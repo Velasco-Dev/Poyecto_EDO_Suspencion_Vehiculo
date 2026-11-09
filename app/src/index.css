@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-unimayor-blue: #0B3C73;
+    --color-unimayor-blue-dark: #072242;
+    --color-unimayor-gold: #F5A800;
+    --color-unimayor-gold-light: #FFBF24;
+    --glass-bg: rgba(255, 255, 255, 0.06);
+    --glass-border: rgba(255, 255, 255, 0.14);
+    --glass-specular: rgba(255, 255, 255, 0.28);
+  }
+
+  body {
+    margin: 0;
+    background-color: #030712;
+    background-image: 
+      radial-gradient(at 10% 20%, rgba(11, 60, 115, 0.35) 0px, transparent 50%),
+      radial-gradient(at 90% 10%, rgba(245, 168, 0, 0.18) 0px, transparent 40%),
+      radial-gradient(at 50% 80%, rgba(7, 34, 66, 0.5) 0px, transparent 60%);
+    background-attachment: fixed;
+    color: #f3f4f6;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+}
+
+/* ==========================================================================
+   ESTILOS APPLE LIQUID GLASS (UI/UX PRO MAX - ESTILO 14)
+   ========================================================================== */
+.liquid-glass {
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(20px) saturate(190%);
+  -webkit-backdrop-filter: blur(20px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 
+    0 10px 30px -10px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+}
+
+.liquid-glass-card {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: 
+    0 8px 24px -6px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.liquid-glass-card:hover {
+  border-color: rgba(245, 168, 0, 0.35);
+  box-shadow: 
+    0 12px 32px -6px rgba(0, 0, 0, 0.6),
+    0 0 20px 0 rgba(245, 168, 0, 0.12),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+.liquid-glass-button {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.liquid-glass-button:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.08) 100%);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+}
+
+.liquid-glass-button:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.liquid-glass-button-gold {
+  background: linear-gradient(135deg, #F5A800 0%, #D48800 100%);
+  color: #071526;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 18px rgba(245, 168, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  transition: all 0.2s ease;
+}
+
+.liquid-glass-button-gold:hover {
+  background: linear-gradient(135deg, #FFB814 0%, #E59800 100%);
+  box-shadow: 0 6px 22px rgba(245, 168, 0, 0.55), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+  transform: translateY(-1px);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(245, 168, 0, 0.4);
+}
+
+/* Estilos de Impresión para Flashcards */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .flashcard-page {
+    page-break-after: always;
+    border: 1px solid #ccc !important;
+    color: #111 !important;
+    background: #fff !important;
+    box-shadow: none !important;
+  }
+}
