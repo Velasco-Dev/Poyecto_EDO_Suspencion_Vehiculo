@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   Activity, BarChart3, BookOpen, Presentation,
-  Award, Download, Calculator
+  Award, Download, Calculator, BookCheck
 } from 'lucide-react';
 
 export default function Header({ activeTab, setActiveTab, onOpenFlashcards }) {
@@ -10,6 +10,7 @@ export default function Header({ activeTab, setActiveTab, onOpenFlashcards }) {
     { id: 'chart', label: 'RK4', icon: BarChart3, color: 'text-sky-500' },
     { id: 'math', label: 'Deducción', icon: BookOpen, color: 'text-purple-500' },
     { id: 'calculator', label: 'Calculadora', icon: Calculator, color: 'text-emerald-500' },
+    { id: 'comparison', label: 'Clase vs Web', icon: BookCheck, color: 'text-indigo-600' },
     { id: 'deck', label: 'Exposición', icon: Presentation, color: 'text-amber-500' },
   ];
 

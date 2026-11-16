@@ -7,6 +7,7 @@ import PresentationDeck from './components/PresentationDeck';
 import FlashcardsModal from './components/FlashcardsModal';
 import Vehicle3DScene from './components/Vehicle3DScene';
 import SuspensionCalculator from './components/SuspensionCalculator';
+import ClassComparisonView from './components/ClassComparisonView';
 import {
   PRESETS,
   calculateOscillatorProperties, 
@@ -345,7 +346,7 @@ export default function App() {
                   Demostración del cumplimiento de la regla de oro: la simulación numérica de cuarto orden valida milimétricamente la solución analítica deducida a mano.
                 </p>
               </div>
-              <div className="h-[440px]">
+              <div className="min-h-[480px]">
                 <SimulationChart m={m} c={c} k={k} x0={x0} v0={v0} />
               </div>
             </div>
@@ -376,7 +377,14 @@ export default function App() {
         )}
 
         {/* ========================================================
-            VISTA 5: MODO EXPOSICIÓN (SLIDE DECK 15 MINUTOS)
+            VISTA 5: COMPARATIVA DIDÁCTICA (CLASE VS WEB)
+            ======================================================== */}
+        {activeTab === 'comparison' && (
+          <ClassComparisonView />
+        )}
+
+        {/* ========================================================
+            VISTA 6: MODO EXPOSICIÓN (SLIDE DECK 15 MINUTOS)
             ======================================================== */}
         {activeTab === 'deck' && (
           <PresentationDeck

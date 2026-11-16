@@ -8,21 +8,22 @@ export const TEAM_MEMBERS_FLASHCARDS = [
   {
     id: 'angela',
     name: 'CRUZ ANACONA ANGELA GABRIELA',
+    shortName: 'Angela Cruz',
     role: 'Ponente 1: Planteamiento Físico y Parámetros del Sistema',
     timeSlot: '0:00 - 3:30 (3 minutos 30 seg)',
     color: '#0B3C73',
     topics: [
       'Introducción y contextualización del modelo de cuarto de carro (quarter-car model).',
       'Planteamiento de la Ecuación Diferencial Ordinaria de segundo orden lineal homogénea.',
-      'Origen físico de cada término (Segunda Ley de Newton, Ley de Hooke, Fuerza disipativa de amortiguador).',
-      'Cálculo analítico de la frecuencia natural (wn = 10 rad/s) y amortiguamiento crítico (ccr = 6000 N·s/m).'
+      'Origen físico de cada término: las 3 fuerzas del modelo vistas en clase (resorte $-kx$, amortiguador $-cx\'$ y fuerza externa $F(t)=0$).',
+      'Cálculo analítico de la frecuencia natural ($\\omega_n = 10\\text{ rad/s}$) y amortiguamiento crítico ($c_{cr} = 6000\\text{ N}\\cdot\\text{s/m}$).'
     ],
     script: [
       '“Buenos días profesora y compañeros. Nuestro equipo, el Grupo 5, desarrolló el análisis analítico y computacional del Proyecto 1: La suspensión de un vehículo.”',
-      '“En dinámica vehicular, el modelo de un cuarto de carro simplifica el vehículo a una masa suspendida m = 300 kg (la cuarta parte de la carrocería) soportada por un resorte elástico k = 30 000 N/m y un amortiguador de fricción viscosa c.”',
-      '“Al cruzar un bache de 5 cm (0.05 m), el sistema parte del reposo instantáneo con condiciones iniciales x(0) = 0.05 m y velocidad x\'(0) = 0 m/s.”',
-      '“Aplicando la Segunda Ley de Newton: m*x\'\' = -k*x - c*x\', lo que nos da la EDO canónica m*x\'\' + c*x\' + k*x = 0, o dividiendo entre m: x\'\' + (c/300)x\' + 100x = 0.”',
-      '“Calculamos los dos parámetros dimensionales maestros: la frecuencia natural wn = sqrt(k/m) = sqrt(30000/300) = 10 rad/s, y el coeficiente crítico ccr = 2*sqrt(m*k) = 2*sqrt(9 000 000) = 6000 N·s/m. Con ccr determinamos el comportamiento límite del sistema.”'
+      '“En dinámica vehicular, el modelo de un cuarto de carro simplifica el vehículo a una masa suspendida $m = 300\\text{ kg}$ (la cuarta parte de la carrocería) soportada por un resorte elástico $k = 30\\,000\\text{ N/m}$ y un amortiguador de fricción viscosa $c$.”',
+      '“Al cruzar un bache de $5\\text{ cm}$ ($0.05\\text{ m}$), el sistema parte del reposo instantáneo con condiciones iniciales $x(0) = 0.05\\text{ m}$ y velocidad $x\'(0) = 0\\text{ m/s}$.”',
+      '“Tal como vimos en clase al aplicar la Segunda Ley de Newton, las fuerzas del modelo son tres: el resorte que tira con $-k x$, el amortiguador que frena con $-c x\'$, y la fuerza externa $F(t) = 0$ al quedar libre tras el bache. Así, $m x\'\' = -k x - c x\'$, lo que produce la EDO canónica $m x\'\'(t) + c x\'(t) + k x(t) = 0$, o dividiendo entre $m$: $x\'\' + \\frac{c}{300}x\' + 100x = 0$.”',
+      '“Calculamos los dos parámetros dimensionales maestros: la frecuencia natural $\\omega_n = \\sqrt{k/m} = \\sqrt{30000/300} = 10\\text{ rad/s}$, y el coeficiente crítico $c_{cr} = 2\\sqrt{m k} = 2\\sqrt{9\\,000\\,000} = 6000\\text{ N}\\cdot\\text{s/m}$. Con $c_{cr}$ determinamos el comportamiento límite del sistema.”'
     ],
     formulas: [
       {
@@ -76,21 +77,22 @@ export const TEAM_MEMBERS_FLASHCARDS = [
   {
     id: 'duban',
     name: 'GOMEZ HOYOS DUBAN ALEXANDER',
+    shortName: 'Duban Gómez',
     role: 'Ponente 2: Deducción Analítica Completa a Mano',
     timeSlot: '3:30 - 7:30 (4 minutos 00 seg)',
     color: '#F5A800',
     topics: [
-      'Planteamiento de la ecuación auxiliar o característica: r^2 + (c/300)r + 100 = 0.',
-      'Resolución matemática paso a paso de los 3 casos asignados.',
-      'Aplicación rigurosa de las condiciones iniciales para hallar constantes A, B, C1, C2.',
-      'Explicación física de cuál término produce la oscilación y cuál el decaimiento disipativo.'
+      'Planteamiento de la ecuación auxiliar o característica: $m r^2 + c r + k = 0 \\iff r^2 + \\frac{c}{300}r + 100 = 0$.',
+      'Criterio de la profesora visto en clase: “el discriminante $\\Delta = c^2 - 4mk$ define todo”.',
+      'Resolución matemática paso a paso de los 3 casos asignados (subamortiguado, crítico y sobreamortiguado).',
+      'Aplicación rigurosa de las condiciones iniciales para hallar las constantes exactas.'
     ],
     script: [
-      '“Continuando con el desarrollo, como lo exige la regla de oro: primero la matemática, después el código. Asumimos una solución de la forma x(t) = e^(r*t), obteniendo la ecuación característica r^2 + (c/300)r + 100 = 0.”',
-      '“En el Caso 1 (Subamortiguado, c = 1800 N·s/m), la ecuación es r^2 + 6r + 100 = 0. El discriminante es 36 - 400 = -364 < 0. Las raíces complejas conjugadas son r = -3 +- i*sqrt(91). La solución general es x(t) = e^(-3t)[A*cos(sqrt(91)t) + B*sin(sqrt(91)t)]. Evaluando x(0)=0.05 y x\'(0)=0, hallamos A = 0.05 y B = 0.15/sqrt(91) approx 0.01572.”',
-      '“Aquí explicamos los dos roles físicos: el factor exponencial e^(-3t) es la envolvente disipativa que extingue el movimiento, mientras que las funciones trigonométricas con frecuencia wd = sqrt(91) rad/s (approx 9.54 rad/s) son las que generan la oscilación inducida por el resorte.”',
-      '“En el Caso 2 (Crítico, c = 6000 N·s/m), r^2 + 20r + 100 = (r+10)^2 = 0. Hay una raíz real repetida r = -10. La solución es x(t) = (C1 + C2*t)e^(-10t). Con las condiciones iniciales resulta x(t) = (0.05 + 0.5t)e^(-10t). No tiene términos trigonométricos, por lo que no oscila en absoluto.”',
-      '“En el Caso 3 (Sobreamortiguado, c = 9000 N·s/m), r^2 + 30r + 100 = 0 da dos raíces reales negativas: r1 = -15 + 5*sqrt(5) approx -3.82 y r2 = -15 - 5*sqrt(5) approx -26.18. La solución particular es x(t) = 0.05854*e^(-3.82t) - 0.00854*e^(-26.18t). El modo lento r1 domina y retrasa el retorno al equilibrio.”'
+      '“Continuando con el desarrollo, como lo exige la regla de oro: primero la matemática, después el código. Asumimos una solución de la forma $x(t) = e^{r t}$, obteniendo la ecuación característica $r^2 + \\frac{c}{300}r + 100 = 0$.”',
+      '“Como nos enseñó la profesora en el cuaderno de clase: el discriminante $\\Delta = c^2 - 4mk$ define todo. En el Caso 1 (Subamortiguado, $c = 1800\\text{ N}\\cdot\\text{s/m}$), la ecuación es $r^2 + 6r + 100 = 0$. El discriminante es $\\Delta = 36 - 400 = -364 < 0$. Al ser negativo, tenemos raíces complejas conjugadas $r = -3 \\pm i\\sqrt{91}$. La solución general es $x(t) = e^{-3t}\\left[A\\cos(\\sqrt{91}t) + B\\sin(\\sqrt{91}t)\\right]$. Evaluando $x(0) = 0.05$ y $x\'(0) = 0$, hallamos $A = 0.05\\text{ m}$ y $B = \\frac{0.15}{\\sqrt{91}} \\approx 0.01572\\text{ m}$.”',
+      '“Aquí explicamos los dos roles físicos fundamentales: el factor exponencial $e^{-3t}$ es la envolvente disipativa que extingue el movimiento, mientras que las funciones trigonométricas con frecuencia angular $\\omega_d = \\sqrt{91}\\text{ rad/s} \\approx 9.54\\text{ rad/s}$ son las que generan la oscilación de la carrocería.”',
+      '“En el Caso 2 (Crítico, $c = 6000\\text{ N}\\cdot\\text{s/m}$), $\\Delta = 400 - 400 = 0$, obteniendo $(r + 10)^2 = 0$. Hay una raíz real repetida $r = -10\\text{ s}^{-1}$. Aplicando reducción de orden, la solución es $x(t) = (C_1 + C_2 t)e^{-10t}$. Con las condiciones iniciales resulta $x(t) = (0.05 + 0.5t)e^{-10t}$. No tiene términos trigonométricos: es el regreso más rápido al reposo sin sobreimpulso ni rebote.”',
+      '“En el Caso 3 (Sobreamortiguado, $c = 9000\\text{ N}\\cdot\\text{s/m}$), $\\Delta = 900 - 400 = 500 > 0$. Da dos raíces reales negativas distintas: $r_1 = -15 + 5\\sqrt{5} \\approx -3.82\\text{ s}^{-1}$ y $r_2 = -15 - 5\\sqrt{5} \\approx -26.18\\text{ s}^{-1}$. La solución particular es $x(t) = 0.05854 e^{-3.82t} - 0.00854 e^{-26.18t}$. El modo lento $r_1$ domina y retrasa sensiblemente el retorno al equilibrio.”'
     ],
     formulas: [
       {
@@ -144,22 +146,23 @@ export const TEAM_MEMBERS_FLASHCARDS = [
   {
     id: 'jose',
     name: 'TORRES ANGULO JOSE ALDAIR',
+    shortName: 'José Torres',
     role: 'Ponente 3: Implementación Computacional y Validación Numérica',
     timeSlot: '7:30 - 11:30 (4 minutos 00 seg)',
     color: '#0B3C73',
     topics: [
-      'Conversión de la EDO de 2° orden a un sistema de dos EDOs de 1° orden.',
-      'Algoritmo Runge-Kutta de 4to orden (RK4): cálculo de las 4 pendientes intermedias k1, k2, k3, k4.',
+      'Conversión de la EDO de 2° orden a un sistema acoplado de dos EDOs de 1° orden: $u\' = v,\\; v\' = \\frac{-c v - k u}{m}$.',
+      'Algoritmo Runge-Kutta de 4to orden (RK4): cálculo y ponderación de las 4 pendientes $k_1, k_2, k_3, k_4$.',
       'Superposición de curvas: verificación de coincidencia numérica vs. analítica exacta.',
-      'Análisis de orden y control del paso h (h = 1e-4 s, error máximo < 1e-6 m).'
+      'Control del paso temporal fijo $h = 10^{-4}\\text{ s}$ y cota de error residual $\\max |x_{\\text{num}} - x_{\\text{exact}}| < 10^{-6}\\text{ m}$.'
     ],
     script: [
-      '“Para verificar computacionalmente lo deducido por Duban, convertimos la EDO de segundo orden en un sistema acoplado de primer orden definiendo u = x (posición) y v = x\' (velocidad).”',
-      '“El sistema resultante es: u\' = v, y v\' = (-c*v - k*u)/m. Ningún integrador numérico resuelve directamente orden 2; esta transformación es el estándar en simulación física.”',
-      '“Implementamos el método Runge-Kutta de 4° orden (RK4). En cada paso de tiempo h = 1e-4 s, evaluamos 4 pendientes k1 (al inicio), k2 y k3 (en el punto medio con corrección de Euler), y k4 (al final del intervalo).”',
-      '“La combinación ponderada (k1 + 2k2 + 2k3 + k4)/6 proporciona un error local de orden O(h^5) y error global O(h^4).”',
-      '“Como pueden observar en nuestra gráfica interactiva y en el script de Python, la curva numérica de RK4 y la analítica exacta se superponen milimétricamente. El error absoluto máximo observado es de apenas 2.3 x 10^-8 metros, cumpliendo con la exigencia de la rúbrica donde la simulación verifica la teoría.”',
-      '“Además, cuidamos los errores comunes mencionados en la guía: usamos un paso fijo h = 1e-4 s, evitamos deltaTime variable, y garantizamos unidades consistentes en el Sistema Internacional: kg, N/m, N·s/m y segundos.”'
+      '“Para verificar computacionalmente lo deducido por Duban, convertimos la EDO de segundo orden en un sistema acoplado de primer orden definiendo variables de estado $u = x$ (posición) y $v = x\'$ (velocidad).”',
+      '“El sistema resultante es: $u\' = v$, y $v\' = \\frac{-c v - k u}{m}$. Ningún integrador numérico estándar resuelve directamente orden 2; esta transformación canónica es el estándar en simulación física moderna.”',
+      '“Implementamos el método Runge-Kutta de 4° orden (RK4). En cada paso de tiempo fijo $h = 10^{-4}\\text{ s}$ ($0.1\\text{ ms}$), evaluamos 4 pendientes: $k_1$ (al inicio del paso), $k_2$ y $k_3$ (en el punto medio con corrección predictiva), y $k_4$ (al final del intervalo).”',
+      '“La combinación ponderada $\\frac{k_1 + 2k_2 + 2k_3 + k_4}{6}$ proporciona un error local de orden $O(h^5)$ y un error global acumulado de orden $O(h^4)$.”',
+      '“Como pueden observar en nuestra gráfica interactiva y en el script de Python, la curva numérica de RK4 y la analítica exacta se superponen milimétricamente. El error absoluto máximo observado es de apenas $2.3 \\times 10^{-8}\\text{ m}$, cumpliendo con creces la exigencia de la rúbrica donde la simulación verifica la teoría.”',
+      '“Además, evitamos errores comunes de la guía: fijamos el paso temporal $h = 10^{-4}\\text{ s}$, eliminamos fluctuaciones de deltaTime, y garantizamos unidades consistentes en el Sistema Internacional: $\\text{kg}$, $\\text{N/m}$, $\\text{N}\\cdot\\text{s/m}$ y $\\text{segundos}$.”'
     ],
     formulas: [
       {
@@ -213,24 +216,25 @@ export const TEAM_MEMBERS_FLASHCARDS = [
   {
     id: 'ruben',
     name: 'VELASCO BURBANO RUBEN DARIO',
+    shortName: 'Rubén Velasco',
     role: 'Ponente 4: Métricas de Ingeniería, Animación y Conclusión',
     timeSlot: '11:30 - 15:00 (3 minutos 30 seg)',
     color: '#F5A800',
     topics: [
-      'Medición rigurosa de métricas: tiempo de asentamiento (criterio 2% = 0.001 m) y sobreimpulso.',
-      'Demostración en vivo de la animación interactiva con el control deslizante de c.',
+      'Medición rigurosa de métricas: tiempo de asentamiento ($|x(t)| \\le 0.001\\text{ m}$) y sobreimpulso ($M_p$).',
+      'Demostración en vivo de la animación interactiva con el control deslizante de $c$.',
       'Defensa de la conclusión de ingeniería con números reales: Ambulancia vs. Carro de carreras.',
       'Cierre de la exposición y apertura a la sesión de preguntas (Q&A).'
     ],
     script: [
       '“Finalmente, la matemática cobra sentido cuando tomamos decisiones de ingeniería fundamentadas en datos. Programamos la medición de las dos métricas clave exigidas por la rúbrica:”',
-      '“1. El Tiempo de Asentamiento ts: el instante a partir del cual el desplazamiento |x(t)| queda permanentemente por debajo del 2% del desplazamiento inicial (es decir, |x| <= 0.001 m = 1 mm).”',
-      '“2. El Sobreimpulso Mp: cuánto cruza la masa más allá de la línea de equilibrio hacia el lado opuesto.”',
-      '“Los resultados medidos coinciden con la guía docente: en el caso subamortiguado ts = 1.12 s y el sobreimpulso es del 37.23% (alcanza -1.86 cm hacia abajo). En el crítico ts = 0.58 s y sobreimpulso 0.00%. En el sobreamortiguado ts = 1.07 s y sobreimpulso 0.00%.”',
-      '“Ahora realizamos la demostración en vivo con nuestro slider de amortiguamiento c (mostrando la animación Apple Liquid Glass de la suspensión).”',
+      '“1. El Tiempo de Asentamiento $t_s$: el instante a partir del cual el desplazamiento $|x(t)|$ queda permanentemente por debajo del $2\\%$ del desplazamiento inicial (es decir, $|x| \\le 0.001\\text{ m} = 1\\text{ mm}$).”',
+      '“2. El Sobreimpulso $M_p$: cuánto cruza la masa más allá de la línea de equilibrio hacia el lado opuesto.”',
+      '“Los resultados medidos coinciden con la guía docente: en el caso subamortiguado $t_s = 1.12\\text{ s}$ y el sobreimpulso es del $37.23\\%$ (alcanza un pico negativo $x_{\\min} = -1.86\\text{ cm}$). En el crítico $t_s = 0.58\\text{ s}$ y sobreimpulso $0.00\\%$. En el sobreamortiguado $t_s = 1.07\\text{ s}$ y sobreimpulso $0.00\\%$.”',
+      '“Ahora realizamos la demostración en vivo con nuestro slider de amortiguamiento $c$ (mostrando la animación Apple Liquid Glass de la suspensión).”',
       '“Conclusión de Ingeniería para responder la pregunta de la rúbrica:”',
-      '“¿Qué amortiguador le ponemos a una ambulancia? Le ponemos amortiguamiento crítico (c = 6000 N·s/m, zeta = 1.0) o ligeramente subamortiguado alto (zeta = 0.8). ¿Por qué con números? Porque el sobreimpulso es 0.00% y el tiempo de asentamiento es el más rápido de todos: 0.58 segundos. En una ambulancia, un paciente con fractura de columna o trauma craneoencefálico no puede tolerar los 4 o 5 rebotes y el 37% de sobreimpulso que provocaría una suspensión subamortiguada.”',
-      '“¿Y a un carro de carreras? Un vehículo de competición no busca confort humano, sino mantener la huella del neumático (contact patch) 100% adherida al asfalto para máxima tracción y efecto suelo aerodinámico. Por tanto, se aumenta tanto la rigidez k como el amortiguamiento c (suspensión muy dura), logrando que el chasis no cabecee ni se incline en curvas.”',
+      '“¿Qué amortiguador le ponemos a una ambulancia? Le ponemos amortiguamiento crítico ($c = 6000\\text{ N}\\cdot\\text{s/m}$, $\\zeta = 1.0$) o ligeramente subamortiguado alto ($\\zeta = 0.8$). ¿Por qué con números? Porque el sobreimpulso es $0.00\\%$ y el tiempo de asentamiento es el más rápido de todos: $0.58\\text{ segundos}$. En una ambulancia, un paciente con fractura de columna o trauma craneoencefálico no puede tolerar los 4 o 5 rebotes y el $37\\%$ de sobreimpulso que provocaría una suspensión subamortiguada.”',
+      '“¿Y a un carro de carreras? Un vehículo de competición no busca confort humano, sino mantener la huella del neumático (contact patch) $100\\%$ adherida al asfalto para máxima tracción y efecto suelo aerodinámico. Por tanto, se aumenta tanto la rigidez $k$ como el amortiguamiento $c$ (suspensión muy dura), logrando que el chasis no cabecee ni se incline en curvas.”',
       '“Concluimos así nuestra presentación y quedamos atentos a sus preguntas. Muchas gracias.”'
     ],
     formulas: [

@@ -138,7 +138,7 @@ export default function PresentationDeck({ m, c, k, x0, v0, regimen, settlingTim
       </div>
 
       {/* Área Principal de la Diapositiva Interactiva (Luminous Liquid Glass con Acentos Institucionales) */}
-      <div className="liquid-glass p-6 sm:p-8 rounded-3xl border border-white/90 relative overflow-hidden min-h-[560px] flex flex-col justify-between shadow-xl">
+      <div className="liquid-glass p-5 sm:p-7 md:p-8 rounded-3xl border border-white/90 relative min-h-[560px] flex flex-col justify-between shadow-xl">
         
         {/* Glow de fondo institucional Unimayor (Azul Rey y Oro Solar) */}
         <div className="absolute -top-20 -right-20 w-96 h-96 bg-[#0B3C73]/12 rounded-full blur-3xl pointer-events-none" />
@@ -150,9 +150,9 @@ export default function PresentationDeck({ m, c, k, x0, v0, regimen, settlingTim
             <span className="text-xs uppercase tracking-widest text-[#0B3C73] font-extrabold bg-blue-50/90 px-3 py-1 rounded-full border border-blue-200 shadow-xs">
               {currentSlide.category} · {currentSlide.badge}
             </span>
-            <span className="text-xs font-mono text-slate-500 hidden sm:inline">
+            {/* <span className="text-xs font-mono text-slate-500 hidden sm:inline">
               Teclado: [←] Anterior | [→] o [Espacio] Siguiente
-            </span>
+            </span> */}
           </div>
 
           <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
@@ -223,7 +223,7 @@ export default function PresentationDeck({ m, c, k, x0, v0, regimen, settlingTim
                 </span>
                 <div className="mt-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-300 text-amber-900 text-xs font-bold">
                   <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                  <span>Meta de Calificación: 5.0</span>
+                  <span>Docente: Diana Marcela Mendez Astudillo</span>
                 </div>
               </div>
             </div>
@@ -285,14 +285,14 @@ export default function PresentationDeck({ m, c, k, x0, v0, regimen, settlingTim
           {/* DIAPOSITIVA 6: GRÁFICA DE SUPERPOSICIÓN (VERIFICACIÓN EXACTA VS NUMÉRICA) */}
           {currentSlide.id === 6 && (
             <div className="space-y-3">
-              <div className="math-formula-box overflow-x-auto text-center">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#0B3C73] block mb-1">
+              <div className="math-formula-box py-1.5 px-3 overflow-x-auto text-center">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#0B3C73] block mb-0.5">
                   Criterio de Validación: Error Máximo Residual
                 </span>
                 <KaTeXMath math={currentSlide.mainFormula} block={true} />
               </div>
-              <div className="h-[340px] w-full bg-white rounded-2xl border border-slate-200 p-2 shadow-inner">
-                <SimulationChart m={m} c={c} k={k} x0={x0} v0={v0} />
+              <div className="w-full bg-slate-50/70 rounded-2xl border border-slate-200/90 p-3 sm:p-4 shadow-xs">
+                <SimulationChart m={m} c={c} k={k} x0={x0} v0={v0} height="400px" />
               </div>
             </div>
           )}
@@ -435,12 +435,12 @@ export default function PresentationDeck({ m, c, k, x0, v0, regimen, settlingTim
             ))}
           </div>
 
-          <div className="flex items-center gap-2">
+          {/* <div className="flex items-center gap-2">
             <span className="hidden sm:inline">Usa las flechas para exponer</span>
             <span className="text-[#0B3C73] font-bold bg-blue-50 px-2.5 py-0.5 rounded border border-blue-200">
               15 min exactos
             </span>
-          </div>
+          </div> */}
         </div>
 
       </div>

@@ -44,7 +44,7 @@ ChartJS.register(
   customCanvasBackgroundColor
 );
 
-export default function SimulationChart({ m, c, k, x0, v0 = 0 }) {
+export default function SimulationChart({ m, c, k, x0, v0 = 0, compact = false, height = '400px' }) {
   const [viewMode, setViewMode] = useState('superposition'); // 'superposition' | 'three_cases' | 'error'
   const [showToleranceBand, setShowToleranceBand] = useState(true);
 
@@ -285,6 +285,7 @@ export default function SimulationChart({ m, c, k, x0, v0 = 0 }) {
         },
         ticks: {
           color: '#334155', // dark ticks
+          maxTicksLimit: 12,
           callback: (value) => `${Number(value).toFixed(3)} m`
         }
       }
@@ -350,48 +351,72 @@ export default function SimulationChart({ m, c, k, x0, v0 = 0 }) {
         </button>
       </div>
 
-      {/* Lienzo de la gráfica con fondo blanco */}
-      <div className="relative flex-1 w-full min-h-[320px] bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm">
+      {/* Lienzo de la gráfica con fondo blanco y proporción vertical amplia idéntica al laboratorio */}
+      <div 
+        className="relative flex-1 w-full bg-white p-3 sm:p-4 rounded-xl border border-slate-200 shadow-sm"
+        style={{ minHeight: height || '400px', height: height || '400px' }}
+      >
         <Line data={chartData} options={chartOptions} />
       </div>
 
-      {/* Tarjetas de Métricas Cuantitativas - White cards with subtle border */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3">
-        <div className="bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm">
-          <span className="text-[11px] font-medium text-slate-500 block">Tiempo de Asentamiento (ts)</span>
-          <span className="text-base font-bold text-amber-600 font-mono">
-            {currentMetrics.settlingTime.toFixed(3)} s
-          </span>
-          <span className="text-[10px] text-slate-600 block">Criterio |x| ≤ 2% (1 mm)</span>
+      {/* Tarjetas de Métricas Cuantitativas */}
+      {compact ? (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-2.5">
+          <div className="bg-white px-3 py-2 rounded-xl border border-slate-200 text-center shadow-2xs">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">Asentamiento (2%)</span>
+            <span className="text-sm font-black text-amber-700 font-mono">{currentMetrics.settlingTime.toFixed(2)} s</span>
+          </div>
+          <div className="bg-white px-3 py-2 rounded-xl border border-slate-200 text-center shadow-2xs">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">Sobreimpulso</span>
+            <span className="text-sm font-black text-sky-700 font-mono">{currentMetrics.overshootPct.toFixed(1)}%</span>
+          </div>
+          <div className="bg-white px-3 py-2 rounded-xl border border-slate-200 text-center shadow-2xs">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">Error Máx RK4</span>
+            <span className="text-sm font-black text-emerald-700 font-mono">{currentMetrics.maxRk4Error.toExponential(1)} m</span>
+          </div>
+          <div className="bg-emerald-50 px-3 py-2 rounded-xl border border-emerald-300 text-center flex items-center justify-center gap-1.5 shadow-2xs">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span className="text-xs font-black text-emerald-900">100% Coincidente</span>
+          </div>
         </div>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3">
+          <div className="bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm">
+            <span className="text-[11px] font-medium text-slate-500 block">Tiempo de Asentamiento (ts)</span>
+            <span className="text-base font-bold text-amber-600 font-mono">
+              {currentMetrics.settlingTime.toFixed(3)} s
+            </span>
+            <span className="text-[10px] text-slate-600 block">Criterio |x| ≤ 2% (1 mm)</span>
+          </div>
 
-        <div className="bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm">
-          <span className="text-[11px] font-medium text-slate-500 block">Sobreimpulso (Mp)</span>
-          <span className="text-base font-bold text-sky-600 font-mono">
-            {currentMetrics.overshootPct.toFixed(2)}%
-          </span>
-          <span className="text-[10px] text-slate-600 block">
-            Pico: {(currentMetrics.minDisplacement * 100).toFixed(2)} cm
-          </span>
-        </div>
+          <div className="bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm">
+            <span className="text-[11px] font-medium text-slate-500 block">Sobreimpulso (Mp)</span>
+            <span className="text-base font-bold text-sky-600 font-mono">
+              {currentMetrics.overshootPct.toFixed(2)}%
+            </span>
+            <span className="text-[10px] text-slate-600 block">
+              Pico: {(currentMetrics.minDisplacement * 100).toFixed(2)} cm
+            </span>
+          </div>
 
-        <div className="bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm">
-          <span className="text-[11px] font-medium text-slate-500 block">Error Máximo RK4 vs Exacta</span>
-          <span className="text-base font-bold text-emerald-600 font-mono">
-            {currentMetrics.maxRk4Error.toExponential(2)} m
-          </span>
-          <span className="text-[10px] text-slate-600 block">Convergencia de 4to orden</span>
-        </div>
+          <div className="bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm">
+            <span className="text-[11px] font-medium text-slate-500 block">Error Máximo RK4 vs Exacta</span>
+            <span className="text-base font-bold text-emerald-600 font-mono">
+              {currentMetrics.maxRk4Error.toExponential(2)} m
+            </span>
+            <span className="text-[10px] text-slate-600 block">Convergencia de 4to orden</span>
+          </div>
 
-        <div className="bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm">
-          <span className="text-[11px] font-medium text-slate-500 block">Estado de Superposición</span>
-          <span className="text-xs font-semibold text-emerald-600 flex items-center gap-1 mt-1">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-            100% Coincidente
-          </span>
-          <span className="text-[10px] text-slate-600 block">Validación analítica OK</span>
+          <div className="bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm">
+            <span className="text-[11px] font-medium text-slate-500 block">Estado de Superposición</span>
+            <span className="text-xs font-semibold text-emerald-600 flex items-center gap-1 mt-1">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+              100% Coincidente
+            </span>
+            <span className="text-[10px] text-slate-600 block">Validación analítica OK</span>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

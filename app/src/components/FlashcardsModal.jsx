@@ -7,6 +7,30 @@ import {
 import { TEAM_MEMBERS_FLASHCARDS } from '../data/flashcardsData';
 import KaTeXMath from './KaTeXMath';
 
+/**
+ * Renderizador de texto enriquecido que detecta expresiones LaTeX delimitadas por $...$
+ * y las convierte en componentes matemáticos KaTeX inline reales.
+ */
+function FormattedMathText({ text }) {
+  if (!text) return null;
+  const parts = text.split(/(\$[^$]+\$)/g);
+  return (
+    <span>
+      {parts.map((part, idx) => {
+        if (part.startsWith('$') && part.endsWith('$') && part.length > 2) {
+          const math = part.slice(1, -1);
+          return (
+            <span key={idx} className="inline-block mx-1 font-semibold text-[#0B3C73]">
+              <KaTeXMath math={math} block={false} />
+            </span>
+          );
+        }
+        return <span key={idx}>{part}</span>;
+      })}
+    </span>
+  );
+}
+
 export default function FlashcardsModal({ isOpen, onClose }) {
   const [activeMemberId, setActiveMemberId] = useState('angela');
   const [showSymbolGuide, setShowSymbolGuide] = useState(false);
@@ -20,15 +44,15 @@ export default function FlashcardsModal({ isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/40 backdrop-blur-md overflow-y-auto">
-      <div className="relative w-full max-w-5xl bg-white/95 backdrop-blur-2xl border border-white/90 rounded-3xl shadow-[0_25px_70px_-15px_rgba(11,60,115,0.22)] overflow-hidden flex flex-col max-h-[94vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-slate-900/40 backdrop-blur-md overflow-y-auto">
+      <div className="relative w-full max-w-5xl bg-white/95 backdrop-blur-2xl border border-white/90 rounded-3xl shadow-[0_25px_70px_-15px_rgba(11,60,115,0.22)] overflow-hidden flex flex-col max-h-[92vh]">
         
         {/* Glows ambientales sutiles con colores institucionales */}
         <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-[#0B3C73]/10 blur-3xl" />
         <div className="pointer-events-none absolute -left-20 -bottom-20 h-72 w-72 rounded-full bg-[#F5A800]/15 blur-3xl" />
 
         {/* Cabecera del Modal (Luminous Glass Header) */}
-        <div className="relative z-10 flex items-center justify-between p-4 sm:p-5 border-b border-slate-200/90 bg-white/90 backdrop-blur-md">
+        <div className="relative z-10 flex items-center justify-between p-4 sm:p-5 border-b border-slate-200/90 bg-white/90 backdrop-blur-md shrink-0">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-2xl bg-amber-50 border border-amber-300 text-amber-600 shadow-xs">
               <Award className="w-6 h-6" />
@@ -77,7 +101,7 @@ export default function FlashcardsModal({ isOpen, onClose }) {
 
         {/* Guía Rápida de Símbolos Griegos y Matemáticos (Desplegable) */}
         {showSymbolGuide && (
-          <div className="relative z-10 bg-blue-50/90 p-4 border-b border-blue-200 text-xs space-y-2">
+          <div className="relative z-10 bg-blue-50/95 p-4 border-b border-blue-200 text-xs space-y-2 shrink-0">
             <div className="flex items-center justify-between text-[#0B3C73] font-bold">
               <span className="flex items-center gap-1.5">
                 <PenTool className="w-4 h-4 text-amber-600" />
@@ -134,21 +158,21 @@ export default function FlashcardsModal({ isOpen, onClose }) {
           </div>
         )}
 
-        {/* Selector de Integrantes con Estilo de Pestañas Claras */}
-        <div className="relative z-10 flex items-center gap-2 p-3 bg-slate-50/90 border-b border-slate-200/90 overflow-x-auto">
+        {/* Selector de Integrantes con Estilo de Pestañas Claras y Nombres Completos */}
+        <div className="relative z-10 flex items-center gap-2 px-4 py-2.5 bg-slate-50/90 border-b border-slate-200/90 overflow-x-auto shrink-0">
           {TEAM_MEMBERS_FLASHCARDS.map((member) => (
             <button
               key={member.id}
               onClick={() => setActiveMemberId(member.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer ${
                 activeMemberId === member.id
                   ? 'bg-[#0B3C73] text-white shadow-md border border-blue-800'
                   : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100 hover:text-slate-950'
               }`}
             >
-              <UserCheck className={`w-4 h-4 ${activeMemberId === member.id ? 'text-[#F5A800]' : 'text-slate-400'}`} />
-              <span>{member.name.split(' ')[0]} {member.name.split(' ')[2] || ''}</span>
-              <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono ${
+              <UserCheck className={`w-4 h-4 shrink-0 ${activeMemberId === member.id ? 'text-[#F5A800]' : 'text-slate-400'}`} />
+              <span>{member.shortName || member.name}</span>
+              <span className={`text-[10px] px-2 py-0.5 rounded font-mono font-bold ${
                 activeMemberId === member.id ? 'bg-white/20 text-amber-300' : 'bg-slate-100 text-slate-600'
               }`}>
                 {member.timeSlot.split(' ')[0]}
@@ -186,22 +210,24 @@ export default function FlashcardsModal({ isOpen, onClose }) {
               {currentMember.topics.map((topic, i) => (
                 <div key={i} className="bg-white p-3.5 rounded-xl border border-slate-200/90 flex items-start gap-2.5 text-xs font-medium text-slate-800 shadow-2xs">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span className="leading-relaxed">{topic}</span>
+                  <span className="leading-relaxed">
+                    <FormattedMathText text={topic} />
+                  </span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* 2. Guion Textual */}
+          {/* 2. Guion Textual Recomendado (Renderizado con LaTeX Inline Real) */}
           <div className="space-y-2">
             <h4 className="text-xs font-extrabold uppercase tracking-wider text-amber-800 flex items-center gap-1.5">
               <Award className="w-4 h-4 text-amber-600" />
               Guion Textual Recomendado (Léelo con seguridad y lenguaje técnico de ingeniería)
             </h4>
-            <div className="bg-amber-50/60 p-4 sm:p-5 rounded-2xl border border-amber-200/90 space-y-2.5 text-xs sm:text-sm text-slate-800 leading-relaxed font-normal shadow-xs">
+            <div className="bg-amber-50/60 p-4 sm:p-5 rounded-2xl border border-amber-200/90 space-y-3 text-xs sm:text-sm text-slate-800 leading-relaxed font-normal shadow-xs">
               {currentMember.script.map((paragraph, i) => (
                 <p key={i} className="pl-3.5 border-l-3 border-[#F5A800]">
-                  {paragraph}
+                  <FormattedMathText text={paragraph} />
                 </p>
               ))}
             </div>
@@ -294,7 +320,7 @@ export default function FlashcardsModal({ isOpen, onClose }) {
                   </div>
                   <div className="pl-6 text-xs text-slate-700 border-l-2 border-emerald-500 font-normal leading-relaxed">
                     <strong className="text-emerald-800 font-bold block mb-0.5">Cómo debes responder:</strong>
-                    {t.answer}
+                    <FormattedMathText text={t.answer} />
                   </div>
                 </div>
               ))}
@@ -304,7 +330,7 @@ export default function FlashcardsModal({ isOpen, onClose }) {
         </div>
 
         {/* Pie de Página del Modal */}
-        <div className="relative z-10 p-4 border-t border-slate-200/90 bg-slate-50 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600 font-medium">
+        <div className="relative z-10 p-4 border-t border-slate-200/90 bg-slate-50 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600 font-medium shrink-0">
           <span>Institución Universitaria Colegio Mayor del Cauca · EDO 2026</span>
           <button
             onClick={onClose}
