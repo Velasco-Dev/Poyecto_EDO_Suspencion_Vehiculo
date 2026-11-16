@@ -214,11 +214,14 @@ export default function Vehicle3DScene({
           <iframe
             ref={cardIframeRef}
             key={iframeKey}
-            src="./models/Animacion_Carretera.html?embedded=true"
+            src="./models/Animacion_Carretera.html?embedded=true&view=card"
             title="Animación Carretera 3D"
             className="h-full w-full border-0 select-none"
             allow="fullscreen"
             loading="eager"
+            onLoad={() => {
+              postToIframe(cardIframeRef, { type: 'set-ui-visibility', visible: false });
+            }}
           />
         )}
       </div>
@@ -296,11 +299,14 @@ export default function Vehicle3DScene({
             <iframe
               ref={modalIframeRef}
               key={modalIframeKey}
-              src="./models/Animacion_Carretera.html"
+              src="./models/Animacion_Carretera.html?embedded=false&view=modal"
               title="Vista Técnica: Animación Carretera 3D"
               className="h-full w-full border-0 select-none"
               allow="fullscreen"
               loading="eager"
+              onLoad={() => {
+                postToIframe(modalIframeRef, { type: 'set-ui-visibility', visible: true });
+              }}
             />
           </div>
         </div>
