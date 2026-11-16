@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ambulancia Tipo III 3D — Estudio Interactivo Realista</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/objects/Reflector.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #06080c;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: #f3f4f6;
+      user-select: none;
+    }
+    #canvas-container {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+    .glass-panel {
+      background: rgba(10, 14, 22, 0.76);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .swatch-btn {
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .swatch-btn:hover { transform: scale(1.12); }
+    .swatch-btn.active {
+      box-shadow: 0 0 0 2px #0a0e16, 0 0 0 4px #ef4444;
+    }
+    .cam-btn.active, .ctrl-btn.active {
+      background: rgba(239, 68, 68, 0.22);
+      border-color: rgba(239, 68, 68, 0.78);
+      color: #fca5a5;
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body>
+  <div id="canvas-container"></div>
+
+  <!-- Barra superior -->
+  <header class="fixed top-3 left-3 right-3 z-20 flex items-center justify-between gap-2 pointer-events-none">
+    <div class="glass-panel rounded-2xl px-4 py-2.5 pointer-events-auto flex items-center gap-3 shadow-2xl">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-rose-700 flex items-center justify-center shadow-lg shadow-red-500/25">
+        <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7V3z" />
+        </svg>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="text-sm sm:text-base font-bold tracking-tight text-white">AMBULANCIA TIPO III EMS</h1>
+          <span class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-500/30">Soporte Vital</span>
+        </div>
+        <p class="text-[11px] text-gray-400 hidden sm:block">Módulo 150" Aluminio · 6.53 m × 2.44 m × 2.59 m · Unidad 911</p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2 pointer-events-auto">
+      <button id="btn-specs" type="button" class="glass-panel rounded-xl px-3 py-2 text-xs font-medium text-gray-200 hover:text-white hover:border-white/25 transition flex items-center gap-1.5">
+        <svg class="w-4 h-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span class="hidden sm:inline">Ficha Técnica</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Panel lateral derecho -->
+  <aside class="fixed right-3 top-20 z-20 glass-panel rounded-2xl p-3.5 w-60 hidden md:flex flex-col gap-3.5 shadow-2xl">
+    <div>
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Librea / Esquema</span>
+        <span id="livery-name" class="text-[11px] text-gray-200 font-medium">EMS Rojo</span>
+      </div>
+      <div id="livery-swatches" class="grid grid-cols-4 gap-2"></div>
+    </div>
+
+    <div class="border-t border-white/10 pt-3 flex flex-col gap-1.5">
+      <span class="text-[11px] font-semibold uppercase tracking-wider text-gray-400 mb-0.5">Controles de Unidad</span>
+      <button id="btn-rear-doors" type="button" class="ctrl-btn w-full flex items-center justify-between px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-xs font-medium text-gray-200 hover:bg-white/10 transition">
+        <span>Puertas Traseras</span>
+        <span id="lbl-rear-doors" class="text-[10px] uppercase tracking-wider text-gray-400">Cerradas</span>
+      </button>
+      <button id="btn-cab-doors" type="button" class="ctrl-btn w-full flex items-center justify-between px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-xs font-medium text-gray-200 hover:bg-white/10 transition">
+        <span>Puertas Cabina</span>
+        <span id="lbl-cab-doors" class="text-[10px] uppercase tracking-wider text-gray-400">Cerradas</span>
+      </button>
+      <button id="btn-emergency" type="button" class="ctrl-btn active w-full flex items-center justify-between px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-xs font-medium text-gray-200 hover:bg-white/10 transition">
+        <span>Balizas Emergencia</span>
+        <span id="lbl-emergency" class="text-[10px] uppercase tracking-wider text-red-300">Activas</span>
+      </button>
+      <button id="btn-lights" type="button" class="ctrl-btn active w-full flex items-center justify-between px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-xs font-medium text-gray-200 hover:bg-white/10 transition">
+        <span>Faros y Cabina</span>
+        <span id="lbl-lights" class="text-[10px] uppercase tracking-wider text-red-300">Encendidos</span>
+      </button>
+      <button id="btn-spin" type="button" class="ctrl-btn w-full flex items-center justify-between px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-xs font-medium text-gray-200 hover:bg-white/10 transition">
+        <span>Rotación Showroom</span>
+        <span id="lbl-spin" class="text-[10px] uppercase tracking-wider text-gray-400">Off</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Modal Ficha Técnica -->
+  <div id="specs-modal" class="fixed inset-0 z-30 hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div class="glass-panel rounded-2xl max-w-lg w-full p-5 shadow-2xl border border-white/15 max-h-[85vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-white/10">
+        <div>
+          <h2 class="text-base font-bold text-white">Especificaciones de Ambulancia Tipo III</h2>
+          <p class="text-xs text-gray-400">Estándar de Carrocería Modular EMS</p>
+        </div>
+        <button id="btn-close-specs" type="button" class="p-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-gray-300 hover:text-white transition">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="grid grid-cols-2 gap-3 mt-4 text-xs">
+        <div class="bg-white/5 rounded-xl p-3 border border-white/5">
+          <div class="text-gray-400 text-[11px]">Dimensiones Totales</div>
+          <div class="font-semibold text-white mt-0.5">6,528 × 2,438 × 2,591 mm</div>
+          <div class="text-gray-400 text-[11px] mt-1">257" Largo × 96" Ancho × 102" Alto</div>
+        </div>
+        <div class="bg-white/5 rounded-xl p-3 border border-white/5">
+          <div class="text-gray-400 text-[11px]">Módulo Médico</div>
+          <div class="font-semibold text-red-300 mt-0.5">3,810 × 2,438 mm (150")</div>
+          <div class="text-gray-400 text-[11px] mt-1">Altura interior: 1,727 mm (68")</div>
+        </div>
+        <div class="bg-white/5 rounded-xl p-3 border border-white/5">
+          <div class="text-gray-400 text-[11px]">Distancia entre Ejes</div>
+          <div class="font-semibold text-white mt-0.5">3,505 mm (138")</div>
+          <div class="text-gray-400 text-[11px] mt-1">Chasis Cutaway doble rueda trasera</div>
+        </div>
+        <div class="bg-white/5 rounded-xl p-3 border border-white/5">
+          <div class="text-gray-400 text-[11px]">Equipamiento Médico</div>
+          <div class="font-semibold text-white mt-0.5">Camilla + Monitor + O₂</div>
+          <div class="text-gray-400 text-[11px] mt-1">Gabinetes aluminio, banca y pasamanos</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controles móviles -->
+  <div class="fixed bottom-16 left-3 right-3 z-20 flex md:hidden items-center justify-center gap-1.5 flex-wrap pointer-events-none">
+    <div class="glass-panel rounded-xl px-2 py-1.5 flex items-center gap-1.5 pointer-events-auto overflow-x-auto no-scrollbar max-w-full">
+      <button id="m-btn-rear" type="button" class="px-2.5 py-1 rounded-lg bg-white/10 text-[11px] font-medium whitespace-nowrap">P. Traseras</button>
+      <button id="m-btn-cab" type="button" class="px-2.5 py-1 rounded-lg bg-white/10 text-[11px] font-medium whitespace-nowrap">P. Cabina</button>
+      <button id="m-btn-emerg" type="button" class="px-2.5 py-1 rounded-lg bg-red-500/30 text-red-200 text-[11px] font-medium whitespace-nowrap">Balizas</button>
+      <button id="m-btn-lights" type="button" class="px-2.5 py-1 rounded-lg bg-red-500/30 text-red-200 text-[11px] font-medium whitespace-nowrap">Luces</button>
+      <button id="m-btn-livery" type="button" class="px-2.5 py-1 rounded-lg bg-white/10 text-[11px] font-medium whitespace-nowrap">Librea</button>
+      <button id="m-btn-spin" type="button" class="px-2.5 py-1 rounded-lg bg-white/10 text-[11px] font-medium whitespace-nowrap">Girar</button>
+    </div>
+  </div>
+
+  <!-- Barra inferior de cámaras -->
+  <footer class="fixed bottom-3 left-3 right-3 z-20 flex items-center justify-center pointer-events-none">
+    <div class="glass-panel rounded-2xl p-1.5 flex items-center gap-1 overflow-x-auto no-scrollbar max-w-full pointer-events-auto shadow-2xl">
+      <button data-cam="exterior" type="button" class="cam-btn active px-3 py-1.5 rounded-xl border border-transparent text-xs font-medium whitespace-nowrap transition">3/4 Exterior</button>
+      <button data-cam="front" type="button" class="cam-btn px-3 py-1.5 rounded-xl border border-transparent text-xs font-medium text-gray-300 hover:text-white whitespace-nowrap transition">Frontal</button>
+      <button data-cam="side" type="button" class="cam-btn px-3 py-1.5 rounded-xl border border-transparent text-xs font-medium text-gray-300 hover:text-white whitespace-nowrap transition">Perfil</button>
+      <button data-cam="rear" type="button" class="cam-btn px-3 py-1.5 rounded-xl border border-transparent text-xs font-medium text-gray-300 hover:text-white whitespace-nowrap transition">Trasera</button>
+      <button data-cam="medical" type="button" class="cam-btn px-3 py-1.5 rounded-xl border border-transparent text-xs font-medium text-gray-300 hover:text-white whitespace-nowrap transition">Interior Médico</button>
+      <button data-cam="cab" type="button" class="cam-btn px-3 py-1.5 rounded-xl border border-transparent text-xs font-medium text-gray-300 hover:text-white whitespace-nowrap transition">Cabina</button>
+      <button data-cam="wheel" type="button" class="cam-btn px-3 py-1.5 rounded-xl border border-transparent text-xs font-medium text-gray-300 hover:text-white whitespace-nowrap transition">Rueda / Eje</button>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // =========================================================================
+      // 1. CONFIGURACIÓN Y ESTADO
+      // =========================================================================
+      const LIVERIES = [
+        { name: 'EMS Rojo',     body: '#f4f6f8', stripe: '#dc2626', accent: '#1d4ed8' },
+        { name: 'EMS Azul',     body: '#f4f6f8', stripe: '#1d4ed8', accent: '#0ea5e9' },
+        { name: 'Euro Amarillo',body: '#eab308', stripe: '#15803d', accent: '#1e3a8a' },
+        { name: 'Rescate Gris', body: '#334155', stripe: '#f97316', accent: '#facc15' }
+      ];
+
+      const state = {
+        liveryIdx: 0,
+        rearDoorsOpen: false,
+        cabDoorsOpen: false,
+        emergencyOn: true,
+        lightsOn: true,
+        spinning: false,
+        rearDoorAnim: 0,
+        cabDoorAnim: 0,
+        camAnim: null,
+        simulationDisplacement: 0
+      };
+
+      const CAMERAS = {
+        exterior: { pos: [5.4, 2.35, 5.8], target: [0, 1.15, 0.0] },
+        front:    { pos: [0.0, 1.45, 6.4], target: [0, 1.10, 0.5] },
+        side:     { pos: [7.2, 1.45, 0.0], target: [0, 1.15, 0.0] },
+        rear:     { pos: [0.0, 1.60, -6.5], target: [0, 1.20, -0.5] },
+        medical:  { pos: [0.0, 1.75, -5.2], target: [0, 1.10, -1.2] },
+        cab:      { pos: [2.2, 1.55, 2.1], target: [0.0, 1.22, 1.35] },
+        wheel:    { pos: [2.8, 0.65, 2.6], target: [0.96, 0.40, 2.35] }
+      };
+
+      // =========================================================================
+      // 2. ESCENA, RENDERER Y ENTORNO HDRI DE ESTUDIO
+      // =========================================================================
+      const container = document.getElementById('canvas-container');
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x06080c);
+      scene.fog = new THREE.FogExp2(0x06080c, 0.026);
+
+      const camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.05, 90);
+      camera.position.set(...CAMERAS.exterior.pos);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.18;
+      renderer.outputEncoding = THREE.sRGBEncoding;
+      container.appendChild(renderer.domElement);
+
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.055;
+      controls.maxPolarAngle = Math.PI * 0.49;
+      controls.minDistance = 1.0;
+      controls.maxDistance = 16.0;
+      controls.target.set(...CAMERAS.exterior.target);
+
+      function createEquirectStudioEnv() {
+        const c = document.createElement('canvas'); c.width = 2048; c.height = 1024;
+        const ctx = c.getContext('2d');
+        const bgGrad = ctx.createLinearGradient(0, 0, 0, 1024);
+        bgGrad.addColorStop(0.0, '#161b26');
+        bgGrad.addColorStop(0.46, '#0d111a');
+        bgGrad.addColorStop(0.50, '#232a3a');
+        bgGrad.addColorStop(0.55, '#080a0f');
+        bgGrad.addColorStop(1.0, '#040507');
+        ctx.fillStyle = bgGrad; ctx.fillRect(0, 0, 2048, 1024);
+
+        function drawSoftbox(x, y, w, h, color, blurPx) {
+          ctx.save(); ctx.filter = `blur(${blurPx}px)`; ctx.fillStyle = color; ctx.fillRect(x, y, w, h); ctx.restore();
+        }
+        drawSoftbox(220, 60, 1608, 120, 'rgba(255,255,255,0.95)', 24);
+        drawSoftbox(120, 260, 540, 80, 'rgba(220,235,255,0.85)', 18);
+        drawSoftbox(1388, 260, 540, 80, 'rgba(220,235,255,0.85)', 18);
+        drawSoftbox(0, 470, 2048, 20, 'rgba(190,215,255,0.35)', 10);
+
+        const tex = new THREE.CanvasTexture(c);
+        tex.mapping = THREE.EquirectangularReflectionMapping;
+        tex.encoding = THREE.sRGBEncoding;
+
+        const pmrem = new THREE.PMREMGenerator(renderer);
+        pmrem.compileEquirectangularShader();
+        const envRT = pmrem.fromEquirectangular(tex);
+        tex.dispose(); pmrem.dispose();
+        return envRT.texture;
+      }
+      scene.environment = createEquirectStudioEnv();
+
+      const keyLight = new THREE.DirectionalLight(0xffffff, 1.45);
+      keyLight.position.set(6, 9, 6);
+      keyLight.castShadow = true;
+      keyLight.shadow.mapSize.set(2048, 2048);
+      keyLight.shadow.camera.near = 1;
+      keyLight.shadow.camera.far = 26;
+      keyLight.shadow.camera.left = -5.5;
+      keyLight.shadow.camera.right = 5.5;
+      keyLight.shadow.camera.top = 5.5;
+      keyLight.shadow.camera.bottom = -5.5;
+      keyLight.shadow.bias = -0.0004;
+      scene.add(keyLight);
+
+      const rimLight = new THREE.DirectionalLight(0xbfdbfe, 0.85);
+      rimLight.position.set(-6, 5, -6);
+      scene.add(rimLight);
+
+      const fillLight = new THREE.HemisphereLight(0xe0f2fe, 0x0f172a, 0.5);
+      scene.add(fillLight);
+
+      // =========================================================================
+      // 3. TEXTURAS PROCEDURALES DE AMBULANCIA Y MATERIALES
+      // =========================================================================
+      function createStarOfLifeTexture(bgColor = 'transparent') {
+        const c = document.createElement('canvas'); c.width = 512; c.height = 512;
+        const ctx = c.getContext('2d');
+        if (bgColor !== 'transparent') {
+          ctx.fillStyle = bgColor; ctx.fillRect(0, 0, 512, 512);
+        }
+        ctx.save();
+        ctx.translate(256, 256);
+        ctx.fillStyle = '#1d4ed8';
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 10;
+        for (let i = 0; i < 3; i++) {
+          ctx.save();
+          ctx.rotate((i * Math.PI) / 3);
+          ctx.fillRect(-52, -210, 104, 420);
+          ctx.strokeRect(-52, -210, 104, 420);
+          ctx.restore();
+        }
+        // Limpiar centro para unir las 6 puntas
+        for (let i = 0; i < 3; i++) {
+          ctx.save();
+          ctx.rotate((i * Math.PI) / 3);
+          ctx.fillRect(-47, -205, 94, 410);
+          ctx.restore();
+        }
+        // Vara de Esculapio blanca central
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(-9, -135, 18, 270);
+        ctx.beginPath();
+        ctx.arc(0, -140, 18, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 14;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(-26, 95);
+        ctx.bezierCurveTo(42, 65, -42, 20, 26, -15);
+        ctx.bezierCurveTo(45, -45, -38, -80, 18, -110);
+        ctx.stroke();
+        ctx.restore();
+        const tex = new THREE.CanvasTexture(c);
+        tex.encoding = THREE.sRGBEncoding;
+        return tex;
+      }
+
+      function createAmbulanceTextTexture(text, color = '#dc2626', mirror = false) {
+        const c = document.createElement('canvas'); c.width = 1024; c.height = 192;
+        const ctx = c.getContext('2d');
+        ctx.clearRect(0, 0, 1024, 192);
+        ctx.save();
+        if (mirror) {
+          ctx.translate(1024, 0);
+          ctx.scale(-1, 1);
+        }
+        ctx.fillStyle = color;
+        ctx.font = '900 128px Inter, Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(text, 512, 98);
+        ctx.restore();
+        const tex = new THREE.CanvasTexture(c);
+        tex.encoding = THREE.sRGBEncoding;
+        return tex;
+      }
+
+      function createChevronTexture() {
+        const c = document.createElement('canvas'); c.width = 512; c.height = 512;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#facc15';
+        ctx.fillRect(0, 0, 512, 512);
+        ctx.fillStyle = '#dc2626';
+        for (let y = -512; y < 1024; y += 96) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(256, y - 160);
+          ctx.lineTo(512, y);
+          ctx.lineTo(512, y + 48);
+          ctx.lineTo(256, y - 112);
+          ctx.lineTo(0, y + 48);
+          ctx.closePath();
+          ctx.fill();
+        }
+        const tex = new THREE.CanvasTexture(c);
+        tex.encoding = THREE.sRGBEncoding;
+        return tex;
+      }
+
+      function createDiamondPlateTexture() {
+        const c = document.createElement('canvas'); c.width = 128; c.height = 128;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#9ca3af'; ctx.fillRect(0, 0, 128, 128);
+        ctx.fillStyle = '#e5e7eb';
+        for (let y = 8; y < 128; y += 32) {
+          for (let x = 8; x < 128; x += 32) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(((x + y) / 32) % 2 === 0 ? Math.PI / 4 : -Math.PI / 4);
+            ctx.fillRect(-7, -2.5, 14, 5);
+            ctx.restore();
+          }
+        }
+        const tex = new THREE.CanvasTexture(c);
+        tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+        tex.repeat.set(10, 2);
+        tex.encoding = THREE.sRGBEncoding;
+        return tex;
+      }
+
+      function createECGMonitorTexture() {
+        const c = document.createElement('canvas'); c.width = 512; c.height = 320;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#040914'; ctx.fillRect(0, 0, 512, 320);
+        // ECG verde
+        ctx.strokeStyle = '#22c55e'; ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(0, 100); ctx.lineTo(100, 100); ctx.lineTo(120, 75); ctx.lineTo(135, 105);
+        ctx.lineTo(150, 25); ctx.lineTo(168, 140); ctx.lineTo(185, 100); ctx.lineTo(290, 100);
+        ctx.lineTo(310, 75); ctx.lineTo(325, 105); ctx.lineTo(340, 25); ctx.lineTo(358, 140);
+        ctx.lineTo(375, 100); ctx.lineTo(512, 100);
+        ctx.stroke();
+        // Números
+        ctx.fillStyle = '#22c55e'; ctx.font = 'bold 54px monospace'; ctx.fillText('76', 385, 65);
+        ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 42px monospace'; ctx.fillText('99%', 385, 175);
+        ctx.fillStyle = '#facc15'; ctx.font = 'bold 34px monospace'; ctx.fillText('118/76', 350, 260);
+        const tex = new THREE.CanvasTexture(c); tex.encoding = THREE.sRGBEncoding;
+        return tex;
+      }
+
+      function createContactShadowTexture() {
+        const c = document.createElement('canvas'); c.width = 512; c.height = 512;
+        const ctx = c.getContext('2d');
+        const grad = ctx.createRadialGradient(256, 256, 40, 256, 256, 250);
+        grad.addColorStop(0.0, 'rgba(0,0,0,0.92)');
+        grad.addColorStop(0.6, 'rgba(0,0,0,0.60)');
+        grad.addColorStop(1.0, 'rgba(0,0,0,0.0)');
+        ctx.fillStyle = grad; ctx.fillRect(0, 0, 512, 512);
+        return new THREE.CanvasTexture(c);
+      }
+
+      const starTex = createStarOfLifeTexture();
+      const chevronTex = createChevronTexture();
+      const diamondTex = createDiamondPlateTexture();
+      const ecgTex = createECGMonitorTexture();
+
+      const bodyPaintMat = new THREE.MeshPhysicalMaterial({
+        color: new THREE.Color(LIVERIES[0].body),
+        metalness: 0.18,
+        roughness: 0.18,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.05,
+        envMapIntensity: 1.35
+      });
+
+      const stripeMat = new THREE.MeshPhysicalMaterial({
+        color: new THREE.Color(LIVERIES[0].stripe),
+        metalness: 0.25,
+        roughness: 0.22,
+        clearcoat: 0.9
+      });
+
+      const accentMat = new THREE.MeshPhysicalMaterial({
+        color: new THREE.Color(LIVERIES[0].accent),
+        metalness: 0.3,
+        roughness: 0.22,
+        clearcoat: 0.9
+      });
+
+      const chromeMat = new THREE.MeshStandardMaterial({ color: 0xe5e7eb, metalness: 0.95, roughness: 0.12 });
+      const diamondMat = new THREE.MeshStandardMaterial({ map: diamondTex, metalness: 0.85, roughness: 0.28 });
+      const darkTrimMat = new THREE.MeshStandardMaterial({ color: 0x11141a, metalness: 0.15, roughness: 0.72 });
+      const tireMat = new THREE.MeshStandardMaterial({ color: 0x101216, metalness: 0.04, roughness: 0.88 });
+      const interiorWallMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.1, roughness: 0.55 });
+      const floorMedicalMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.1, roughness: 0.75 });
+      const glassMat = new THREE.MeshPhysicalMaterial({
+        color: 0x0e1726, metalness: 0.08, roughness: 0.04,
+        transparent: true, opacity: 0.45, clearcoat: 1.0, depthWrite: false, side: THREE.DoubleSide
+      });
+      const frostedGlassMat = new THREE.MeshPhysicalMaterial({
+        color: 0x94a3b8, metalness: 0.05, roughness: 0.35,
+        transparent: true, opacity: 0.65, clearcoat: 0.6
+      });
+
+      const headlightMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xf8fafc, emissiveIntensity: 2.8 });
+      const tailRedMat = new THREE.MeshStandardMaterial({ color: 0x991b1b, emissive: 0xef4444, emissiveIntensity: 2.2 });
+      const interiorLedMat = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xe0f2fe, emissiveIntensity: 1.8 });
+
+      // Materiales de balizas de emergencia (controlados dinámicamente en el loop)
+      const beaconRedMat = new THREE.MeshStandardMaterial({ color: 0x7f1d1d, emissive: 0xff1111, emissiveIntensity: 3.5, roughness: 0.1 });
+      const beaconWhiteMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, emissive: 0xffffff, emissiveIntensity: 3.5, roughness: 0.1 });
+      const beaconAmberMat = new THREE.MeshStandardMaterial({ color: 0x78350f, emissive: 0xf59e0b, emissiveIntensity: 3.0, roughness: 0.1 });
+      const beaconBlueMat = new THREE.MeshStandardMaterial({ color: 0x1e3a8a, emissive: 0x3b82f6, emissiveIntensity: 3.5, roughness: 0.1 });
+
+      // =========================================================================
+      // 4. SHOWROOM CON SUELO REFLECTANTE REAL
+      // =========================================================================
+      const reflector = new THREE.Reflector(new THREE.CircleGeometry(28, 64), {
+        clipBias: 0.003,
+        textureWidth: Math.min(1024, window.innerWidth * window.devicePixelRatio),
+        textureHeight: Math.min(1024, window.innerHeight * window.devicePixelRatio),
+        color: 0x2a2f3a
+      });
+      reflector.rotation.x = -Math.PI / 2;
+      scene.add(reflector);
+
+      const floorOverlay = new THREE.Mesh(
+        new THREE.CircleGeometry(28, 64),
+        new THREE.MeshStandardMaterial({ color: 0x07090e, transparent: true, opacity: 0.78, roughness: 0.25, metalness: 0.4 })
+      );
+      floorOverlay.rotation.x = -Math.PI / 2;
+      floorOverlay.position.y = 0.001;
+      floorOverlay.receiveShadow = true;
+      scene.add(floorOverlay);
+
+      const ringMesh = new THREE.Mesh(
+        new THREE.RingGeometry(3.82, 3.86, 96),
+        new THREE.MeshBasicMaterial({ color: 0xef4444, transparent: true, opacity: 0.35, side: THREE.DoubleSide })
+      );
+      ringMesh.rotation.x = -Math.PI / 2;
+      ringMesh.position.y = 0.003;
+      scene.add(ringMesh);
+
+      // =========================================================================
+      // 5. CONSTRUCCIÓN EXACTA DE LA AMBULANCIA TIPO III (1u = 1m)
+      // =========================================================================
+      const ambRoot = new THREE.Group();
+      scene.add(ambRoot);
+
+      const contactShadow = new THREE.Mesh(
+        new THREE.PlaneGeometry(3.2, 7.4),
+        new THREE.MeshBasicMaterial({ map: createContactShadowTexture(), transparent: true, opacity: 0.88, depthWrite: false })
+      );
+      contactShadow.rotation.x = -Math.PI / 2;
+      contactShadow.position.y = 0.004;
+      ambRoot.add(contactShadow);
+
+      // 5.1 MÓDULO MÉDICO TRASERO (z: +0.55 a -3.26, ancho: 2.44 m -> x: ±1.22, alto: y=0.32 a 2.59)
+      const moduleGroup = new THREE.Group();
+      ambRoot.add(moduleGroup);
+
+      // Piso estructural del módulo
+      const modFloor = new THREE.Mesh(new THREE.BoxGeometry(2.44, 0.07, 3.81), floorMedicalMat);
+      modFloor.position.set(0, 0.355, -1.355);
+      modFloor.castShadow = true;
+      modFloor.receiveShadow = true;
+      moduleGroup.add(modFloor);
+
+      // Techo del módulo con bordes biselados
+      const modRoof = new THREE.Mesh(new THREE.BoxGeometry(2.44, 0.07, 3.81), bodyPaintMat);
+      modRoof.position.set(0, 2.555, -1.355);
+      modRoof.castShadow = true;
+      moduleGroup.add(modRoof);
+
+      // Estrella de la Vida grande en el techo + unidad de A/C aerodinámica
+      const roofStar = new THREE.Mesh(
+        new THREE.PlaneGeometry(1.35, 1.35),
+        new THREE.MeshBasicMaterial({ map: starTex, transparent: true })
+      );
+      roofStar.rotation.x = -Math.PI / 2;
+      roofStar.position.set(0, 2.592, -1.85);
+      moduleGroup.add(roofStar);
+
+      const acUnit = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.16, 1.05), bodyPaintMat);
+      acUnit.position.set(0, 2.66, -0.35);
+      acUnit.castShadow = true;
+      moduleGroup.add(acUnit);
+
+      // Paredes laterales del módulo con RECORTE CIRCULAR EXACTO para las ruedas traseras (z=-1.155, R=0.46)
+      function buildModuleSideWall(xPos) {
+        const wallShape = new THREE.Shape();
+        // Coordenadas en el plano (z, y): z va de -3.26 a +0.55, y va de 0.32 a 2.52
+        wallShape.moveTo(-3.26, 0.32);
+        // Hasta el inicio del paso de rueda trasero (z = -1.155 - 0.46 = -1.615)
+        wallShape.lineTo(-1.615, 0.32);
+        // Arco circular concéntrico alrededor de (z=-1.155, y=0.40) con radio 0.46
+        const steps = 24;
+        for (let i = 0; i <= steps; i++) {
+          const ang = Math.PI - (i / steps) * Math.PI; // PI -> 0
+          const wz = -1.155 + Math.cos(ang) * 0.46;
+          const wy = 0.40 + Math.sin(ang) * 0.46;
+          if (wy >= 0.32) wallShape.lineTo(wz, wy);
+        }
+        wallShape.lineTo(-0.695, 0.32);
+        wallShape.lineTo(0.55, 0.32);
+        wallShape.lineTo(0.55, 2.52);
+        wallShape.lineTo(-3.26, 2.52);
+        wallShape.closePath();
+
+        const geo = new THREE.ExtrudeGeometry(wallShape, { depth: 0.06, bevelEnabled: false });
+        geo.rotateY(-Math.PI / 2);
+        const wall = new THREE.Mesh(geo, bodyPaintMat);
+        wall.position.x = xPos > 0 ? xPos : xPos + 0.06;
+        wall.castShadow = true;
+        wall.receiveShadow = true;
+        return wall;
+      }
+
+      moduleGroup.add(buildModuleSideWall( 1.16));
+      moduleGroup.add(buildModuleSideWall(-1.22));
+
+      // Revestimiento interno oscuro de los pasos de rueda traseros (R=0.46)
+      [-1, 1].forEach((side) => {
+        const linerGeo = new THREE.CylinderGeometry(0.46, 0.46, 0.42, 28, 1, true, 0, Math.PI);
+        linerGeo.rotateZ(Math.PI / 2);
+        const liner = new THREE.Mesh(linerGeo, darkTrimMat);
+        liner.position.set(side * 1.00, 0.40, -1.155);
+        moduleGroup.add(liner);
+
+        // Guardabarros de goma negro en el borde del arco trasero
+        const flareGeo = new THREE.TorusGeometry(0.465, 0.022, 8, 28, Math.PI);
+        flareGeo.rotateY(Math.PI / 2);
+        const flare = new THREE.Mesh(flareGeo, darkTrimMat);
+        flare.position.set(side * 1.22, 0.40, -1.155);
+        moduleGroup.add(flare);
+      });
+
+      // Paredes interiores blancas del módulo (evita ver el color exterior desde adentro)
+      [-1, 1].forEach((side) => {
+        const inWall = new THREE.Mesh(new THREE.BoxGeometry(0.015, 2.10, 3.74), interiorWallMat);
+        inWall.position.set(side * 1.15, 1.44, -1.355);
+        moduleGroup.add(inWall);
+      });
+
+      // Pared frontal del módulo (z = +0.55) con paso central hacia la cabina
+      const modFrontLeft = new THREE.Mesh(new THREE.BoxGeometry(0.84, 2.20, 0.06), bodyPaintMat);
+      modFrontLeft.position.set(-0.80, 1.42, 0.52);
+      moduleGroup.add(modFrontLeft);
+      const modFrontRight = new THREE.Mesh(new THREE.BoxGeometry(0.84, 2.20, 0.06), bodyPaintMat);
+      modFrontRight.position.set(0.80, 1.42, 0.52);
+      moduleGroup.add(modFrontRight);
+      const modFrontTop = new THREE.Mesh(new THREE.BoxGeometry(0.76, 0.62, 0.06), bodyPaintMat);
+      modFrontTop.position.set(0, 2.21, 0.52);
+      moduleGroup.add(modFrontTop);
+
+      // Marco trasero del módulo (z = -3.26) dejando abertura exacta de 1.52 m × 1.77 m
+      const rearPillarL = new THREE.Mesh(new THREE.BoxGeometry(0.46, 2.13, 0.07), bodyPaintMat);
+      rearPillarL.position.set(0.99, 1.455, -3.225);
+      moduleGroup.add(rearPillarL);
+      const rearPillarR = new THREE.Mesh(new THREE.BoxGeometry(0.46, 2.13, 0.07), bodyPaintMat);
+      rearPillarR.position.set(-0.99, 1.455, -3.225);
+      moduleGroup.add(rearPillarR);
+      const rearHeader = new THREE.Mesh(new THREE.BoxGeometry(1.52, 0.36, 0.07), bodyPaintMat);
+      rearHeader.position.set(0, 2.34, -3.225);
+      moduleGroup.add(rearHeader);
+
+      // Visera aerodinámica sobre la cabina + Barra de luces LED frontal (z: +0.55 a +1.00)
+      const visorShape = new THREE.Shape();
+      visorShape.moveTo(0.55, 2.04);
+      visorShape.lineTo(1.02, 2.04);
+      visorShape.quadraticCurveTo(0.85, 2.52, 0.55, 2.58);
+      visorShape.closePath();
+      const visorGeo = new THREE.ExtrudeGeometry(visorShape, { depth: 2.36, bevelEnabled: true, bevelSegments: 2, bevelSize: 0.02, bevelThickness: 0.02 });
+      visorGeo.rotateY(-Math.PI / 2);
+      const visorMesh = new THREE.Mesh(visorGeo, bodyPaintMat);
+      visorMesh.position.set(1.18, 0, 0);
+      visorMesh.castShadow = true;
+      moduleGroup.add(visorMesh);
+
+      // 7 luces de emergencia frontales integradas en la visera
+      [-0.85, -0.57, -0.28, 0, 0.28, 0.57, 0.85].forEach((xPos, idx) => {
+        const mat = idx === 3 ? beaconWhiteMat : (idx % 2 === 0 ? beaconRedMat : beaconWhiteMat);
+        const light = new THREE.Mesh(new THREE.BoxGeometry(0.20, 0.09, 0.05), mat);
+        light.position.set(xPos, 2.26, 0.92);
+        light.rotation.x = -0.35;
+        moduleGroup.add(light);
+      });
+
+      // Placa diamantada inferior lateral y escalón trasero
+      [-1, 1].forEach((side) => {
+        const dpFront = new THREE.Mesh(new THREE.BoxGeometry(0.015, 0.22, 1.24), diamondMat);
+        dpFront.position.set(side * 1.225, 0.43, -0.07);
+        moduleGroup.add(dpFront);
+
+        const dpRear = new THREE.Mesh(new THREE.BoxGeometry(0.015, 0.22, 1.64), diamondMat);
+        dpRear.position.set(side * 1.225, 0.43, -2.44);
+        moduleGroup.add(dpRear);
+      });
+
+      const rearBumper = new THREE.Mesh(new THREE.BoxGeometry(2.44, 0.14, 0.22), diamondMat);
+      rearBumper.position.set(0, 0.27, -3.32);
+      rearBumper.castShadow = true;
+      moduleGroup.add(rearBumper);
+
+      // Gráficos laterales: Franjas reflectantes, Estrella de la Vida y texto AMBULANCE
+      const sideTextTex = createAmbulanceTextTexture('AMBULANCE', '#dc2626', false);
+      const sideTextMat = new THREE.MeshBasicMaterial({ map: sideTextTex, transparent: true });
+      const sideStarMat = new THREE.MeshBasicMaterial({ map: starTex, transparent: true });
+
+      [-1, 1].forEach((side) => {
+        const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.18, 3.78), stripeMat);
+        stripe.position.set(side * 1.225, 1.15, -1.355);
+        moduleGroup.add(stripe);
+
+        const thinStripe = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.045, 3.78), accentMat);
+        thinStripe.position.set(side * 1.225, 1.01, -1.355);
+        moduleGroup.add(thinStripe);
+
+        const starDecal = new THREE.Mesh(new THREE.PlaneGeometry(0.76, 0.76), sideStarMat);
+        starDecal.rotation.y = side > 0 ? Math.PI / 2 : -Math.PI / 2;
+        starDecal.position.set(side * 1.232, 1.72, -1.95);
+        moduleGroup.add(starDecal);
+
+        const textDecal = new THREE.Mesh(new THREE.PlaneGeometry(1.75, 0.32), sideTextMat);
+        textDecal.rotation.y = side > 0 ? Math.PI / 2 : -Math.PI / 2;
+        textDecal.position.set(side * 1.232, 1.72, -0.45);
+        moduleGroup.add(textDecal);
+
+        // Puertas de compartimentos exteriores con manija
+        [0.05, -2.35].forEach((zComp) => {
+          const compFrame = new THREE.Mesh(new THREE.BoxGeometry(0.014, 0.72, 0.78), darkTrimMat);
+          compFrame.position.set(side * 1.222, 0.85, zComp);
+          moduleGroup.add(compFrame);
+          const compDoor = new THREE.Mesh(new THREE.BoxGeometry(0.016, 0.69, 0.75), bodyPaintMat);
+          compDoor.position.set(side * 1.223, 0.85, zComp);
+          moduleGroup.add(compDoor);
+        });
+
+        // Luces de emergencia laterales perimetrales (rojas/ámbar/escena blancas)
+        [0.25, -1.35, -2.95].forEach((zL, idx) => {
+          const bMat = idx === 1 ? beaconAmberMat : beaconRedMat;
+          const bLight = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.09, 0.18), bMat);
+          bLight.position.set(side * 1.23, 2.38, zL);
+          moduleGroup.add(bLight);
+        });
+      });
+
+      // Luces traseras superiores (rojas/ámbar) y luces de freno/reversa en pilares traseros
+      [-0.95, -0.50, 0, 0.50, 0.95].forEach((xPos, idx) => {
+        const mat = idx === 2 ? beaconAmberMat : beaconRedMat;
+        const rl = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.09, 0.03), mat);
+        rl.position.set(xPos, 2.40, -3.265);
+        moduleGroup.add(rl);
+      });
+      [-0.99, 0.99].forEach((xPos) => {
+        const brake = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.24, 0.03), tailRedMat);
+        brake.position.set(xPos, 0.85, -3.265);
+        moduleGroup.add(brake);
+      });
+
+      // Puertas Traseras Dobles Animadas (bisagradas en x = ±0.76, z = -3.26)
+      function buildRearDoor(side) {
+        const pivot = new THREE.Group();
+        pivot.position.set(side * 0.76, 1.27, -3.255);
+
+        const doorPanel = new THREE.Mesh(new THREE.BoxGeometry(0.755, 1.76, 0.055), bodyPaintMat);
+        doorPanel.position.set(-side * 0.378, 0, 0);
+        doorPanel.castShadow = true;
+        pivot.add(doorPanel);
+
+        // Franja chevron amarilla/roja inferior en puerta trasera
+        const chevron = new THREE.Mesh(
+          new THREE.PlaneGeometry(0.74, 0.82),
+          new THREE.MeshBasicMaterial({ map: chevronTex })
+        );
+        chevron.rotation.y = Math.PI;
+        chevron.position.set(-side * 0.378, -0.46, -0.030);
+        pivot.add(chevron);
+
+        // Ventana esmerilada superior
+        const winFrame = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.52, 0.065), darkTrimMat);
+        winFrame.position.set(-side * 0.378, 0.42, 0);
+        pivot.add(winFrame);
+        const winGlass = new THREE.Mesh(new THREE.BoxGeometry(0.41, 0.47, 0.07), frostedGlassMat);
+        winGlass.position.set(-side * 0.378, 0.42, 0);
+        pivot.add(winGlass);
+
+        // Manija cromada
+        const handle = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.14, 0.03), chromeMat);
+        handle.position.set(-side * 0.68, -0.05, -0.04);
+        pivot.add(handle);
+
+        moduleGroup.add(pivot);
+        return pivot;
+      }
+      const rearDoorLeft = buildRearDoor(1);
+      const rearDoorRight = buildRearDoor(-1);
+
+      // 5.2 INTERIOR MÉDICO DETALLADO (Camilla, Monitor ECG, Gabinetes, Oxígeno, Banca)
+      const medicalInterior = new THREE.Group();
+      moduleGroup.add(medicalInterior);
+
+      // Gabinetes médicos lado izquierdo (x = -0.94)
+      const cabinetMain = new THREE.Mesh(new THREE.BoxGeometry(0.42, 1.65, 2.40), interiorWallMat);
+      cabinetMain.position.set(-0.94, 1.32, -1.55);
+      medicalInterior.add(cabinetMain);
+
+      const counterTop = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.04, 1.45), darkTrimMat);
+      counterTop.position.set(-0.92, 1.05, -1.10);
+      medicalInterior.add(counterTop);
+
+      // Monitor de signos vitales con pantalla ECG iluminada
+      const monitorBody = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.24, 0.32), darkTrimMat);
+      monitorBody.position.set(-0.88, 1.20, -0.95);
+      monitorBody.rotation.y = 0.25;
+      medicalInterior.add(monitorBody);
+      const monitorScreen = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.28, 0.19),
+        new THREE.MeshBasicMaterial({ map: ecgTex })
+      );
+      monitorScreen.rotation.y = Math.PI / 2 + 0.25;
+      monitorScreen.position.set(-0.80, 1.20, -0.93);
+      medicalInterior.add(monitorScreen);
+
+      // Cilindro de oxígeno médico
+      const o2Tank = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.085, 0.085, 0.72, 16),
+        new THREE.MeshStandardMaterial({ color: 0x16a34a, metalness: 0.4, roughness: 0.35 })
+      );
+      o2Tank.position.set(-0.94, 0.76, -0.15);
+      medicalInterior.add(o2Tank);
+
+      // Banca lateral de paramédicos a la derecha (x = +0.86)
+      const benchBase = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.46, 2.25), interiorWallMat);
+      benchBase.position.set(0.87, 0.62, -1.65);
+      medicalInterior.add(benchBase);
+      const benchCushion = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.08, 2.22), accentMat);
+      benchCushion.position.set(0.86, 0.89, -1.65);
+      medicalInterior.add(benchCushion);
+
+      // Camilla principal Stryker/Ferno en el centro-izquierda
+      const cotGroup = new THREE.Group();
+      cotGroup.position.set(-0.16, 0.40, -1.65);
+      medicalInterior.add(cotGroup);
+
+      const cotFrame = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.05, 1.92), chromeMat);
+      cotFrame.position.y = 0.36;
+      cotGroup.add(cotFrame);
+
+      // Patas en X de la camilla
+      [-0.65, 0.65].forEach((zLeg) => {
+        const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.42, 8), chromeMat);
+        leg.position.set(0.24, 0.18, zLeg); leg.rotation.x = 0.35; cotGroup.add(leg);
+        const leg2 = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.42, 8), chromeMat);
+        leg2.position.set(-0.24, 0.18, zLeg); leg2.rotation.x = 0.35; cotGroup.add(leg2);
+      });
+
+      const mattress = new THREE.Mesh(
+        new THREE.BoxGeometry(0.56, 0.11, 1.88),
+        new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.65 })
+      );
+      mattress.position.y = 0.44;
+      cotGroup.add(mattress);
+
+      // Barandillas amarillas de camilla y pasamanos de techo
+      [-0.29, 0.29].forEach((xRail) => {
+        const rail = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 1.10, 8), beaconAmberMat);
+        rail.rotation.x = Math.PI / 2;
+        rail.position.set(xRail, 0.54, 0.10);
+        cotGroup.add(rail);
+      });
+
+      const grabRail = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.018, 0.018, 2.8, 12),
+        new THREE.MeshStandardMaterial({ color: 0xfacc15, metalness: 0.3, roughness: 0.35 })
+      );
+      grabRail.rotation.x = Math.PI / 2;
+      grabRail.position.set(0.10, 2.40, -1.45);
+      medicalInterior.add(grabRail);
+
+      // Tiras LED del techo médico
+      [-0.45, 0.45].forEach((xLed) => {
+        const ledStrip = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.02, 2.8), interiorLedMat);
+        ledStrip.position.set(xLed, 2.50, -1.45);
+        medicalInterior.add(ledStrip);
+      });
+
+      // 5.3 CABINA DELANTERA CUTAWAY (z: +0.55 a +3.26)
+      const cabGroup = new THREE.Group();
+      ambRoot.add(cabGroup);
+
+      // Capó inclinado y frente del motor
+      const hoodShape = new THREE.Shape();
+      hoodShape.moveTo(2.05, 0.32);
+      hoodShape.lineTo(3.22, 0.32);
+      hoodShape.lineTo(3.24, 0.94);
+      hoodShape.lineTo(2.05, 1.24);
+      hoodShape.closePath();
+      const hoodGeo = new THREE.ExtrudeGeometry(hoodShape, { depth: 1.98, bevelEnabled: true, bevelSegments: 2, bevelSize: 0.03, bevelThickness: 0.03 });
+      hoodGeo.rotateY(-Math.PI / 2);
+      const hoodMesh = new THREE.Mesh(hoodGeo, bodyPaintMat);
+      hoodMesh.position.set(0.99, 0, 0);
+      hoodMesh.castShadow = true;
+      cabGroup.add(hoodMesh);
+
+      // Texto en espejo "AMBULANCE" ("ECNALUBMA") en el capó
+      const hoodTextTex = createAmbulanceTextTexture('AMBULANCE', '#dc2626', true);
+      const hoodDecal = new THREE.Mesh(
+        new THREE.PlaneGeometry(1.45, 0.26),
+        new THREE.MeshBasicMaterial({ map: hoodTextTex, transparent: true })
+      );
+      hoodDecal.rotation.x = -Math.PI / 2 + 0.25;
+      hoodDecal.position.set(0, 1.12, 2.66);
+      cabGroup.add(hoodDecal);
+
+      // Guardabarros delanteros con arco circular EXACTO (z = 2.35, R = 0.46)
+      function buildFrontFender(xPos) {
+        const fShape = new THREE.Shape();
+        fShape.moveTo(1.72, 0.32);
+        fShape.lineTo(1.89, 0.32);
+        const steps = 24;
+        for (let i = 0; i <= steps; i++) {
+          const ang = Math.PI - (i / steps) * Math.PI;
+          const wz = 2.35 + Math.cos(ang) * 0.46;
+          const wy = 0.40 + Math.sin(ang) * 0.46;
+          if (wy >= 0.32) fShape.lineTo(wz, wy);
+        }
+        fShape.lineTo(2.81, 0.32);
+        fShape.lineTo(3.22, 0.32);
+        fShape.lineTo(3.22, 0.94);
+        fShape.lineTo(1.72, 1.24);
+        fShape.closePath();
+        const geo = new THREE.ExtrudeGeometry(fShape, { depth: 0.14, bevelEnabled: true, bevelSegments: 1, bevelSize: 0.015, bevelThickness: 0.015 });
+        geo.rotateY(-Math.PI / 2);
+        const fMesh = new THREE.Mesh(geo, bodyPaintMat);
+        fMesh.position.x = xPos > 0 ? xPos : xPos + 0.14;
+        fMesh.castShadow = true;
+        return fMesh;
+      }
+      cabGroup.add(buildFrontFender( 0.94));
+      cabGroup.add(buildFrontFender(-1.08));
+
+      // Revestimiento interno oscuro de los pasos de rueda delanteros
+      [-1, 1].forEach((side) => {
+        const linerGeo = new THREE.CylinderGeometry(0.46, 0.46, 0.34, 28, 1, true, 0, Math.PI);
+        linerGeo.rotateZ(Math.PI / 2);
+        const liner = new THREE.Mesh(linerGeo, darkTrimMat);
+        liner.position.set(side * 0.94, 0.40, 2.35);
+        cabGroup.add(liner);
+
+        const flareGeo = new THREE.TorusGeometry(0.465, 0.02, 8, 28, Math.PI);
+        flareGeo.rotateY(Math.PI / 2);
+        const flare = new THREE.Mesh(flareGeo, darkTrimMat);
+        flare.position.set(side * 1.095, 0.40, 2.35);
+        cabGroup.add(flare);
+      });
+
+      // Parachoques delantero cromado + Parrilla + Faros + Luces de emergencia
+      const frontBumper = new THREE.Mesh(new THREE.BoxGeometry(2.14, 0.22, 0.16), chromeMat);
+      frontBumper.position.set(0, 0.35, 3.24);
+      frontBumper.castShadow = true;
+      cabGroup.add(frontBumper);
+
+      const grilleFrame = new THREE.Mesh(new THREE.BoxGeometry(1.18, 0.42, 0.06), chromeMat);
+      grilleFrame.position.set(0, 0.69, 3.24);
+      cabGroup.add(grilleFrame);
+
+      const grilleInner = new THREE.Mesh(new THREE.BoxGeometry(1.08, 0.34, 0.07), darkTrimMat);
+      grilleInner.position.set(0, 0.69, 3.245);
+      cabGroup.add(grilleInner);
+
+      // Luces LED de emergencia en la parrilla
+      [-0.32, 0.32].forEach((xPos, idx) => {
+        const gl = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.06, 0.03), idx === 0 ? beaconRedMat : beaconBlueMat);
+        gl.position.set(xPos, 0.69, 3.285);
+        cabGroup.add(gl);
+      });
+
+      // Faros principales delanteros
+      [-0.80, 0.80].forEach((xPos) => {
+        const hlHousing = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.22, 0.08), darkTrimMat);
+        hlHousing.position.set(xPos, 0.69, 3.22);
+        cabGroup.add(hlHousing);
+        const hlLamp = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.15, 0.03), headlightMat);
+        hlLamp.position.set(xPos, 0.69, 3.255);
+        cabGroup.add(hlLamp);
+      });
+
+      // Techo de cabina + Parabrisas inclinado + Pilares A
+      const cabRoof = new THREE.Mesh(new THREE.BoxGeometry(1.96, 0.06, 0.92), bodyPaintMat);
+      cabRoof.position.set(0, 2.02, 1.00);
+      cabRoof.castShadow = true;
+      cabGroup.add(cabRoof);
+
+      const cabFloor = new THREE.Mesh(new THREE.BoxGeometry(1.94, 0.06, 1.25), darkTrimMat);
+      cabFloor.position.set(0, 0.33, 1.15);
+      cabGroup.add(cabFloor);
+
+      // Parabrisas panorámico (conectado desde z=2.05, y=1.24 hasta z=1.44, y=2.02)
+      const wsLen = Math.hypot(2.05 - 1.44, 2.02 - 1.24);
+      const wsAngle = Math.atan2(2.05 - 1.44, 2.02 - 1.24);
+      const windshield = new THREE.Mesh(new THREE.BoxGeometry(1.88, wsLen, 0.025), glassMat);
+      windshield.position.set(0, 1.63, 1.745);
+      windshield.rotation.x = -wsAngle;
+      cabGroup.add(windshield);
+
+      [-0.95, 0.95].forEach((xPos) => {
+        const aPillar = new THREE.Mesh(new THREE.BoxGeometry(0.07, wsLen, 0.07), darkTrimMat);
+        aPillar.position.set(xPos, 1.63, 1.745);
+        aPillar.rotation.x = -wsAngle;
+        cabGroup.add(aPillar);
+      });
+
+      // Interior básico de cabina (Tablero, Volante, Asientos)
+      const cabDash = new THREE.Mesh(new THREE.BoxGeometry(1.82, 0.32, 0.42), darkTrimMat);
+      cabDash.position.set(0, 1.05, 1.78);
+      cabGroup.add(cabDash);
+
+      const cabWheel = new THREE.Mesh(new THREE.TorusGeometry(0.18, 0.02, 10, 24), darkTrimMat);
+      cabWheel.position.set(0.46, 1.16, 1.50);
+      cabWheel.rotation.x = -0.45;
+      cabGroup.add(cabWheel);
+
+      [-0.46, 0.46].forEach((xSeat) => {
+        const seatB = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.12, 0.48), darkTrimMat);
+        seatB.position.set(xSeat, 0.72, 1.05);
+        cabGroup.add(seatB);
+        const seatBack = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.68, 0.12), darkTrimMat);
+        seatBack.position.set(xSeat, 1.08, 0.84);
+        seatBack.rotation.x = -0.15;
+        cabGroup.add(seatBack);
+      });
+
+      // Puertas de Cabina Animadas (bisagradas en x = ±1.02, z = +1.72)
+      function buildCabDoor(side) {
+        const pivot = new THREE.Group();
+        pivot.position.set(side * 1.02, 0.85, 1.72);
+
+        const lowerPanel = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.88, 1.12), bodyPaintMat);
+        lowerPanel.position.set(0, -0.08, -0.56);
+        lowerPanel.castShadow = true;
+        pivot.add(lowerPanel);
+
+        const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.065, 0.14, 1.12), stripeMat);
+        stripe.position.set(0, 0.25, -0.56);
+        pivot.add(stripe);
+
+        const winFrameTop = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 0.80), darkTrimMat);
+        winFrameTop.position.set(0, 1.12, -0.72);
+        pivot.add(winFrameTop);
+
+        const winFrameRear = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.78, 0.05), darkTrimMat);
+        winFrameRear.position.set(0, 0.75, -1.10);
+        pivot.add(winFrameRear);
+
+        const doorGlass = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.74, 0.92), glassMat);
+        doorGlass.position.set(0, 0.74, -0.62);
+        pivot.add(doorGlass);
+
+        // Espejo retrovisor de ambulancia sobre doble brazo
+        const arm1 = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.24, 8), darkTrimMat);
+        arm1.rotation.z = Math.PI / 2;
+        arm1.position.set(side * 0.12, 0.56, -0.12);
+        pivot.add(arm1);
+
+        const arm2 = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.24, 8), darkTrimMat);
+        arm2.rotation.z = Math.PI / 2;
+        arm2.position.set(side * 0.12, 0.36, -0.12);
+        pivot.add(arm2);
+
+        const mirrorHead = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.32, 0.16), darkTrimMat);
+        mirrorHead.position.set(side * 0.24, 0.46, -0.12);
+        pivot.add(mirrorHead);
+
+        cabGroup.add(pivot);
+        return pivot;
+      }
+      const cabDoorLeft = buildCabDoor(1);
+      const cabDoorRight = buildCabDoor(-1);
+
+      // 5.4 RUEDAS REALISTAS CON NEUMÁTICOS LATHE Y RINES DE ACERO/ALUMINIO
+      const wheelSpinGroups = [];
+
+      function buildAmbWheel(x, z, width) {
+        const outerR = 0.40;
+        const rimR = 0.24;
+        const corner = new THREE.Group();
+        corner.position.set(x, outerR, z);
+        corner.userData = { restHeight: outerR };
+        ambRoot.add(corner);
+
+        const spin = new THREE.Group();
+        corner.add(spin);
+        wheelSpinGroups.push(spin);
+
+        const side = Math.sign(x);
+        const halfW = width * 0.5;
+        const tirePts = [
+          new THREE.Vector2(rimR, -halfW * 0.88),
+          new THREE.Vector2(rimR + 0.08, -halfW),
+          new THREE.Vector2(outerR - 0.015, -halfW * 0.92),
+          new THREE.Vector2(outerR, -halfW * 0.72),
+          new THREE.Vector2(outerR,  halfW * 0.72),
+          new THREE.Vector2(outerR - 0.015, halfW * 0.92),
+          new THREE.Vector2(rimR + 0.08, halfW),
+          new THREE.Vector2(rimR, halfW * 0.88)
+        ];
+        const tireGeo = new THREE.LatheGeometry(tirePts, 44);
+        tireGeo.rotateZ(Math.PI / 2);
+        const tire = new THREE.Mesh(tireGeo, tireMat);
+        tire.castShadow = true;
+        spin.add(tire);
+
+        // Rin de acero/aluminio pulido
+        const rim = new THREE.Mesh(new THREE.CylinderGeometry(rimR, rimR, width * 0.85, 32), chromeMat);
+        rim.rotation.z = Math.PI / 2;
+        spin.add(rim);
+
+        const hubCap = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.095, width * 0.96, 16), chromeMat);
+        hubCap.rotation.z = Math.PI / 2;
+        spin.add(hubCap);
+
+        // Tuercas de rueda
+        for (let k = 0; k < 8; k++) {
+          const ang = (k / 8) * Math.PI * 2;
+          const lug = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.03, 6), darkTrimMat);
+          lug.rotation.z = Math.PI / 2;
+          lug.position.set(side * (halfW * 0.45), Math.cos(ang) * 0.14, Math.sin(ang) * 0.14);
+          spin.add(lug);
+        }
+      }
+
+      buildAmbWheel( 0.96,  2.35, 0.25);
+      buildAmbWheel(-0.96,  2.35, 0.25);
+      buildAmbWheel( 0.98, -1.155, 0.34);
+      buildAmbWheel(-0.98, -1.155, 0.34);
+
+      // =========================================================================
+      // 6. INTERFAZ Y CONTROLES INTERACTIVOS
+      // =========================================================================
+      const liveryContainer = document.getElementById('livery-swatches');
+      const liveryNameEl = document.getElementById('livery-name');
+
+      function applyLivery(idx) {
+        state.liveryIdx = idx;
+        const l = LIVERIES[idx];
+        bodyPaintMat.color.set(l.body);
+        stripeMat.color.set(l.stripe);
+        accentMat.color.set(l.accent);
+        ringMesh.material.color.set(l.stripe);
+        liveryNameEl.textContent = l.name;
+        liveryContainer.querySelectorAll('button').forEach((b, i) => b.classList.toggle('active', i === idx));
+      }
+
+      LIVERIES.forEach((l, idx) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.title = l.name;
+        btn.className = 'swatch-btn w-8 h-8 rounded-full border border-white/25' + (idx === 0 ? ' active' : '');
+        btn.style.background = `linear-gradient(135deg, ${l.body} 55%, ${l.stripe} 55%)`;
+        btn.addEventListener('click', () => applyLivery(idx));
+        liveryContainer.appendChild(btn);
+      });
+
+      function toggleRearDoors() {
+        state.rearDoorsOpen = !state.rearDoorsOpen;
+        document.getElementById('btn-rear-doors').classList.toggle('active', state.rearDoorsOpen);
+        document.getElementById('lbl-rear-doors').textContent = state.rearDoorsOpen ? 'Abiertas' : 'Cerradas';
+        document.getElementById('lbl-rear-doors').className = state.rearDoorsOpen
+          ? 'text-[10px] uppercase tracking-wider text-red-300'
+          : 'text-[10px] uppercase tracking-wider text-gray-400';
+      }
+
+      function toggleCabDoors() {
+        state.cabDoorsOpen = !state.cabDoorsOpen;
+        document.getElementById('btn-cab-doors').classList.toggle('active', state.cabDoorsOpen);
+        document.getElementById('lbl-cab-doors').textContent = state.cabDoorsOpen ? 'Abiertas' : 'Cerradas';
+        document.getElementById('lbl-cab-doors').className = state.cabDoorsOpen
+          ? 'text-[10px] uppercase tracking-wider text-red-300'
+          : 'text-[10px] uppercase tracking-wider text-gray-400';
+      }
+
+      function toggleEmergency() {
+        state.emergencyOn = !state.emergencyOn;
+        document.getElementById('btn-emergency').classList.toggle('active', state.emergencyOn);
+        document.getElementById('lbl-emergency').textContent = state.emergencyOn ? 'Activas' : 'Apagadas';
+        document.getElementById('lbl-emergency').className = state.emergencyOn
+          ? 'text-[10px] uppercase tracking-wider text-red-300'
+          : 'text-[10px] uppercase tracking-wider text-gray-400';
+      }
+
+      function toggleLights() {
+        state.lightsOn = !state.lightsOn;
+        headlightMat.emissiveIntensity = state.lightsOn ? 2.8 : 0.05;
+        tailRedMat.emissiveIntensity = state.lightsOn ? 2.2 : 0.05;
+        interiorLedMat.emissiveIntensity = state.lightsOn ? 1.8 : 0.05;
+        document.getElementById('btn-lights').classList.toggle('active', state.lightsOn);
+        document.getElementById('lbl-lights').textContent = state.lightsOn ? 'Encendidos' : 'Apagados';
+        document.getElementById('lbl-lights').className = state.lightsOn
+          ? 'text-[10px] uppercase tracking-wider text-red-300'
+          : 'text-[10px] uppercase tracking-wider text-gray-400';
+      }
+
+      function toggleSpin() {
+        state.spinning = !state.spinning;
+        document.getElementById('btn-spin').classList.toggle('active', state.spinning);
+        document.getElementById('lbl-spin').textContent = state.spinning ? 'Activo' : 'Off';
+        document.getElementById('lbl-spin').className = state.spinning
+          ? 'text-[10px] uppercase tracking-wider text-red-300'
+          : 'text-[10px] uppercase tracking-wider text-gray-400';
+      }
+
+      document.getElementById('btn-rear-doors').addEventListener('click', toggleRearDoors);
+      document.getElementById('btn-cab-doors').addEventListener('click', toggleCabDoors);
+      document.getElementById('btn-emergency').addEventListener('click', toggleEmergency);
+      document.getElementById('btn-lights').addEventListener('click', toggleLights);
+      document.getElementById('btn-spin').addEventListener('click', toggleSpin);
+
+      document.getElementById('m-btn-rear').addEventListener('click', toggleRearDoors);
+      document.getElementById('m-btn-cab').addEventListener('click', toggleCabDoors);
+      document.getElementById('m-btn-emerg').addEventListener('click', toggleEmergency);
+      document.getElementById('m-btn-lights').addEventListener('click', toggleLights);
+      document.getElementById('m-btn-spin').addEventListener('click', toggleSpin);
+      document.getElementById('m-btn-livery').addEventListener('click', () => {
+        applyLivery((state.liveryIdx + 1) % LIVERIES.length);
+      });
+
+      document.querySelectorAll('.cam-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const key = btn.getAttribute('data-cam');
+          const preset = CAMERAS[key];
+          if (!preset) return;
+          document.querySelectorAll('.cam-btn').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          state.camAnim = {
+            startPos: camera.position.clone(),
+            endPos: new THREE.Vector3(...preset.pos),
+            startTarget: controls.target.clone(),
+            endTarget: new THREE.Vector3(...preset.target),
+            progress: 0
+          };
+        });
+      });
+
+      const specsModal = document.getElementById('specs-modal');
+      document.getElementById('btn-specs').addEventListener('click', () => {
+        specsModal.classList.remove('hidden');
+        specsModal.classList.add('flex');
+      });
+      document.getElementById('btn-close-specs').addEventListener('click', () => {
+        specsModal.classList.add('hidden');
+        specsModal.classList.remove('flex');
+      });
+      specsModal.addEventListener('click', (e) => {
+        if (e.target === specsModal) {
+          specsModal.classList.add('hidden');
+          specsModal.classList.remove('flex');
+        }
+      });
+
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      // =========================================================================
+      // 7. LOOP DE ANIMACIÓN Y DESTELLOS DE EMERGENCIA
+      // =========================================================================
+      const clock = new THREE.Clock();
+      let elapsed = 0;
+
+      // El simulador padre envía la respuesta vertical calculada por la EDO.
+      window.addEventListener('message', (event) => {
+        if (event.data?.type !== 'suspension-motion') return;
+        const displacement = Number(event.data.displacement);
+        if (Number.isFinite(displacement)) state.simulationDisplacement = THREE.MathUtils.clamp(displacement, -0.15, 0.15);
+      });
+
+      function animate() {
+        requestAnimationFrame(animate);
+        const dt = Math.min(clock.getDelta(), 0.05);
+        elapsed += dt;
+
+        // Sube la carrocería según la respuesta del modelo y mantiene las ruedas en el piso.
+        ambRoot.position.y = state.simulationDisplacement;
+
+        // Compensa las ruedas para que queden ancladas al suelo
+        wheelSpinGroups.forEach((wg) => {
+          const corner = wg.parent;
+          if (corner && corner.userData?.restHeight !== undefined) {
+            corner.position.y = corner.userData.restHeight - state.simulationDisplacement;
+          }
+        });
+        contactShadow.position.y = 0.004 - state.simulationDisplacement;
+
+        // Puertas traseras del módulo (rotan hacia afuera 120°)
+        const targetRear = state.rearDoorsOpen ? 1 : 0;
+        state.rearDoorAnim += (targetRear - state.rearDoorAnim) * Math.min(1, dt * 5.0);
+        rearDoorLeft.rotation.y = -state.rearDoorAnim * 2.1;
+        rearDoorRight.rotation.y = state.rearDoorAnim * 2.1;
+
+        // Puertas de cabina delantera (rotan 62°)
+        const targetCab = state.cabDoorsOpen ? 1 : 0;
+        state.cabDoorAnim += (targetCab - state.cabDoorAnim) * Math.min(1, dt * 5.0);
+        cabDoorLeft.rotation.y = state.cabDoorAnim * 1.08;
+        cabDoorRight.rotation.y = -state.cabDoorAnim * 1.08;
+
+        // Patrón de destello alternado realista en balizas LED
+        if (state.emergencyOn) {
+          const phase = Math.floor(elapsed * 8) % 4;
+          const pulseA = phase === 0 || phase === 1 ? 4.2 : 0.1;
+          const pulseB = phase === 2 || phase === 3 ? 4.2 : 0.1;
+          beaconRedMat.emissiveIntensity = pulseA;
+          beaconWhiteMat.emissiveIntensity = pulseB;
+          beaconBlueMat.emissiveIntensity = pulseB;
+          beaconAmberMat.emissiveIntensity = (Math.floor(elapsed * 5) % 2 === 0) ? 3.5 : 0.15;
+        } else {
+          beaconRedMat.emissiveIntensity = 0.05;
+          beaconWhiteMat.emissiveIntensity = 0.05;
+          beaconBlueMat.emissiveIntensity = 0.05;
+          beaconAmberMat.emissiveIntensity = 0.05;
+        }
+
+        if (state.spinning) {
+          ambRoot.rotation.y += dt * 0.30;
+          wheelSpinGroups.forEach((wg) => {
+            wg.rotation.x += dt * 3.2;
+          });
+        }
+
+        if (state.camAnim) {
+          state.camAnim.progress += dt * 2.2;
+          const t = Math.min(1, state.camAnim.progress);
+          const ease = 1 - Math.pow(1 - t, 3);
+          camera.position.lerpVectors(state.camAnim.startPos, state.camAnim.endPos, ease);
+          controls.target.lerpVectors(state.camAnim.startTarget, state.camAnim.endTarget, ease);
+          if (t >= 1) state.camAnim = null;
+        }
+
+        controls.update();
+        renderer.render(scene, camera);
+      }
+
+      animate();
+    })();
+  </script>
+</body>
+</html>
