@@ -15,12 +15,13 @@ import {
   rk4Integrate 
 } from './physics/suspensionPhysics';
 import {
-  Sliders, Gauge, ShieldCheck, ChevronRight, Activity, HeartPulse, Trophy, Box
+  Sliders, Gauge, ShieldCheck, ChevronRight, Activity, HeartPulse, Trophy, Box, Eye
 } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('simulator'); // 'simulator' | 'chart' | 'math' | 'calculator' | 'deck'
   const [isFlashcardsOpen, setIsFlashcardsOpen] = useState(false);
+  const [isTechnicalModalOpen, setIsTechnicalModalOpen] = useState(false);
   const [simViewMode, setSimViewMode] = useState('3d'); // '3d' | '2d'
 
   // Parámetros reactivos del sistema físico
@@ -193,7 +194,7 @@ export default function App() {
                   }`}
                 >
                   <Trophy className={`w-3.5 h-3.5 ${focusedVehicle === 'carreras' ? 'text-white' : 'text-rose-600'}`} />
-                  <span>Carro de Carreras</span>
+                  <span>Koenigsegg Jesko</span>
                 </button>
               </div>
             </div>
@@ -206,17 +207,41 @@ export default function App() {
                     <Box className="h-4 w-4 text-blue-700" />
                     <div>
                       <span className="block text-xs font-extrabold uppercase tracking-wider text-slate-950">Visualización física</span>
-                      <span className="mt-0.5 hidden text-[10px] font-medium text-slate-700 sm:block">La suspensión se mueve con cada impacto</span>
+                      <span className="mt-0.5 hidden text-[10px] font-medium text-slate-700 sm:block">Modelos a escala real y respuesta en carretera</span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1 rounded-xl border border-slate-200 bg-slate-100 p-0.5 text-[11px] font-semibold">
-                    <button onClick={() => setSimViewMode('3d')} className={`rounded-lg px-2.5 py-1.5 transition ${simViewMode === '3d' ? 'bg-white font-extrabold text-blue-800 shadow-sm ring-1 ring-slate-200' : 'text-slate-700 hover:text-slate-950'}`}>Modelo 3D</button>
-                    <button onClick={() => setSimViewMode('2d')} className={`rounded-lg px-2.5 py-1.5 transition ${simViewMode === '2d' ? 'bg-white font-extrabold text-blue-800 shadow-sm ring-1 ring-slate-200' : 'text-slate-700 hover:text-slate-950'}`}>Diagrama 2D</button>
+                  <div className="flex items-center gap-2">
+                    {simViewMode === '3d' && (
+                      <button
+                        onClick={() => setIsTechnicalModalOpen(true)}
+                        className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-3 py-1.5 text-xs font-bold shadow-sm transition-all cursor-pointer"
+                        title="Lanzar Vista Técnica 3D en pantalla completa"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>Vista Técnica</span>
+                      </button>
+                    )}
+                    <div className="flex items-center gap-1 rounded-xl border border-slate-200 bg-slate-100 p-0.5 text-[11px] font-semibold">
+                      <button onClick={() => setSimViewMode('3d')} className={`rounded-lg px-2.5 py-1.5 transition ${simViewMode === '3d' ? 'bg-white font-extrabold text-blue-800 shadow-sm ring-1 ring-slate-200' : 'text-slate-700 hover:text-slate-950'}`}>Modelo 3D</button>
+                      <button onClick={() => setSimViewMode('2d')} className={`rounded-lg px-2.5 py-1.5 transition ${simViewMode === '2d' ? 'bg-white font-extrabold text-blue-800 shadow-sm ring-1 ring-slate-200' : 'text-slate-700 hover:text-slate-950'}`}>Diagrama 2D</button>
+                    </div>
                   </div>
                 </div>
                 <div className="flex-1">
                   {simViewMode === '3d' ? (
-                    <Vehicle3DScene m={m} c={c} k={k} x0={x0} v0={v0} focusedVehicle={focusedVehicle} setFocusedVehicle={focusVehicle} />
+                    <Vehicle3DScene
+                      m={m}
+                      c={c}
+                      k={k}
+                      x0={x0}
+                      v0={v0}
+                      regimen={regimen}
+                      zeta={zeta}
+                      focusedVehicle={focusedVehicle}
+                      setFocusedVehicle={focusVehicle}
+                      isTechnicalOpen={isTechnicalModalOpen}
+                      setIsTechnicalOpen={setIsTechnicalModalOpen}
+                    />
                   ) : (
                     <SuspensionAnimation m={m} c={c} k={k} x0={x0} v0={v0} regimen={regimen} settlingTime={settlingTime} overshootPct={overshootPct} />
                   )}
@@ -258,7 +283,7 @@ export default function App() {
                       <input type="range" min="0.01" max="0.15" step="0.01" value={x0} onChange={(e) => setX0(parseFloat(e.target.value))} aria-label="Altura inicial del bache" className="h-1.5 w-full cursor-pointer rounded bg-slate-200 accent-emerald-600" />
                     </label>
                   </div>
-                  <p className="border-t border-slate-200 pt-3 text-[11px] leading-relaxed text-slate-700">{focusedVehicle === null ? 'Ambos reciben el mismo bache; el Rayo McQueen usa una suspensión más rígida. Los deslizadores ajustan los dos sistemas conservando esa diferencia.' : 'Los cambios se aplican al vehículo seleccionado. El otro conserva su configuración de referencia.'}</p>
+                  <p className="border-t border-slate-200 pt-3 text-[11px] leading-relaxed text-slate-700">{focusedVehicle === null ? 'Ambos reciben el mismo bache; el Koenigsegg responde con una suspensión más firme. Los deslizadores ajustan ambos sistemas conservando esa diferencia.' : 'Los cambios se aplican al vehículo seleccionado. El otro conserva su configuración de referencia.'}</p>
                 </section>
 
                 <section className="relative isolate overflow-hidden rounded-[1.6rem] border border-blue-200/70 bg-gradient-to-br from-white/95 via-blue-50/40 to-amber-50/30 p-4 text-slate-900 shadow-sm sm:p-5">
@@ -315,7 +340,7 @@ export default function App() {
                   </h3>
                   <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-3xl leading-relaxed">
                     Para la <strong>Ambulancia</strong> elegimos amortiguamiento crítico (<strong>c = 6000 N·s/m</strong>): sobreimpulso del <strong>0.00%</strong> y retorno en <strong>0.58 s</strong> para no generar rebotes al paciente.  
-                    Para el <strong>Carro de carreras</strong> se usa amortiguamiento rígido para evitar oscilaciones de carrocería y maximizar la adherencia de neumáticos a altas velocidades.
+                    Para el <strong>Koenigsegg Jesko</strong> se usa amortiguamiento firme para reducir el balanceo de carrocería y mantener la adherencia de los neumáticos.
                   </p>
                 </div>
               </div>

@@ -130,7 +130,7 @@ export default function SuspensionCalculator() {
     },
     {
       id: 'race',
-      label: 'Carro de Carreras',
+      label: 'Koenigsegg Jesko',
       m: 300,
       k: 50000,
       c: 8500,
