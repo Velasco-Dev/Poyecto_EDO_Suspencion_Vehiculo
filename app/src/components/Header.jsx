@@ -1,32 +1,40 @@
 import React from 'react';
-import { 
-  Activity, BarChart3, BookOpen, Presentation, 
-  Award, Download, Sparkles 
+import {
+  Activity, BarChart3, BookOpen, Presentation,
+  Award, Download, Calculator, Box
 } from 'lucide-react';
 
 export default function Header({ activeTab, setActiveTab, onOpenFlashcards }) {
+  const tabs = [
+    { id: 'simulator', label: 'Laboratorio Interactivo', icon: Activity, color: 'text-blue-600' },
+    { id: 'chart', label: 'Superposición RK4', icon: BarChart3, color: 'text-sky-500' },
+    { id: 'math', label: 'Deducción a Mano', icon: BookOpen, color: 'text-purple-500' },
+    { id: 'calculator', label: 'Calculadora EDO', icon: Calculator, color: 'text-emerald-500' },
+    { id: 'deck', label: 'Exposición (15 Min)', icon: Presentation, color: 'text-amber-500' },
+  ];
+
   return (
-    <header className="sticky top-0 z-40 w-full px-3 py-3 sm:px-6 bg-slate-950/70 backdrop-blur-xl border-b border-white/10">
+    <header className="sticky top-0 z-40 w-full px-3 py-3 sm:px-6 bg-white/90 backdrop-blur-xl border-b border-slate-200/80 shadow-sm">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
-        
-        {/* Identidad Institucional Unimayor */}
+
+        {/* Identidad Institucional */}
         <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
           <div className="flex items-center gap-3">
-            <img 
-              src="./logotipo-actual.webp" 
-              alt="Unimayor Logo" 
-              className="w-10 h-10 object-contain drop-shadow-md rounded bg-white/10 p-0.5" 
+            <img
+              src="./logotipo-actual.webp"
+              alt="Unimayor Logo"
+              className="w-10 h-10 object-contain drop-shadow-sm rounded-lg bg-white p-0.5 border border-slate-200"
             />
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold tracking-widest text-amber-400 uppercase">
+                <span className="text-xs font-bold tracking-widest text-blue-700 uppercase">
                   UNIMAYOR · GRUPO 5
                 </span>
-                <span className="text-[10px] bg-blue-900/60 text-blue-200 px-2 py-0.5 rounded-full border border-blue-700/50">
+                <span className="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full border border-blue-200 font-semibold">
                   EDO U3
                 </span>
               </div>
-              <h1 className="text-sm sm:text-base font-extrabold text-white tracking-tight leading-tight">
+              <h1 className="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight leading-tight">
                 Simulador de Suspensión Vehicular
               </h1>
             </div>
@@ -43,63 +51,33 @@ export default function Header({ activeTab, setActiveTab, onOpenFlashcards }) {
           </div>
         </div>
 
-        {/* Pestañas de Navegación de Modos */}
-        <nav className="flex items-center gap-1.5 p-1 bg-slate-900/80 rounded-xl border border-white/10 overflow-x-auto w-full md:w-auto text-xs">
-          <button
-            onClick={() => setActiveTab('simulator')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg whitespace-nowrap font-medium transition-all cursor-pointer ${
-              activeTab === 'simulator'
-                ? 'bg-[#0B3C73] text-white border border-[#F5A800]/50 shadow-md'
-                : 'text-gray-400 hover:text-white hover:bg-white/5'
-            }`}
-          >
-            <Activity className="w-3.5 h-3.5 text-amber-400" />
-            <span>Laboratorio Interactivo</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('chart')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg whitespace-nowrap font-medium transition-all cursor-pointer ${
-              activeTab === 'chart'
-                ? 'bg-[#0B3C73] text-white border border-[#F5A800]/50 shadow-md'
-                : 'text-gray-400 hover:text-white hover:bg-white/5'
-            }`}
-          >
-            <BarChart3 className="w-3.5 h-3.5 text-sky-400" />
-            <span>Superposición RK4</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('math')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg whitespace-nowrap font-medium transition-all cursor-pointer ${
-              activeTab === 'math'
-                ? 'bg-[#0B3C73] text-white border border-[#F5A800]/50 shadow-md'
-                : 'text-gray-400 hover:text-white hover:bg-white/5'
-            }`}
-          >
-            <BookOpen className="w-3.5 h-3.5 text-purple-400" />
-            <span>Deducción a Mano</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('deck')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg whitespace-nowrap font-medium transition-all cursor-pointer ${
-              activeTab === 'deck'
-                ? 'bg-[#0B3C73] text-white border border-[#F5A800]/50 shadow-md'
-                : 'text-gray-400 hover:text-white hover:bg-white/5'
-            }`}
-          >
-            <Presentation className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Exposición (15 Min)</span>
-          </button>
+        {/* Pestañas de Navegación */}
+        <nav className="flex items-center gap-1 p-1 bg-slate-100/80 rounded-xl border border-slate-200 overflow-x-auto w-full md:w-auto text-xs">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg whitespace-nowrap font-medium transition-all cursor-pointer ${
+                  activeTab === tab.id
+                    ? 'bg-white text-slate-900 border border-slate-200 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-900 hover:bg-white/60'
+                }`}
+              >
+                <Icon className={`w-3.5 h-3.5 ${activeTab === tab.id ? tab.color : ''}`} />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
         </nav>
 
-        {/* Acciones Rápidas: Flashcards 5.0 y Descarga de Python */}
+        {/* Acciones Rápidas */}
         <div className="hidden md:flex items-center gap-2">
           <button
             onClick={onOpenFlashcards}
-            className="liquid-glass-button-gold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 cursor-pointer"
-            title="Abrir flashcards de preparación para cada integrante"
+            className="liquid-glass-button-gold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5"
+            title="Abrir flashcards de preparación"
           >
             <Award className="w-3.5 h-3.5" />
             <span>Flashcards 5.0</span>
@@ -108,10 +86,10 @@ export default function Header({ activeTab, setActiveTab, onOpenFlashcards }) {
           <a
             href="./suspension_sim.py"
             download="suspension_sim.py"
-            className="liquid-glass-button px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 text-gray-200 hover:text-white"
-            title="Descargar script Python con NumPy y Matplotlib oficial"
+            className="liquid-glass-button px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 text-slate-600 hover:text-slate-900"
+            title="Descargar script Python"
           >
-            <Download className="w-3.5 h-3.5 text-cyan-400" />
+            <Download className="w-3.5 h-3.5 text-blue-500" />
             <span>Script Python</span>
           </a>
         </div>

@@ -5,6 +5,8 @@ import SimulationChart from './components/SimulationChart';
 import MathDeductionView from './components/MathDeductionView';
 import PresentationDeck from './components/PresentationDeck';
 import FlashcardsModal from './components/FlashcardsModal';
+import Vehicle3DScene from './components/Vehicle3DScene';
+import SuspensionCalculator from './components/SuspensionCalculator';
 import { 
   DEFAULT_PARAMS, 
   PRESETS, 
@@ -14,19 +16,23 @@ import {
 } from './physics/suspensionPhysics';
 import { 
   Sliders, Gauge, ShieldCheck, Sparkles, Award, 
-  HelpCircle, ChevronRight, Activity, Car, HeartPulse, Trophy 
+  HelpCircle, ChevronRight, Activity, Car, HeartPulse, Trophy, Calculator, Box 
 } from 'lucide-react';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('simulator'); // 'simulator' | 'chart' | 'math' | 'deck'
+  const [activeTab, setActiveTab] = useState('simulator'); // 'simulator' | 'chart' | 'math' | 'calculator' | 'deck'
   const [isFlashcardsOpen, setIsFlashcardsOpen] = useState(false);
+  const [simViewMode, setSimViewMode] = useState('3d'); // '3d' | '2d'
 
   // Parámetros reactivos del sistema físico
-  const [m, setM] = useState(DEFAULT_PARAMS.m);
-  const [k, setK] = useState(DEFAULT_PARAMS.k);
+  const [m, setM] = useState(300.0);
+  const [k, setK] = useState(30000.0);
   const [c, setC] = useState(6000.0); // Inicia en crítico
-  const [x0, setX0] = useState(DEFAULT_PARAMS.x0);
+  const [x0, setX0] = useState(0.05);
   const v0 = 0.0;
+
+  // Estado del vehículo enfocado para el visor 3D ('ambulancia' | 'carreras' | null)
+  const [focusedVehicle, setFocusedVehicle] = useState('ambulancia');
 
   // Propiedades analíticas y métricas computadas en vivo
   const { omega_n, c_cr, zeta, regimen, omega_d } = useMemo(() => {
@@ -38,14 +44,23 @@ export default function App() {
     return calculateEngineeringMetrics(t, x, m, c, k, x0, v0);
   }, [m, c, k, x0, v0]);
 
-  const applyPreset = (preset) => {
+  const applyPreset = (preset, vehicle = null) => {
     setM(preset.m);
     setK(preset.k);
     setC(preset.c);
+    if (vehicle) {
+      setFocusedVehicle(vehicle);
+    } else if (preset.id === 'amb') {
+      setFocusedVehicle('ambulancia');
+    } else if (preset.id === 'race') {
+      setFocusedVehicle('carreras');
+    } else {
+      setFocusedVehicle(null);
+    }
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between text-gray-100 selection:bg-amber-500 selection:text-black">
+    <div className="min-h-screen flex flex-col justify-between bg-slate-50 text-slate-900 selection:bg-amber-400 selection:text-slate-950">
       {/* Barra de Navegación Superior */}
       <Header
         activeTab={activeTab}
@@ -57,15 +72,15 @@ export default function App() {
       <main className="flex-1 w-full max-w-7xl mx-auto p-3 sm:p-6 space-y-6">
         
         {/* ========================================================
-            VISTA 1: LABORATORIO INTERACTIVO (SANDBOX + ANIMACIÓN)
+            VISTA 1: LABORATORIO INTERACTIVO (SIMULADOR 3D + GRÁFICA)
             ======================================================== */}
         {activeTab === 'simulator' && (
           <div className="space-y-6">
             
-            {/* Banner de Presets Rápidos */}
-            <div className="liquid-glass p-3 sm:p-4 rounded-2xl flex flex-wrap items-center justify-between gap-3 border border-white/10">
-              <div className="flex items-center gap-2 text-xs font-semibold text-gray-300">
-                <Sliders className="w-4 h-4 text-[#F5A800]" />
+            {/* 1. Banner de Presets Rápidos */}
+            <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2 text-xs font-semibold text-slate-700">
+                <Sliders className="w-4 h-4 text-amber-500" />
                 <span>Casos de Estudio Oficiales:</span>
               </div>
 
@@ -73,9 +88,9 @@ export default function App() {
                 <button
                   onClick={() => applyPreset(PRESETS.SUBAMORTIGUADO)}
                   className={`px-3 py-1.5 rounded-xl border transition-all cursor-pointer font-medium ${
-                    Math.abs(c - 1800) < 5
-                      ? 'bg-blue-600 text-white border-blue-400 shadow-md'
-                      : 'bg-slate-900/60 text-blue-300 border-blue-500/30 hover:bg-blue-900/30'
+                    Math.abs(c - 1800) < 5 && k === 30000 && !focusedVehicle
+                      ? 'bg-blue-600 text-white border-blue-500 shadow-sm'
+                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:text-slate-900'
                   }`}
                 >
                   1. Subamortiguado (0.3 ccr)
@@ -84,9 +99,9 @@ export default function App() {
                 <button
                   onClick={() => applyPreset(PRESETS.CRITICO)}
                   className={`px-3 py-1.5 rounded-xl border transition-all cursor-pointer font-medium ${
-                    Math.abs(c - 6000) < 5
-                      ? 'bg-amber-500 text-slate-950 font-bold border-amber-300 shadow-md'
-                      : 'bg-slate-900/60 text-amber-300 border-amber-500/30 hover:bg-amber-900/30'
+                    Math.abs(c - 6000) < 5 && k === 30000 && focusedVehicle !== 'ambulancia'
+                      ? 'bg-amber-500 text-slate-950 font-bold border-amber-400 shadow-sm'
+                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:text-slate-900'
                   }`}
                 >
                   2. Crítico (ccr = 6000)
@@ -95,67 +110,126 @@ export default function App() {
                 <button
                   onClick={() => applyPreset(PRESETS.SOBREAMORTIGUADO)}
                   className={`px-3 py-1.5 rounded-xl border transition-all cursor-pointer font-medium ${
-                    Math.abs(c - 9000) < 5
-                      ? 'bg-purple-600 text-white border-purple-400 shadow-md'
-                      : 'bg-slate-900/60 text-purple-300 border-purple-500/30 hover:bg-purple-900/30'
+                    Math.abs(c - 9000) < 5 && k === 30000 && !focusedVehicle
+                      ? 'bg-purple-600 text-white border-purple-500 shadow-sm'
+                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:text-slate-900'
                   }`}
                 >
                   3. Sobreamortiguado (1.5 ccr)
                 </button>
 
-                <div className="h-4 w-px bg-white/20 mx-1 hidden sm:block" />
+                <div className="h-4 w-px bg-slate-200 mx-1 hidden sm:block" />
 
                 <button
-                  onClick={() => applyPreset(PRESETS.AMBULANCIA)}
-                  className="px-3 py-1.5 rounded-xl bg-slate-900/80 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-950/40 transition-all text-xs flex items-center gap-1 cursor-pointer"
+                  onClick={() => applyPreset(PRESETS.AMBULANCIA, 'ambulancia')}
+                  className={`px-3 py-1.5 rounded-xl border transition-all cursor-pointer text-xs flex items-center gap-1.5 font-medium ${
+                    focusedVehicle === 'ambulancia' && Math.abs(c - 6000) < 5
+                      ? 'bg-emerald-600 text-white border-emerald-500 shadow-sm'
+                      : 'bg-slate-50 text-emerald-800 border-emerald-200 hover:bg-emerald-50'
+                  }`}
                 >
-                  <HeartPulse className="w-3.5 h-3.5 text-emerald-400" />
+                  <HeartPulse className={`w-3.5 h-3.5 ${focusedVehicle === 'ambulancia' ? 'text-white' : 'text-emerald-600'}`} />
                   <span>Ambulancia</span>
                 </button>
 
                 <button
-                  onClick={() => applyPreset(PRESETS.CARRERAS)}
-                  className="px-3 py-1.5 rounded-xl bg-slate-900/80 text-rose-300 border border-rose-500/30 hover:bg-rose-950/40 transition-all text-xs flex items-center gap-1 cursor-pointer"
+                  onClick={() => applyPreset(PRESETS.CARRERAS, 'carreras')}
+                  className={`px-3 py-1.5 rounded-xl border transition-all cursor-pointer text-xs flex items-center gap-1.5 font-medium ${
+                    focusedVehicle === 'carreras' && Math.abs(c - 8500) < 5
+                      ? 'bg-rose-600 text-white border-rose-500 shadow-sm'
+                      : 'bg-slate-50 text-rose-800 border-rose-200 hover:bg-rose-50'
+                  }`}
                 >
-                  <Trophy className="w-3.5 h-3.5 text-rose-400" />
+                  <Trophy className={`w-3.5 h-3.5 ${focusedVehicle === 'carreras' ? 'text-white' : 'text-rose-600'}`} />
                   <span>Carro de Carreras</span>
                 </button>
               </div>
             </div>
 
-            {/* Grid Principal: Animación 2D SVG a la izquierda, Gráfica y Sliders a la derecha */}
+            {/* 2. Grid Principal: 3D Vehicle Scene (5 cols) + Gráfica y Sliders (7 cols) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
               
-              {/* Columna Izquierda: Animación Física (5 columnas en LG) */}
-              <div className="lg:col-span-5 liquid-glass p-4 rounded-3xl border border-white/10 flex flex-col justify-between shadow-xl">
-                <SuspensionAnimation
-                  m={m}
-                  c={c}
-                  k={k}
-                  x0={x0}
-                  v0={v0}
-                  regimen={regimen}
-                  settlingTime={settlingTime}
-                  overshootPct={overshootPct}
-                />
+              {/* Columna Izquierda (5 cols): 3D Vehicle Scene (Vehicle3DScene) */}
+              <div className="lg:col-span-5 bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[500px]">
+                {/* Selector de Modo de Visualización (3D vs 2D) */}
+                <div className="flex items-center justify-between pb-3 mb-2 border-b border-slate-100">
+                  <div className="flex items-center gap-2">
+                    <Box className="w-4 h-4 text-blue-600" />
+                    <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                      Visualización Física
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded-xl border border-slate-200 text-[11px] font-medium">
+                    <button
+                      onClick={() => setSimViewMode('3d')}
+                      className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+                        simViewMode === '3d'
+                          ? 'bg-white text-blue-600 font-bold shadow-xs'
+                          : 'text-slate-600 hover:text-slate-900'
+                      }`}
+                    >
+                      3D Vehicular
+                    </button>
+                    <button
+                      onClick={() => setSimViewMode('2d')}
+                      className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+                        simViewMode === '2d'
+                          ? 'bg-white text-blue-600 font-bold shadow-xs'
+                          : 'text-slate-600 hover:text-slate-900'
+                      }`}
+                    >
+                      Diagrama 2D
+                    </button>
+                  </div>
+                </div>
+
+                {/* Renderizado de 3D Scene o 2D Animation */}
+                <div className="flex-1 flex flex-col justify-center">
+                  {simViewMode === '3d' ? (
+                    <Vehicle3DScene
+                      m={m}
+                      c={c}
+                      k={k}
+                      x0={x0}
+                      v0={v0}
+                      regimen={regimen}
+                      settlingTime={settlingTime}
+                      overshootPct={overshootPct}
+                      focusedVehicle={focusedVehicle}
+                      setFocusedVehicle={setFocusedVehicle}
+                    />
+                  ) : (
+                    <SuspensionAnimation
+                      m={m}
+                      c={c}
+                      k={k}
+                      x0={x0}
+                      v0={v0}
+                      regimen={regimen}
+                      settlingTime={settlingTime}
+                      overshootPct={overshootPct}
+                    />
+                  )}
+                </div>
               </div>
 
-              {/* Columna Derecha: Gráfica y Panel de Control Háptico (7 columnas en LG) */}
-              <div className="lg:col-span-7 flex flex-col gap-4">
+              {/* Columna Derecha (7 cols): SimulationChart + Parameter Sliders Panel */}
+              <div className="lg:col-span-7 flex flex-col gap-5">
                 
                 {/* Gráfica de Superposición */}
-                <div className="liquid-glass p-4 rounded-3xl border border-white/10 flex-1 min-h-[360px] flex flex-col justify-between shadow-xl">
+                <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-sm flex-1 min-h-[350px] flex flex-col justify-between">
                   <SimulationChart m={m} c={c} k={k} x0={x0} v0={v0} />
                 </div>
 
-                {/* Controles Deslizantes de Precisión */}
-                <div className="liquid-glass p-4 sm:p-5 rounded-3xl border border-white/10 space-y-4">
+                {/* Panel de Controles Deslizantes de Precisión */}
+                <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
-                      <Sliders className="w-4 h-4" />
+                    <span className="text-xs font-bold uppercase tracking-wider text-amber-600 flex items-center gap-1.5">
+                      <Sliders className="w-4 h-4 text-amber-500" />
                       Controles de Parámetros Físicos
                     </span>
-                    <span className="text-xs text-gray-400 font-mono">
+                    <span className="text-xs text-slate-500 font-mono font-semibold">
                       ζ = {zeta.toFixed(2)} ({regimen})
                     </span>
                   </div>
@@ -163,10 +237,10 @@ export default function App() {
                   {/* Slider c: Coeficiente de Amortiguamiento */}
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="text-gray-300 font-medium">
+                      <span className="text-slate-700 font-medium">
                         Amortiguamiento c:
                       </span>
-                      <span className="font-mono font-bold text-amber-300 text-sm">
+                      <span className="font-mono font-bold text-amber-600 text-sm">
                         {c.toFixed(0)} N·s/m ({((c / c_cr) * 100).toFixed(0)}% ccr)
                       </span>
                     </div>
@@ -177,24 +251,24 @@ export default function App() {
                       step="50"
                       value={c}
                       onChange={(e) => setC(parseFloat(e.target.value))}
-                      className="w-full accent-[#F5A800] cursor-pointer h-2 bg-slate-800 rounded-lg"
+                      className="w-full accent-amber-500 cursor-pointer h-2 bg-slate-100 rounded-lg"
                     />
-                    <div className="flex justify-between text-[10px] text-gray-400 font-mono">
+                    <div className="flex justify-between text-[10px] text-slate-400 font-mono">
                       <span>0 (Sin fricción)</span>
-                      <span className="text-blue-300">1800 (0.3 ccr)</span>
-                      <span className="text-amber-300 font-bold">6000 (Crítico ccr)</span>
-                      <span className="text-purple-300">9000 (1.5 ccr)</span>
+                      <span className="text-blue-600 font-semibold">1800 (0.3 ccr)</span>
+                      <span className="text-amber-600 font-bold">6000 (Crítico ccr)</span>
+                      <span className="text-purple-600 font-semibold">9000 (1.5 ccr)</span>
                       <span>12000 N·s/m</span>
                     </div>
                   </div>
 
                   {/* Grid de Controles Secundarios: m, k, x0 */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-white/10">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t border-slate-100">
                     {/* Masa m */}
                     <div className="space-y-1">
-                      <div className="flex justify-between text-[11px] text-gray-300">
+                      <div className="flex justify-between text-[11px] text-slate-700">
                         <span>Masa m:</span>
-                        <span className="font-mono font-bold text-white">{m} kg</span>
+                        <span className="font-mono font-bold text-blue-600">{m} kg</span>
                       </div>
                       <input
                         type="range"
@@ -203,15 +277,15 @@ export default function App() {
                         step="10"
                         value={m}
                         onChange={(e) => setM(parseFloat(e.target.value))}
-                        className="w-full accent-blue-400 cursor-pointer h-1.5 bg-slate-800 rounded"
+                        className="w-full accent-blue-600 cursor-pointer h-1.5 bg-slate-100 rounded"
                       />
                     </div>
 
                     {/* Rigidez k */}
                     <div className="space-y-1">
-                      <div className="flex justify-between text-[11px] text-gray-300">
+                      <div className="flex justify-between text-[11px] text-slate-700">
                         <span>Rigidez k:</span>
-                        <span className="font-mono font-bold text-white">{k.toLocaleString()} N/m</span>
+                        <span className="font-mono font-bold text-amber-600">{k.toLocaleString()} N/m</span>
                       </div>
                       <input
                         type="range"
@@ -220,15 +294,15 @@ export default function App() {
                         step="1000"
                         value={k}
                         onChange={(e) => setK(parseFloat(e.target.value))}
-                        className="w-full accent-amber-400 cursor-pointer h-1.5 bg-slate-800 rounded"
+                        className="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-100 rounded"
                       />
                     </div>
 
                     {/* Bache x0 */}
                     <div className="space-y-1">
-                      <div className="flex justify-between text-[11px] text-gray-300">
+                      <div className="flex justify-between text-[11px] text-slate-700">
                         <span>Bache x(0):</span>
-                        <span className="font-mono font-bold text-white">{(x0 * 100).toFixed(0)} cm</span>
+                        <span className="font-mono font-bold text-emerald-600">{(x0 * 100).toFixed(0)} cm</span>
                       </div>
                       <input
                         type="range"
@@ -237,7 +311,7 @@ export default function App() {
                         step="0.01"
                         value={x0}
                         onChange={(e) => setX0(parseFloat(e.target.value))}
-                        className="w-full accent-emerald-400 cursor-pointer h-1.5 bg-slate-800 rounded"
+                        className="w-full accent-emerald-500 cursor-pointer h-1.5 bg-slate-100 rounded"
                       />
                     </div>
                   </div>
@@ -248,17 +322,17 @@ export default function App() {
 
             </div>
 
-            {/* Banner Informativo de Conclusión de Ingeniería */}
-            <div className="liquid-glass-card p-5 rounded-2xl border border-amber-500/30 flex flex-col md:flex-row items-center justify-between gap-4">
+            {/* 3. Banner Informativo de Conclusión de Ingeniería */}
+            <div className="bg-gradient-to-r from-amber-50/90 to-orange-50/80 p-5 rounded-2xl border border-amber-200/90 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="flex items-start gap-3">
-                <div className="p-2.5 rounded-xl bg-amber-500/20 text-[#F5A800] border border-amber-500/30 mt-0.5">
+                <div className="p-2.5 rounded-xl bg-amber-100 text-amber-700 border border-amber-200 mt-0.5">
                   <ShieldCheck className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="text-sm sm:text-base font-bold text-white">
+                  <h3 className="text-sm sm:text-base font-bold text-[#0f172a]">
                     Conclusión de Ingeniería: ¿Qué amortiguador elegir y por qué?
                   </h3>
-                  <p className="text-xs sm:text-sm text-gray-300 mt-1 max-w-3xl leading-relaxed">
+                  <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-3xl leading-relaxed">
                     Para la <strong>Ambulancia</strong> elegimos amortiguamiento crítico (<strong>c = 6000 N·s/m</strong>): sobreimpulso del <strong>0.00%</strong> y retorno en <strong>0.58 s</strong> para no generar rebotes al paciente.  
                     Para el <strong>Carro de carreras</strong> se usa amortiguamiento rígido para evitar oscilaciones de carrocería y maximizar la adherencia de neumáticos a altas velocidades.
                   </p>
@@ -267,7 +341,7 @@ export default function App() {
 
               <button
                 onClick={() => setActiveTab('deck')}
-                className="liquid-glass-button-gold px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 cursor-pointer"
+                className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-xs whitespace-nowrap flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
               >
                 <span>Ver Exposición 15 Min</span>
                 <ChevronRight className="w-4 h-4" />
@@ -282,12 +356,12 @@ export default function App() {
             ======================================================== */}
         {activeTab === 'chart' && (
           <div className="space-y-6">
-            <div className="liquid-glass p-5 rounded-3xl border border-white/10 min-h-[500px]">
+            <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm min-h-[500px]">
               <div className="mb-4">
-                <h2 className="text-xl font-bold text-white">
+                <h2 className="text-xl font-bold text-[#0f172a]">
                   Verificación Computacional: Solución Exacta vs. Algoritmo Numérico RK4
                 </h2>
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-xs sm:text-sm text-slate-500 mt-1">
                   Demostración del cumplimiento de la regla de oro: la simulación numérica de cuarto orden valida milimétricamente la solución analítica deducida a mano.
                 </p>
               </div>
@@ -306,7 +380,23 @@ export default function App() {
         )}
 
         {/* ========================================================
-            VISTA 4: MODO EXPOSICIÓN (SLIDE DECK 15 MINUTOS)
+            VISTA 4: CALCULADORA ANALÍTICA DE SUSPENSIÓN (NUEVA)
+            ======================================================== */}
+        {activeTab === 'calculator' && (
+          <SuspensionCalculator
+            m={m}
+            setM={setM}
+            c={c}
+            setC={setC}
+            k={k}
+            setK={setK}
+            x0={x0}
+            setX0={setX0}
+          />
+        )}
+
+        {/* ========================================================
+            VISTA 5: MODO EXPOSICIÓN (SLIDE DECK 15 MINUTOS)
             ======================================================== */}
         {activeTab === 'deck' && (
           <PresentationDeck
@@ -330,20 +420,20 @@ export default function App() {
       />
 
       {/* Pie de Página Formal Unimayor */}
-      <footer className="w-full border-t border-white/10 bg-slate-950/80 backdrop-blur-md py-4 px-4 sm:px-6 text-xs text-gray-400 mt-8">
+      <footer className="w-full border-t border-slate-200 bg-white/90 backdrop-blur-md py-4 px-4 sm:px-6 text-xs text-slate-600 mt-8">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-white">Institución Universitaria Colegio Mayor del Cauca</span>
-            <span className="hidden sm:inline">·</span>
-            <span>Ecuaciones Diferenciales (Unidad 3)</span>
+            <span className="font-bold text-[#0f172a]">Institución Universitaria Colegio Mayor del Cauca</span>
+            <span className="hidden sm:inline text-slate-300">·</span>
+            <span className="text-slate-600">Ecuaciones Diferenciales (Unidad 3)</span>
           </div>
 
-          <div className="text-[11px] text-gray-500">
+          <div className="text-[11px] text-slate-500">
             Grupo 5: Angela Cruz · Duban Gómez · José Torres · Rubén Velasco
           </div>
 
-          <div className="text-[10px] text-gray-400 bg-black/40 px-2.5 py-1 rounded-full border border-white/5">
-            Declaración IA (Pág. 10): Desarrollado con asistencia de Antigravity AI
+          <div className="text-[10px] text-slate-600 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
+            Declaración IA: Desarrollado con asistencia de Antigravity AI
           </div>
         </div>
       </footer>
