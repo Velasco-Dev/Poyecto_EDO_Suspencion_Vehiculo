@@ -130,7 +130,7 @@ export default function Vehicle3DScene({
     <div className="relative h-[480px] sm:h-[540px] lg:h-[580px] w-full overflow-hidden rounded-[1.6rem] border border-slate-200 bg-[#0b1120] shadow-inner flex flex-col">
       {/* ═══════════════ BARRA SUPERIOR SIMPLIFICADA ═══════════════ */}
       <div className="absolute left-3 right-3 top-3 z-20 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
-        
+
         {/* Identificador de escena */}
         <div className="pointer-events-auto flex items-center gap-2 rounded-2xl border border-white/15 bg-black/60 px-3 py-1.5 shadow-lg backdrop-blur-md">
           <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -138,8 +138,8 @@ export default function Vehicle3DScene({
             {focusedVehicle === 'carreras'
               ? '🏎️ Koenigsegg Jesko Attack'
               : focusedVehicle === 'ambulancia'
-              ? '🚑 Ambulancia Tipo III'
-              : 'Escala 1:1 · Jesko vs Ambulancia'}
+                ? '🚑 Ambulancia Tipo III'
+                : 'Escala 1:1 · Jesko vs Ambulancia'}
           </span>
           <span className="hidden sm:inline-block text-[10px] text-slate-300 border-l border-white/20 pl-2">
             Carretera Panorámica
@@ -148,7 +148,7 @@ export default function Vehicle3DScene({
 
         {/* Acciones principales simplificadas */}
         <div className="pointer-events-auto flex items-center gap-1.5">
-          {/* Botón Simular Bache */}
+          {/* Botón Simular Bache 
           <button
             onClick={handleTriggerBump}
             className="flex items-center gap-1 rounded-xl border border-white/15 bg-black/60 px-2.5 py-1.5 text-[11px] font-semibold text-slate-200 shadow hover:bg-white/15 hover:text-white transition cursor-pointer backdrop-blur-md"
@@ -156,16 +156,15 @@ export default function Vehicle3DScene({
           >
             <Activity className="h-3.5 w-3.5 text-amber-400" />
             <span className="hidden sm:inline">Baches</span>
-          </button>
+          </button>*/}
 
           {/* Botón Rayos X (Suspensión) */}
           <button
             onClick={handleToggleXray}
-            className={`flex items-center gap-1 rounded-xl border px-2.5 py-1.5 text-[11px] font-semibold transition cursor-pointer backdrop-blur-md shadow ${
-              xrayActive
-                ? 'border-orange-500/80 bg-orange-500/25 text-orange-200'
-                : 'border-white/15 bg-black/60 text-slate-200 hover:bg-white/15 hover:text-white'
-            }`}
+            className={`flex items-center gap-1 rounded-xl border px-2.5 py-1.5 text-[11px] font-semibold transition cursor-pointer backdrop-blur-md shadow ${xrayActive
+              ? 'border-orange-500/80 bg-orange-500/25 text-orange-200'
+              : 'border-white/15 bg-black/60 text-slate-200 hover:bg-white/15 hover:text-white'
+              }`}
             title="Alternar transparencia Rayos X para ver la suspensión"
           >
             <Layers className="h-3.5 w-3.5 text-orange-400" />
@@ -181,7 +180,7 @@ export default function Vehicle3DScene({
             <RotateCcw className="h-3.5 w-3.5" />
           </button>
 
-          {/* BOTÓN PROTAGONISTA: VISTA TÉCNICA (Lanza el modal) */}
+          {/* BOTÓN PROTAGONISTA: VISTA TÉCNICA (Lanza el modal) 
           <button
             onClick={() => setIsModalOpen(true)}
             className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-xs px-3 py-1.5 shadow-md shadow-blue-900/40 transition-all cursor-pointer border border-blue-400/30"
@@ -189,7 +188,7 @@ export default function Vehicle3DScene({
           >
             <Maximize2 className="h-3.5 w-3.5 text-blue-200" />
             <span>Vista Técnica</span>
-          </button>
+          </button>*/}
         </div>
       </div>
 
