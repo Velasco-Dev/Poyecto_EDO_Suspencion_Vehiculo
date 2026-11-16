@@ -4,22 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Comparación 3D: Koenigsegg Jesko vs Ambulancia Tipo III</title>
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
-      margin: 0;
-      padding: 0;
       width: 100%;
       height: 100%;
       overflow: hidden;
       background-color: #0b1120;
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       color: #f3f4f6;
       user-select: none;
     }
@@ -30,92 +27,415 @@
       height: 100%;
       z-index: 1;
     }
+
+    /* Paneles de cristal autónomos */
     .glass-panel {
-      background: rgba(10, 14, 22, 0.74);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(10, 14, 22, 0.82) !important;
+      backdrop-filter: blur(16px) !important;
+      -webkit-backdrop-filter: blur(16px) !important;
+      border: 1px solid rgba(255, 255, 255, 0.14) !important;
+      box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.6) !important;
     }
-    .cam-btn.active, .ctrl-btn.active {
-      background: rgba(249, 115, 22, 0.24);
-      border-color: rgba(249, 115, 22, 0.8);
-      color: #fdba74;
+
+    /* SVGs estrictamente controlados en dimensiones */
+    svg {
+      display: inline-block;
+      vertical-align: middle;
+      flex-shrink: 0;
     }
+
+    /* ═══════════════ BARRA SUPERIOR (HEADER) ═══════════════ */
+    header.top-bar {
+      position: fixed !important;
+      top: 12px !important;
+      left: 12px !important;
+      right: 12px !important;
+      z-index: 50 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      gap: 12px !important;
+      pointer-events: none !important;
+    }
+    .header-left {
+      pointer-events: auto !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 12px !important;
+      padding: 10px 16px !important;
+      border-radius: 16px !important;
+    }
+    .header-icon-box {
+      width: 32px !important;
+      height: 32px !important;
+      min-width: 32px !important;
+      border-radius: 8px !important;
+      background: linear-gradient(135deg, #f97316, #dc2626) !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.35) !important;
+    }
+    .header-icon-box svg {
+      width: 18px !important;
+      height: 18px !important;
+      stroke: #ffffff !important;
+      fill: none !important;
+    }
+    .header-text {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 2px !important;
+    }
+    .header-title-row {
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+    }
+    .header-title {
+      font-size: 14px !important;
+      font-weight: 700 !important;
+      color: #ffffff !important;
+      letter-spacing: -0.01em !important;
+      line-height: 1.2 !important;
+    }
+    .header-badge {
+      font-size: 10px !important;
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.05em !important;
+      padding: 2px 8px !important;
+      border-radius: 9999px !important;
+      background: rgba(245, 158, 11, 0.2) !important;
+      color: #fcd34d !important;
+      border: 1px solid rgba(245, 158, 11, 0.35) !important;
+    }
+    .header-subtitle {
+      font-size: 11px !important;
+      color: #94a3b8 !important;
+      line-height: 1.2 !important;
+    }
+
+    .header-right {
+      pointer-events: auto !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+    }
+    .tod-group {
+      display: flex !important;
+      align-items: center !important;
+      gap: 4px !important;
+      padding: 4px !important;
+      border-radius: 12px !important;
+    }
+    .tod-btn {
+      cursor: pointer !important;
+      padding: 6px 12px !important;
+      border-radius: 8px !important;
+      font-size: 12px !important;
+      font-weight: 600 !important;
+      color: #cbd5e1 !important;
+      background: transparent !important;
+      border: 1px solid transparent !important;
+      transition: all 0.2s ease !important;
+      font-family: inherit !important;
+    }
+    .tod-btn:hover {
+      color: #ffffff !important;
+      background: rgba(255, 255, 255, 0.10) !important;
+    }
+    .tod-btn.active.active-sunset, #btn-sunset.active {
+      background: linear-gradient(135deg, #f97316, #ea580c) !important;
+      color: #ffffff !important;
+      border-color: rgba(251, 146, 60, 0.6) !important;
+      box-shadow: 0 4px 14px rgba(249, 115, 22, 0.4) !important;
+      font-weight: 700 !important;
+    }
+    .tod-btn.active.active-day, #btn-day.active {
+      background: linear-gradient(135deg, #facc15, #eab308) !important;
+      color: #0f172a !important;
+      border-color: rgba(253, 224, 71, 0.8) !important;
+      box-shadow: 0 4px 14px rgba(234, 179, 8, 0.4) !important;
+      font-weight: 800 !important;
+    }
+    .tod-btn.active.active-night, #btn-night.active {
+      background: linear-gradient(135deg, #2563eb, #4f46e5) !important;
+      color: #ffffff !important;
+      border-color: rgba(129, 140, 248, 0.6) !important;
+      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4) !important;
+      font-weight: 700 !important;
+    }
+    .btn-compare-action {
+      cursor: pointer !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      padding: 8px 14px !important;
+      border-radius: 12px !important;
+      font-size: 12px !important;
+      font-weight: 500 !important;
+      color: #e2e8f0 !important;
+      transition: all 0.2s ease !important;
+      font-family: inherit !important;
+    }
+    .btn-compare-action:hover {
+      color: #ffffff !important;
+      border-color: rgba(255, 255, 255, 0.25) !important;
+    }
+    .btn-compare-action svg {
+      width: 16px !important;
+      height: 16px !important;
+      color: #fb923c !important;
+      stroke: currentColor !important;
+      fill: none !important;
+    }
+
+    /* ═══════════════ PANEL LATERAL (ASIDE) ═══════════════ */
+    aside.control-panel {
+      position: fixed !important;
+      right: 12px !important;
+      top: 76px !important;
+      z-index: 50 !important;
+      width: 240px !important;
+      padding: 14px !important;
+      border-radius: 16px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 8px !important;
+      pointer-events: auto !important;
+    }
+    .panel-section-title {
+      font-size: 11px !important;
+      font-weight: 600 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.05em !important;
+      color: #94a3b8 !important;
+      margin-bottom: 2px !important;
+    }
+    .ctrl-btn {
+      cursor: pointer !important;
+      border: 1px solid rgba(255, 255, 255, 0.10) !important;
+      background: rgba(255, 255, 255, 0.05) !important;
+      border-radius: 12px !important;
+      padding: 8px 12px !important;
+      width: 100% !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      color: #e2e8f0 !important;
+      font-size: 12px !important;
+      font-weight: 500 !important;
+      transition: all 0.2s ease !important;
+      font-family: inherit !important;
+    }
+    .ctrl-btn:hover {
+      background: rgba(255, 255, 255, 0.12) !important;
+      color: #ffffff !important;
+    }
+    .ctrl-btn.active {
+      background: rgba(249, 115, 22, 0.24) !important;
+      border-color: rgba(249, 115, 22, 0.8) !important;
+      color: #fdba74 !important;
+    }
+    .ctrl-status-tag {
+      font-size: 10px !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.05em !important;
+      font-weight: 700 !important;
+    }
+    .panel-specs {
+      border-top: 1px solid rgba(255, 255, 255, 0.10) !important;
+      padding-top: 10px !important;
+      margin-top: 4px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 6px !important;
+      font-size: 11px !important;
+    }
+    .spec-row {
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+    }
+    .spec-label { color: #94a3b8 !important; }
+    .spec-val { font-weight: 600 !important; color: #ffffff !important; }
+
+    /* ═══════════════ BARRA INFERIOR DE CÁMARAS (FOOTER) ═══════════════ */
+    footer.cam-bar {
+      position: fixed !important;
+      bottom: 12px !important;
+      left: 12px !important;
+      right: 12px !important;
+      z-index: 50 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      pointer-events: none !important;
+    }
+    .cam-bar-inner {
+      pointer-events: auto !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 4px !important;
+      padding: 6px 8px !important;
+      border-radius: 16px !important;
+      max-width: 100% !important;
+      overflow-x: auto !important;
+    }
+    .cam-btn {
+      cursor: pointer !important;
+      border: 1px solid transparent !important;
+      border-radius: 10px !important;
+      padding: 6px 12px !important;
+      font-size: 12px !important;
+      font-weight: 500 !important;
+      color: #cbd5e1 !important;
+      background: transparent !important;
+      white-space: nowrap !important;
+      transition: all 0.2s ease !important;
+      font-family: inherit !important;
+    }
+    .cam-btn:hover {
+      color: #ffffff !important;
+      background: rgba(255, 255, 255, 0.10) !important;
+    }
+    .cam-btn.active {
+      background: rgba(249, 115, 22, 0.24) !important;
+      border-color: rgba(249, 115, 22, 0.8) !important;
+      color: #fdba74 !important;
+    }
+
+    /* Clases de compatibilidad */
+    .text-\[10px\] { font-size: 10px !important; }
+    .uppercase { text-transform: uppercase !important; }
+    .tracking-wider { letter-spacing: 0.05em !important; }
+    .text-orange-300 { color: #fdba74 !important; font-weight: 700 !important; }
+    .text-gray-400 { color: #94a3b8 !important; font-weight: 500 !important; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* Estilos temáticos dinámicos según el modo horario */
-    html.theme-sunset .cam-btn.active,
-    html.theme-sunset .ctrl-btn.active {
-      background: rgba(249, 115, 22, 0.28);
-      border-color: rgba(249, 115, 22, 0.85);
-      color: #fdba74;
-      box-shadow: 0 0 16px rgba(249, 115, 22, 0.25);
-    }
-
-    /* Modo Día: Tono amarillo solar cálido, reflejos dorados y alto contraste */
+    /* ═══════════════ TEMAS HORARIOS ═══════════════ */
     html.theme-day .glass-panel {
-      background: rgba(14, 22, 38, 0.82);
-      border: 1px solid rgba(253, 224, 71, 0.32);
-      box-shadow: 0 16px 38px -10px rgba(180, 83, 9, 0.22);
+      background: rgba(14, 22, 38, 0.85) !important;
+      border: 1px solid rgba(253, 224, 71, 0.32) !important;
+      box-shadow: 0 16px 38px -10px rgba(180, 83, 9, 0.22) !important;
     }
     html.theme-day .cam-btn.active,
     html.theme-day .ctrl-btn.active {
-      background: rgba(234, 179, 8, 0.26);
-      border-color: rgba(250, 204, 21, 0.9);
-      color: #fef08a;
-      box-shadow: 0 0 16px rgba(250, 204, 21, 0.3);
-    }
-    html.theme-day .text-orange-300 {
+      background: rgba(234, 179, 8, 0.26) !important;
+      border-color: rgba(250, 204, 21, 0.9) !important;
       color: #fef08a !important;
+      box-shadow: 0 0 16px rgba(250, 204, 21, 0.3) !important;
     }
-    html.theme-day .text-orange-400 {
-      color: #facc15 !important;
-    }
-    html.theme-day .bg-orange-500\/30 {
-      background-color: rgba(234, 179, 8, 0.25) !important;
-      color: #fef08a !important;
-    }
+    html.theme-day .text-orange-300 { color: #fef08a !important; }
+    html.theme-day .text-orange-400 { color: #facc15 !important; }
 
-    /* Modo Noche: Escénico y luminoso iluminado por luna llena */
     html.theme-night .glass-panel {
-      background: rgba(10, 16, 32, 0.85);
-      border: 1px solid rgba(96, 165, 250, 0.28);
-      box-shadow: 0 16px 38px -10px rgba(15, 23, 42, 0.7);
+      background: rgba(10, 16, 32, 0.88) !important;
+      border: 1px solid rgba(96, 165, 250, 0.28) !important;
+      box-shadow: 0 16px 38px -10px rgba(15, 23, 42, 0.7) !important;
     }
     html.theme-night .cam-btn.active,
     html.theme-night .ctrl-btn.active {
-      background: rgba(99, 102, 241, 0.35);
-      border-color: rgba(129, 140, 248, 0.9);
-      color: #e0e7ff;
-      box-shadow: 0 0 18px rgba(99, 102, 241, 0.35);
+      background: rgba(99, 102, 241, 0.35) !important;
+      border-color: rgba(129, 140, 248, 0.9) !important;
+      color: #e0e7ff !important;
+      box-shadow: 0 0 18px rgba(99, 102, 241, 0.35) !important;
     }
-    html.theme-night .text-orange-300 {
-      color: #93c5fd !important;
-    }
-    html.theme-night .text-orange-400 {
-      color: #60a5fa !important;
-    }
-    html.theme-night .bg-orange-500\/30 {
-      background-color: rgba(59, 130, 246, 0.3) !important;
-      color: #dbeafe !important;
-    }
+    html.theme-night .text-orange-300 { color: #93c5fd !important; }
+    html.theme-night .text-orange-400 { color: #60a5fa !important; }
 
-    /* Ocultar interfaz interna cuando está en modo embebido / vista general */
+    /* ═══════════════ MODAL TABLA COMPARATIVA ═══════════════ */
+    #compare-modal {
+      position: fixed !important;
+      inset: 0 !important;
+      z-index: 60 !important;
+      display: none;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 16px !important;
+      background: rgba(0, 0, 0, 0.65) !important;
+      backdrop-filter: blur(8px) !important;
+    }
+    #compare-modal.flex { display: flex !important; }
+    #compare-modal.hidden { display: none !important; }
+    .modal-card {
+      max-width: 580px !important;
+      width: 100% !important;
+      padding: 20px !important;
+      border-radius: 16px !important;
+      max-height: 85vh !important;
+      overflow-y: auto !important;
+    }
+    .modal-header {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      padding-bottom: 12px !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.10) !important;
+    }
+    .modal-title { font-size: 16px !important; font-weight: 700 !important; color: #ffffff !important; }
+    .modal-subtitle { font-size: 12px !important; color: #94a3b8 !important; margin-top: 2px !important; }
+    .btn-modal-close {
+      cursor: pointer !important;
+      padding: 6px !important;
+      border-radius: 8px !important;
+      background: rgba(255, 255, 255, 0.08) !important;
+      color: #cbd5e1 !important;
+      border: none !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    .btn-modal-close:hover { background: rgba(255, 255, 255, 0.16) !important; color: #ffffff !important; }
+    .btn-modal-close svg { width: 20px !important; height: 20px !important; stroke: currentColor !important; fill: none !important; }
+
+    .compare-table {
+      width: 100% !important;
+      font-size: 12px !important;
+      margin-top: 16px !important;
+      border-collapse: collapse !important;
+      text-align: left !important;
+    }
+    .compare-table th {
+      padding: 8px 10px !important;
+      font-weight: 600 !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+      color: #94a3b8 !important;
+    }
+    .compare-table th.jesko-col { color: #fdba74 !important; }
+    .compare-table th.amb-col { color: #fca5a5 !important; }
+    .compare-table td {
+      padding: 10px 10px !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+      color: #e2e8f0 !important;
+    }
+    .compare-table td.feature-name { color: #94a3b8 !important; }
+
+    /* Ocultar interfaz interna ÚNICAMENTE cuando está en modo embebido */
     html.hide-ui header,
     html.hide-ui aside,
     html.hide-ui footer,
-    html.hide-ui .fixed.bottom-16,
     html.hide-ui #compare-modal {
       display: none !important;
+    }
+
+    /* Responsive */
+    @media (max-width: 860px) {
+      aside.control-panel { display: none !important; }
+      .header-subtitle { display: none !important; }
     }
   </style>
   <script>
     (function () {
       try {
         var p = new URLSearchParams(window.location.search);
-        if (p.get('embedded') === 'true' || p.get('hideUi') === 'true') {
+        var isEmbedded = p.get('embedded') === 'true' || p.get('hideUi') === 'true';
+        if (isEmbedded) {
           document.documentElement.classList.add('hide-ui');
+        } else {
+          document.documentElement.classList.remove('hide-ui');
         }
       } catch (_) {}
     })();
@@ -125,158 +445,147 @@
   <div id="canvas-container"></div>
 
   <!-- Barra superior -->
-  <header class="fixed top-3 left-3 right-3 z-20 flex items-center justify-between gap-2 pointer-events-none">
-    <div class="glass-panel rounded-2xl px-4 py-2.5 pointer-events-auto flex items-center gap-3 shadow-2xl">
-      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center shadow-lg">
-        <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+  <header class="top-bar">
+    <div class="glass-panel header-left">
+      <div class="header-icon-box">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
         </svg>
       </div>
-      <div>
-        <div class="flex items-center gap-2">
-          <h1 class="text-sm sm:text-base font-bold tracking-tight text-white">JESKO vs AMBULANCIA TIPO III</h1>
-          <span class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">Escala 1:1</span>
+      <div class="header-text">
+        <div class="header-title-row">
+          <h1 class="header-title">JESKO vs AMBULANCIA TIPO III</h1>
+          <span class="header-badge">Escala 1:1</span>
         </div>
-        <p class="text-[11px] text-gray-300 hidden sm:block">Modelos completos en carretera panorámica · 1.21 m vs 2.59 m de altura</p>
+        <p class="header-subtitle">Modelos completos en carretera panorámica · 1.21 m vs 2.59 m de altura</p>
       </div>
     </div>
 
-    <div class="flex items-center gap-2 pointer-events-auto">
-      <div class="glass-panel rounded-xl p-1 flex items-center gap-1">
-        <button id="btn-sunset" type="button" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold transition text-gray-300 hover:text-white">Atardecer</button>
-        <button id="btn-day" type="button" class="px-2.5 py-1.5 rounded-lg text-xs font-black transition bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 text-slate-950 shadow-lg shadow-amber-400/30 border border-amber-300/60">Día</button>
-        <button id="btn-night" type="button" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold transition text-gray-300 hover:text-white">Noche</button>
+    <div class="header-right">
+      <div class="glass-panel tod-group">
+        <button id="btn-sunset" type="button" class="tod-btn">Atardecer</button>
+        <button id="btn-day" type="button" class="tod-btn active active-day">Día</button>
+        <button id="btn-night" type="button" class="tod-btn">Noche</button>
       </div>
-      <button id="btn-compare" type="button" class="glass-panel rounded-xl px-3 py-2 text-xs font-medium text-gray-200 hover:text-white hover:border-white/25 transition flex items-center gap-1.5">
-        <svg class="w-4 h-4 text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <button id="btn-compare" type="button" class="glass-panel btn-compare-action">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7" />
         </svg>
-        <span class="hidden sm:inline">Tabla Comparativa</span>
+        <span>Tabla Comparativa</span>
       </button>
     </div>
   </header>
 
   <!-- Panel lateral derecho -->
-  <aside class="fixed right-3 top-20 z-20 glass-panel rounded-2xl p-3.5 w-60 hidden md:flex flex-col gap-2 shadow-2xl">
-    <span class="text-[11px] font-semibold uppercase tracking-wider text-gray-400 mb-0.5">Controles en Carretera</span>
-    <button id="btn-drive" type="button" class="ctrl-btn active w-full flex items-center justify-between px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-xs font-medium text-gray-200 hover:bg-white/10 transition">
+  <aside class="glass-panel control-panel">
+    <span class="panel-section-title">Controles en Carretera</span>
+    <button id="btn-drive" type="button" class="ctrl-btn active">
       <span>Conducción en Ruta</span>
-      <span id="lbl-drive" class="text-[10px] uppercase tracking-wider text-orange-300">En Marcha</span>
+      <span id="lbl-drive" class="ctrl-status-tag text-orange-300">En Marcha</span>
     </button>
-    <button id="btn-doors" type="button" class="ctrl-btn w-full flex items-center justify-between px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-xs font-medium text-gray-200 hover:bg-white/10 transition">
+    <button id="btn-doors" type="button" class="ctrl-btn">
       <span>Abrir Puertas (Ambos)</span>
-      <span id="lbl-doors" class="text-[10px] uppercase tracking-wider text-gray-400">Cerradas</span>
+      <span id="lbl-doors" class="ctrl-status-tag text-gray-400">Cerradas</span>
     </button>
-    <button id="btn-lights" type="button" class="ctrl-btn active w-full flex items-center justify-between px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-xs font-medium text-gray-200 hover:bg-white/10 transition">
+    <button id="btn-lights" type="button" class="ctrl-btn active">
       <span>Balizas y Faros LED</span>
-      <span id="lbl-lights" class="text-[10px] uppercase tracking-wider text-orange-300">Activos</span>
+      <span id="lbl-lights" class="ctrl-status-tag text-orange-300">Activos</span>
     </button>
-    <button id="btn-xray" type="button" class="ctrl-btn w-full flex items-center justify-between px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-xs font-medium text-gray-200 hover:bg-white/10 transition">
+    <button id="btn-xray" type="button" class="ctrl-btn">
       <span>Vista Suspensión (Rayos X)</span>
-      <span id="lbl-xray" class="text-[10px] uppercase tracking-wider text-gray-400">Off</span>
+      <span id="lbl-xray" class="ctrl-status-tag text-gray-400">Off</span>
     </button>
-    <button id="btn-bumps" type="button" class="ctrl-btn active w-full flex items-center justify-between px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-xs font-medium text-gray-200 hover:bg-white/10 transition">
+    <button id="btn-bumps" type="button" class="ctrl-btn active">
       <span>Test Baches (Suspensión)</span>
-      <span id="lbl-bumps" class="text-[10px] uppercase tracking-wider text-orange-300">Activo</span>
+      <span id="lbl-bumps" class="ctrl-status-tag text-orange-300">Activo</span>
     </button>
 
-    <div class="border-t border-white/10 pt-2.5 mt-1 text-[11px] text-gray-300 space-y-1.5">
-      <div class="flex justify-between">
-        <span class="text-gray-400">Jesko (Carril Izq.):</span>
-        <span class="font-semibold text-white">4.63 × 2.03 × 1.21 m</span>
+    <div class="panel-specs">
+      <div class="spec-row">
+        <span class="spec-label">Jesko (Carril Izq.):</span>
+        <span class="spec-val">4.63 × 2.03 × 1.21 m</span>
       </div>
-      <div class="flex justify-between">
-        <span class="text-gray-400">Ambulancia (Der.):</span>
-        <span class="font-semibold text-white">6.53 × 2.44 × 2.59 m</span>
+      <div class="spec-row">
+        <span class="spec-label">Ambulancia (Der.):</span>
+        <span class="spec-val">6.53 × 2.44 × 2.59 m</span>
       </div>
     </div>
   </aside>
 
   <!-- Modal Tabla Comparativa -->
-  <div id="compare-modal" class="fixed inset-0 z-30 hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-    <div class="glass-panel rounded-2xl max-w-xl w-full p-5 shadow-2xl border border-white/15 max-h-[85vh] overflow-y-auto">
-      <div class="flex items-center justify-between pb-3 border-b border-white/10">
+  <div id="compare-modal" class="hidden">
+    <div class="glass-panel modal-card">
+      <div class="modal-header">
         <div>
-          <h2 class="text-base font-bold text-white">Comparación Dimensional y Técnica</h2>
-          <p class="text-xs text-gray-400">Escala real 1:1 en la escena 3D</p>
+          <h2 class="modal-title">Comparación Dimensional y Técnica</h2>
+          <p class="modal-subtitle">Escala real 1:1 en la escena 3D</p>
         </div>
-        <button id="btn-close-compare" type="button" class="p-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-gray-300 hover:text-white transition">
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <button id="btn-close-compare" type="button" class="btn-modal-close">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
-      <table class="w-full text-xs mt-4 text-left border-collapse">
+      <table class="compare-table">
         <thead>
-          <tr class="border-b border-white/10 text-gray-400">
-            <th class="py-2 pr-2 font-medium">Característica</th>
-            <th class="py-2 px-2 font-semibold text-orange-300">Koenigsegg Jesko Attack</th>
-            <th class="py-2 pl-2 font-semibold text-red-300">Ambulancia Tipo III</th>
+          <tr>
+            <th>Característica</th>
+            <th class="jesko-col">Koenigsegg Jesko Attack</th>
+            <th class="amb-col">Ambulancia Tipo III</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-white/5 text-gray-200">
+        <tbody>
           <tr>
-            <td class="py-2.5 pr-2 text-gray-400">Largo total</td>
-            <td class="py-2.5 px-2 font-medium">4,626 mm (4.63 m)</td>
-            <td class="py-2.5 pl-2 font-medium">6,528 mm (6.53 m)</td>
+            <td class="feature-name">Largo total</td>
+            <td>4,626 mm (4.63 m)</td>
+            <td>6,528 mm (6.53 m)</td>
           </tr>
           <tr>
-            <td class="py-2.5 pr-2 text-gray-400">Ancho total</td>
-            <td class="py-2.5 px-2 font-medium">2,030 mm (2.03 m)</td>
-            <td class="py-2.5 pl-2 font-medium">2,438 mm (2.44 m)</td>
+            <td class="feature-name">Ancho total</td>
+            <td>2,030 mm (2.03 m)</td>
+            <td>2,438 mm (2.44 m)</td>
           </tr>
           <tr>
-            <td class="py-2.5 pr-2 text-gray-400">Altura total</td>
-            <td class="py-2.5 px-2 font-medium">1,210 mm (1.21 m)</td>
-            <td class="py-2.5 pl-2 font-medium">2,591 mm (2.59 m)</td>
+            <td class="feature-name">Altura total</td>
+            <td>1,210 mm (1.21 m)</td>
+            <td>2,591 mm (2.59 m)</td>
           </tr>
           <tr>
-            <td class="py-2.5 pr-2 text-gray-400">Distancia entre ejes</td>
-            <td class="py-2.5 px-2 font-medium">2,700 mm (2.70 m)</td>
-            <td class="py-2.5 pl-2 font-medium">3,505 mm (3.51 m)</td>
+            <td class="feature-name">Distancia entre ejes</td>
+            <td>2,700 mm (2.70 m)</td>
+            <td>3,505 mm (3.51 m)</td>
           </tr>
           <tr>
-            <td class="py-2.5 pr-2 text-gray-400">Ruedas y Frenos</td>
-            <td class="py-2.5 px-2 font-medium">20"/21" Carbono Aircore · Ø410/395 mm</td>
-            <td class="py-2.5 pl-2 font-medium">Comerciales doble tras.</td>
+            <td class="feature-name">Ruedas y Frenos</td>
+            <td>20"/21" Carbono Aircore · Ø410/395 mm</td>
+            <td>Comerciales doble tras.</td>
           </tr>
           <tr>
-            <td class="py-2.5 pr-2 text-gray-400">Suspensión</td>
-            <td class="py-2.5 px-2 font-medium">Doble horquilla + Pushrod + Triplex Öhlins</td>
-            <td class="py-2.5 pl-2 font-medium">Indep. del. + Eje rígido con ballestas tras.</td>
+            <td class="feature-name">Suspensión</td>
+            <td>Doble horquilla + Pushrod + Triplex Öhlins</td>
+            <td>Indep. del. + Eje rígido con ballestas tras.</td>
           </tr>
           <tr>
-            <td class="py-2.5 pr-2 text-gray-400">Propósito / Diseño</td>
-            <td class="py-2.5 px-2 font-medium">Hiperauto V8 1,600 HP (E85)</td>
-            <td class="py-2.5 pl-2 font-medium">Soporte Vital Móvil 150"</td>
+            <td class="feature-name">Propósito / Diseño</td>
+            <td>Hiperauto V8 1,600 HP (E85)</td>
+            <td>Soporte Vital Móvil 150"</td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- Controles móviles -->
-  <div class="fixed bottom-16 left-3 right-3 z-20 flex md:hidden items-center justify-center gap-1.5 pointer-events-none">
-    <div class="glass-panel rounded-xl px-2 py-1.5 flex items-center gap-1.5 pointer-events-auto">
-      <button id="m-btn-drive" type="button" class="px-2.5 py-1 rounded-lg bg-orange-500/30 text-orange-200 text-[11px] font-medium">En Marcha</button>
-      <button id="m-btn-doors" type="button" class="px-2.5 py-1 rounded-lg bg-white/10 text-[11px] font-medium">Puertas</button>
-      <button id="m-btn-lights" type="button" class="px-2.5 py-1 rounded-lg bg-orange-500/30 text-orange-200 text-[11px] font-medium">Luces</button>
-      <button id="m-btn-xray" type="button" class="px-2.5 py-1 rounded-lg bg-white/10 text-[11px] font-medium">Rayos X</button>
-      <button id="m-btn-bumps" type="button" class="px-2.5 py-1 rounded-lg bg-orange-500/30 text-orange-200 text-[11px] font-medium">Baches</button>
-    </div>
-  </div>
-
   <!-- Barra inferior de cámaras -->
-  <footer class="fixed bottom-3 left-3 right-3 z-20 flex items-center justify-center pointer-events-none">
-    <div class="glass-panel rounded-2xl p-1.5 flex items-center gap-1 overflow-x-auto no-scrollbar max-w-full pointer-events-auto shadow-2xl">
-      <button data-cam="overview" type="button" class="cam-btn active px-3 py-1.5 rounded-xl border border-transparent text-xs font-medium whitespace-nowrap transition">Panorámica 3/4</button>
-      <button data-cam="front" type="button" class="cam-btn px-3 py-1.5 rounded-xl border border-transparent text-xs font-medium text-gray-300 hover:text-white whitespace-nowrap transition">Frente (Altura)</button>
-      <button data-cam="side" type="button" class="cam-btn px-3 py-1.5 rounded-xl border border-transparent text-xs font-medium text-gray-300 hover:text-white whitespace-nowrap transition">Perfil (Largo)</button>
-      <button data-cam="jesko" type="button" class="cam-btn px-3 py-1.5 rounded-xl border border-transparent text-xs font-medium text-gray-300 hover:text-white whitespace-nowrap transition">Foco Jesko</button>
-      <button data-cam="ambulance" type="button" class="cam-btn px-3 py-1.5 rounded-xl border border-transparent text-xs font-medium text-gray-300 hover:text-white whitespace-nowrap transition">Foco Ambulancia</button>
-      <button data-cam="susp_jesko" type="button" class="cam-btn px-3 py-1.5 rounded-xl border border-transparent text-xs font-medium text-gray-300 hover:text-white whitespace-nowrap transition">Susp. Jesko</button>
-      <button data-cam="susp_amb" type="button" class="cam-btn px-3 py-1.5 rounded-xl border border-transparent text-xs font-medium text-gray-300 hover:text-white whitespace-nowrap transition">Susp. Ambulancia</button>
-      <button data-cam="aerial" type="button" class="cam-btn px-3 py-1.5 rounded-xl border border-transparent text-xs font-medium text-gray-300 hover:text-white whitespace-nowrap transition">Aérea</button>
+  <footer class="cam-bar">
+    <div class="glass-panel cam-bar-inner">
+      <button data-cam="overview" type="button" class="cam-btn active">Panorámica 3/4</button>
+      <button data-cam="front" type="button" class="cam-btn">Frente (Altura)</button>
+      <button data-cam="side" type="button" class="cam-btn">Perfil (Largo)</button>
+      <button data-cam="jesko" type="button" class="cam-btn">Foco Jesko</button>
+      <button data-cam="ambulance" type="button" class="cam-btn">Foco Ambulancia</button>
+      <button data-cam="susp_jesko" type="button" class="cam-btn">Susp. Jesko</button>
+      <button data-cam="susp_amb" type="button" class="cam-btn">Susp. Ambulancia</button>
+      <button data-cam="aerial" type="button" class="cam-btn">Aérea</button>
     </div>
   </footer>
 
@@ -1622,16 +1931,9 @@
         ['sunset', 'day', 'night'].forEach((m) => {
           const btn = document.getElementById('btn-' + m);
           if (!btn) return;
+          btn.className = 'tod-btn';
           if (m === mode) {
-            if (m === 'sunset') {
-              btn.className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-gradient-to-r from-orange-500 to-amber-600 text-white shadow-lg shadow-orange-500/30 border border-orange-400/40';
-            } else if (m === 'day') {
-              btn.className = 'px-2.5 py-1.5 rounded-lg text-xs font-black transition bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 text-slate-950 shadow-lg shadow-amber-400/30 border border-amber-300/60';
-            } else {
-              btn.className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-gradient-to-r from-blue-600 via-indigo-600 to-indigo-800 text-white shadow-lg shadow-blue-500/30 border border-blue-400/40';
-            }
-          } else {
-            btn.className = 'px-2.5 py-1.5 rounded-lg text-xs font-semibold transition text-gray-300 hover:text-white hover:bg-white/10';
+            btn.classList.add('active', 'active-' + m);
           }
         });
       }
@@ -1670,9 +1972,6 @@
       document.getElementById('btn-drive').addEventListener('click', toggleDrive);
       document.getElementById('btn-doors').addEventListener('click', toggleDoors);
       document.getElementById('btn-lights').addEventListener('click', toggleLights);
-      document.getElementById('m-btn-drive').addEventListener('click', toggleDrive);
-      document.getElementById('m-btn-doors').addEventListener('click', toggleDoors);
-      document.getElementById('m-btn-lights').addEventListener('click', toggleLights);
       function setXray(enabled) {
         state.xray = enabled;
         const tr = state.xray;
@@ -1689,8 +1988,6 @@
           m.needsUpdate = true;
         });
         document.getElementById('btn-xray').classList.toggle('active', state.xray);
-        const mXray = document.getElementById('m-btn-xray');
-        if (mXray) mXray.className = state.xray ? 'px-2.5 py-1 rounded-lg bg-orange-500/30 text-orange-200 text-[11px] font-medium' : 'px-2.5 py-1 rounded-lg bg-white/10 text-[11px] font-medium';
         document.getElementById('lbl-xray').textContent = state.xray ? 'Activo' : 'Off';
         document.getElementById('lbl-xray').className = state.xray
           ? 'text-[10px] uppercase tracking-wider text-orange-300'
@@ -1709,8 +2006,6 @@
       }
       document.getElementById('btn-xray').addEventListener('click', toggleXray);
       document.getElementById('btn-bumps').addEventListener('click', toggleBumps);
-      document.getElementById('m-btn-xray').addEventListener('click', toggleXray);
-      document.getElementById('m-btn-bumps').addEventListener('click', toggleBumps);
 
       function switchCamera(camKey) {
         const preset = CAMERAS[camKey];
