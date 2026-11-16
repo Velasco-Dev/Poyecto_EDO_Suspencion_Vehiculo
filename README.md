@@ -1,7 +1,7 @@
-Proyecto 1. La suspensión de un vehículo# Proyecto 1: La Suspensión de un Vehículo (Modelo Cuarto de Carro)
+# Proyecto 1: La Suspensión de un Vehículo (Modelo Cuarto de Carro)
 **Ecuaciones Diferenciales Ordinarias — Unidad 3 (Ecuaciones de Orden Superior)**  
 **Institución Universitaria Colegio Mayor del Cauca (Unimayor)**  
-**Facultad de Ingeniería — Ingeniería Informática · Ingeniería Multimedia**
+**Facultad de Ingeniería — Ingeniería Informática**
 
 ---
 

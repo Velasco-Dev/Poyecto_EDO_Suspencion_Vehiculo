@@ -294,11 +294,34 @@ export const SLIDES_PRESENTATION = [
     category: 'Introducción Física',
     badge: 'Planteamiento',
     summary: 'Contexto físico del sistema masa-resorte-amortiguador. Representación de una rueda y el 25% de la masa del chasis tras superar un bache de 5 cm.',
+    mainFormula: 'm\\,x\'\'(t) + c\\,x\'(t) + k\\,x(t) = 0',
+    formulaCards: [
+      {
+        label: 'Masa Suspendida (Cuarto de Carro)',
+        latex: 'm = 300\\text{ kg}',
+        desc: 'Corresponde al 25% de la masa de la carrocería del chasis'
+      },
+      {
+        label: 'Rigidez del Resorte',
+        latex: 'k = 30\\,000\\text{ N/m}',
+        desc: 'Constante elástica lineal de la suspensión (Ley de Hooke)'
+      },
+      {
+        label: 'Desplazamiento por Bache',
+        latex: 'x(0) = 0.05\\text{ m} = 5\\text{ cm}',
+        desc: 'Perturbación vertical impuesta instantáneamente al cruzar el bache'
+      },
+      {
+        label: 'Velocidad Inicial en Reposo',
+        latex: 'x\'(0) = 0\\text{ m/s}',
+        desc: 'Condición de partida en reposo relativo en el ápice del bache'
+      }
+    ],
     keyPoints: [
-      'Masa suspendida: m = 300 kg.',
-      'Constante de resorte: k = 30 000 N/m.',
+      'Masa suspendida: m = 300 kg (un cuarto de chasis de 1200 kg).',
+      'Rigidez de resorte: k = 30 000 N/m.',
       'Desplazamiento inicial por bache: x(0) = 0.05 m (5 cm).',
-      'Velocidad inicial en reposo: x\'(0) = 0 m/s.'
+      'Velocidad inicial en reposo instantáneo: x\'(0) = 0 m/s.'
     ]
   },
   {
@@ -309,12 +332,35 @@ export const SLIDES_PRESENTATION = [
     time: '1:45 - 3:30',
     category: 'Formulación',
     badge: 'EDO 2° Orden',
-    summary: 'Deducción de la EDO lineal homogénea de segundo orden con coeficientes constantes y cálculo de wn y ccr.',
+    summary: 'Deducción de la EDO lineal homogénea de segundo orden con coeficientes constantes y cálculo de omega_n y c_cr.',
+    mainFormula: 'm\\,x\'\'(t) + c\\,x\'(t) + k\\,x(t) = 0 \\iff x\'\'(t) + \\frac{c}{300}x\'(t) + 100\\,x(t) = 0',
+    formulaCards: [
+      {
+        label: 'Frecuencia Natural no Amortiguada',
+        latex: '\\omega_n = \\sqrt{\\frac{k}{m}} = \\sqrt{\\frac{30000}{300}} = 10\\text{ rad/s}',
+        desc: 'Frecuencia a la que oscilaría el sistema libre de rozamiento viscoso'
+      },
+      {
+        label: 'Amortiguamiento Crítico',
+        latex: 'c_{cr} = 2\\sqrt{m\\cdot k} = 2\\sqrt{300 \\times 30000} = 6000\\text{ N}\\cdot\\text{s/m}',
+        desc: 'Valor frontera exacto entre comportamiento oscilatorio y aperiódico'
+      },
+      {
+        label: 'Factor de Amortiguamiento Adimensional',
+        latex: '\\zeta = \\frac{c}{c_{cr}} = \\frac{c}{6000}',
+        desc: 'Parámetro adimensional clave: subamortiguado (< 1), crítico (= 1), sobreamortiguado (> 1)'
+      },
+      {
+        label: 'Ecuación Característica Auxiliar',
+        latex: 'r^2 + \\frac{c}{300}r + 100 = 0',
+        desc: 'Ecuación algebraica cuadrática resultante de proponer x(t) = e^{rt}'
+      }
+    ],
     keyPoints: [
-      'EDO: m x\'\' + c x\' + k x = 0  =>  x\'\' + (c/300) x\' + 100 x = 0.',
-      'Frecuencia natural: wn = sqrt(k/m) = 10 rad/s.',
-      'Amortiguamiento crítico: ccr = 2*sqrt(m*k) = 6000 N·s/m.',
-      'Factor de amortiguamiento: zeta = c / ccr.'
+      'EDO Canónica: x\'\' + (c/300) x\' + 100 x = 0.',
+      'Frecuencia natural del chasis: omega_n = 10 rad/s (1.59 Hz).',
+      'Amortiguamiento crítico de diseño: c_cr = 6000 N·s/m.',
+      'Régimen físico determinado por zeta = c / c_cr.'
     ]
   },
   {
@@ -325,12 +371,35 @@ export const SLIDES_PRESENTATION = [
     time: '3:30 - 5:30',
     category: 'Deducción Exacta',
     badge: 'Matemática Pura',
-    summary: 'Resolución de la ecuación característica r^2 + (c/300)r + 100 = 0 y aplicación de condiciones iniciales.',
+    summary: 'Resolución analítica paso a paso: discriminante de la ecuación auxiliar y aplicación de condiciones iniciales.',
+    mainFormula: 'x_{\\text{sub}}(t) = e^{-3t}\\left(0.05\\cos(\\sqrt{91}t) + \\frac{0.15}{\\sqrt{91}}\\sin(\\sqrt{91}t)\\right)',
+    formulaCards: [
+      {
+        label: 'Caso 1: Raíces Complejas Conjugadas (c = 1800)',
+        latex: 'r_{1,2} = -3 \\pm i\\sqrt{91}',
+        desc: 'Discriminante Δ = 36 - 400 = -364 < 0 (Régimen subamortiguado, ζ = 0.3)'
+      },
+      {
+        label: 'Frecuencia Angular Amortiguada',
+        latex: '\\omega_d = \\sqrt{\\omega_n^2 - \\alpha^2} = \\sqrt{100 - 9} = \\sqrt{91} \\approx 9.54\\text{ rad/s}',
+        desc: 'Pulsación oscilatoria real de la suspensión en carretera'
+      },
+      {
+        label: 'Caso 2: Raíz Real Repetida (c = 6000)',
+        latex: '(r + 10)^2 = 0 \\implies r_1 = r_2 = -10',
+        desc: 'Discriminante Δ = 400 - 400 = 0 (Régimen críticamente amortiguado, ζ = 1.0)'
+      },
+      {
+        label: 'Solución Crítica Particular',
+        latex: 'x_{\\text{crit}}(t) = (0.05 + 0.5t)e^{-10t}',
+        desc: 'Segunda solución linealmente independiente obtenida por Reducción de Orden'
+      }
+    ],
     keyPoints: [
-      'Subamortiguado (c = 1800): Raíces -3 ± i*sqrt(91). x(t) = e^(-3t)[0.05*cos(sqrt(91)t) + 0.0157*sin(sqrt(91)t)].',
-      'Decaimiento disipativo por e^(-3t) y oscilación por senos/cosenos con wd = 9.54 rad/s.',
-      'Crítico (c = 6000): Raíz repetida r = -10. x(t) = (0.05 + 0.5t)*e^(-10t).',
-      'El régimen crítico no oscila y disipa la energía en el menor tiempo.'
+      'Subamortiguado (c = 1800): Raíces r = -3 ± i*sqrt(91). Decaimiento e^(-3t) y oscilación a wd = 9.54 rad/s.',
+      'Constantes halladas: A = 0.05 m, B = 0.15 / sqrt(91) ≈ 0.01572 m.',
+      'Crítico (c = 6000): Raíz doble r = -10. Solución x(t) = (0.05 + 0.5t)e^(-10t).',
+      'El régimen crítico disipa la perturbación sin rebotar jamás hacia el lado negativo.'
     ]
   },
   {
@@ -341,12 +410,35 @@ export const SLIDES_PRESENTATION = [
     time: '5:30 - 7:30',
     category: 'Deducción Exacta',
     badge: 'Matemática Pura',
-    summary: 'Resolución analítica cuando c = 9000 N·s/m (zeta = 1.5).',
+    summary: 'Resolución matemática cuando c = 9000 N·s/m (zeta = 1.5). Modos exponenciales independientes.',
+    mainFormula: 'x_{\\text{sobre}}(t) = 0.05854\\,e^{-3.82t} - 0.00854\\,e^{-26.18t}',
+    formulaCards: [
+      {
+        label: 'Ecuación Cuadrática con c = 9000',
+        latex: 'r^2 + 30r + 100 = 0 \\implies \\Delta = 900 - 400 = 500 > 0',
+        desc: 'Discriminante positivo estricto: dos raíces reales negativas distintas'
+      },
+      {
+        label: 'Raíces Reales Negativas',
+        latex: 'r_1 = -15+5\\sqrt{5} \\approx -3.82,\\quad r_2 = -15-5\\sqrt{5} \\approx -26.18',
+        desc: 'r1 es el modo lento de decaimiento y r2 es el modo rápido de amortiguamiento'
+      },
+      {
+        label: 'Modo Lento Dominante',
+        latex: 'e^{-3.82t} \\gg e^{-26.18t}',
+        desc: 'El modo rápido muere en 0.15 s; el modo lento domina y retrasa el equilibrio'
+      },
+      {
+        label: 'Constantes de Integración Evaluadas',
+        latex: 'C_1 + C_2 = 0.05,\\quad -3.82C_1 - 26.18C_2 = 0',
+        desc: 'C1 = 0.05854 m, C2 = -0.00854 m al evaluar x(0) = 0.05 y x\'(0) = 0'
+      }
+    ],
     keyPoints: [
       'Discriminante Δ = 500 > 0. Raíces r1 = -3.82 y r2 = -26.18.',
       'x(t) = 0.05854*e^(-3.82t) - 0.00854*e^(-26.18t).',
       'El término e^(-3.82t) es el modo lento que retrasa el retorno al equilibrio.',
-      'Cero rebote pero movimiento perceptiblemente pesado y lento.'
+      'Cero rebote pero movimiento perceptiblemente pesado y tardío.'
     ]
   },
   {
@@ -358,11 +450,34 @@ export const SLIDES_PRESENTATION = [
     category: 'Implementación',
     badge: 'Algoritmo RK4',
     summary: 'Reducción de orden de la EDO y formulación matemática de las cuatro pendientes k1, k2, k3, k4.',
+    mainFormula: '\\begin{cases} \\dfrac{du}{dt} = v \\\\ \\dfrac{dv}{dt} = \\dfrac{-c\\,v - k\\,u}{m} \\end{cases}',
+    formulaCards: [
+      {
+        label: 'Variables de Estado de Fase',
+        latex: 'u(t) = x(t),\\quad v(t) = x\'(t)',
+        desc: 'Vector de estado y = [u, v]^T con posición y velocidad'
+      },
+      {
+        label: 'Pendientes Intermedias de RK4',
+        latex: 'k_1 = f(t_i, y_i),\\quad k_2 = f\\left(t_i+\\frac{h}{2}, y_i+\\frac{h}{2}k_1\\right)',
+        desc: 'k1 inicial, k2 y k3 en el punto medio con corrección de Euler'
+      },
+      {
+        label: 'Actualización Ponderada de RK4',
+        latex: 'y_{i+1} = y_i + \\frac{h}{6}(k_1 + 2k_2 + 2k_3 + k_4)',
+        desc: 'Combinación ponderada que alcanza error local de orden O(h^5) y global O(h^4)'
+      },
+      {
+        label: 'Paso Temporal Fijo',
+        latex: 'h = 10^{-4}\\text{ s} = 0.1\\text{ ms}',
+        desc: 'Garantiza convergencia asintótica y elimina desfases de energía'
+      }
+    ],
     keyPoints: [
-      'Cambio de variable de estado: u = x (posición), v = x\' (velocidad).',
-      'Sistema equivalente: u\' = v,  v\' = (-c*v - k*u)/m.',
-      'Algoritmo RK4: evaluación de 4 derivadas ponderadas en cada paso h.',
-      'Paso temporal fijo h = 1e-4 s: estabilidad numérica y sin drift de fase.'
+      'Cambio de variable canónico: u = x (posición), v = x\' (velocidad).',
+      'Sistema de primer orden acoplado: u\' = v, v\' = (-c*v - k*u)/m.',
+      'Integrador Runge-Kutta 4: cuatro evaluaciones por subintervalo con pesos (1, 2, 2, 1)/6.',
+      'Paso fijo h = 1e-4 s: precisión milimétrica sin divergencias.'
     ]
   },
   {
@@ -374,11 +489,34 @@ export const SLIDES_PRESENTATION = [
     category: 'Validación',
     badge: 'Rúbrica: 0.5',
     summary: 'Demostración de que la curva numérica de RK4 coincide con la solución analítica exacta deducida a mano.',
+    mainFormula: '\\max_{t \\in [0, 3]} |x_{\\text{RK4}}(t) - x_{\\text{exacta}}(t)| < 2.5 \\times 10^{-8}\\text{ m}',
+    formulaCards: [
+      {
+        label: 'Superposición Gráfica Exacta',
+        latex: '\\text{Coincidencia} > 99.9999\\%',
+        desc: 'Las trazas numérica y analítica se superponen con fidelidad total'
+      },
+      {
+        label: 'Error Residual de Truncamiento',
+        latex: 'e_{\\max} \\approx 2.3 \\times 10^{-8}\\text{ m}',
+        desc: 'Magnitud miles de veces menor al umbral estricto de la rúbrica'
+      },
+      {
+        label: 'Banda de Tolerancia del 2%',
+        latex: '\\text{Banda} = [-0.001\\text{ m}, +0.001\\text{ m}]',
+        desc: 'Criterio oficial: 2% del desplazamiento inicial x0 = 0.05 m'
+      },
+      {
+        label: 'Tasa de Disipación de Energía',
+        latex: '\\frac{dE}{dt} = -c(x\')^2 \\le 0',
+        desc: 'Conservación física estricta: energía mecánica monótona decreciente'
+      }
+    ],
     keyPoints: [
-      'Superposición exacta de las 3 curvas en el intervalo [0, 3] segundos.',
-      'Error absoluto máximo: inferior a 2.5 x 10^-8 metros.',
-      'Cumplimiento estricto de la regla de oro: la simulación valida la deducción manual.',
-      'Ejes rotulados con unidades SI: tiempo [s] y desplazamiento [m].'
+      'Superposición milimétrica de las curvas analítica y numérica en [0, 3] segundos.',
+      'Error absoluto máximo medido: apenas 2.3 x 10^-8 metros.',
+      'Cumplimiento total de la regla de oro: la simulación computacional valida la teoría.',
+      'Unidades consistentes en el SI: kg, N/m, N·s/m y segundos.'
     ]
   },
   {
@@ -389,12 +527,35 @@ export const SLIDES_PRESENTATION = [
     time: '11:30 - 13:15',
     category: 'Experimentación',
     badge: 'Datos en Vivo',
-    summary: 'Medición automatizada de ts y Mp en los tres regímenes mediante simulación interactiva.',
+    summary: 'Medición automatizada de ts y Mp en los tres regímenes mediante simulación interactiva reactiva.',
+    mainFormula: 't_s = \\min \\left\\{ T > 0 : |x(t)| \\le 0.02\\,x_0 = 0.001\\text{ m},\\; \\forall t \\ge T \\right\\}',
+    formulaCards: [
+      {
+        label: 'Caso Subamortiguado (c = 1800)',
+        latex: 't_s = 1.12\\text{ s},\\quad M_p = 37.23\\%',
+        desc: 'Pico opuesto x_min = -1.86 cm (-37.23% de rebote inferior)'
+      },
+      {
+        label: 'Caso Críticamente Amortiguado (c = 6000)',
+        latex: 't_s = 0.58\\text{ s},\\quad M_p = 0.00\\%',
+        desc: 'El retorno más rápido posible en la física sin ninguna oscilación'
+      },
+      {
+        label: 'Caso Sobreamortiguado (c = 9000)',
+        latex: 't_s = 1.07\\text{ s},\\quad M_p = 0.00\\%',
+        desc: 'Cero rebote pero tarda 84% más en asentarse que el crítico'
+      },
+      {
+        label: 'Sobreimpulso Máximo Teórico',
+        latex: 'M_p = e^{-\\frac{\\pi \\zeta}{\\sqrt{1-\\zeta^2}}} \\times 100\\%',
+        desc: 'Correlación analítica exacta con el factor de amortiguamiento ζ'
+      }
+    ],
     keyPoints: [
-      'Subamortiguado: ts = 1.12 s (Guía: ~1.1 s), Sobreimpulso = 37.23% (Guía: ~37%).',
-      'Crítico: ts = 0.58 s (Guía: ~0.58 s), Sobreimpulso = 0.00%. El más veloz.',
-      'Sobreamortiguado: ts = 1.07 s (Guía: ~1.07 s), Sobreimpulso = 0.00%.',
-      'Control deslizante interactivo: variación en tiempo real de c desde 0 hasta 12 000 N·s/m.'
+      'Subamortiguado: ts = 1.12 s, Mp = 37.23% (4 oscilaciones perceptibles).',
+      'Crítico: ts = 0.58 s, Mp = 0.00% (óptimo para estabilidad inmediata).',
+      'Sobreamortiguado: ts = 1.07 s, Mp = 0.00% (lento por alta resistencia fluida).',
+      'Control interactivo en vivo: respuesta en tiempo real al variar el deslizador c.'
     ]
   },
   {
@@ -406,11 +567,34 @@ export const SLIDES_PRESENTATION = [
     category: 'Conclusión',
     badge: 'Rúbrica: 1.0',
     summary: 'Veredicto de ingeniería fundamentado en confort clínico vs. rendimiento aerodinámico en pista.',
+    mainFormula: '\\zeta_{\\text{ambulancia}} = 1.0\\; (c = 6000\\text{ N}\\cdot\\text{s/m}) \\quad \\text{vs.} \\quad k_{\\text{carreras}} \\uparrow\\uparrow,\\; c_{\\text{carreras}} \\uparrow\\uparrow',
+    formulaCards: [
+      {
+        label: 'Ambulancia: Amortiguamiento Crítico',
+        latex: 'M_p = 0.00\\%,\\quad t_s = 0.58\\text{ s}',
+        desc: 'Protección absoluta de pacientes con fractura espinal o trauma craneal'
+      },
+      {
+        label: 'Carro de Carreras: Suspensión Rígida',
+        latex: 'k = 45\\,\\text{kN/m},\\quad c = 8500\\,\\text{N}\\cdot\\text{s/m}',
+        desc: 'Mantiene adherencia del neumático y estabilidad del difusor aerodinámico'
+      },
+      {
+        label: 'Aceleración Vertical Admisible',
+        latex: '|x\'\'(t)|_{\\max} \\le 0.5\\,g',
+        desc: 'Previene cinetosis y descalibración de instrumental quirúrgico'
+      },
+      {
+        label: 'Veredicto Final Grupo 5',
+        latex: '\\mathbf{Meta: 5.0}',
+        desc: 'Decisión sustentada matemáticamente con datos y simulación numérica'
+      }
+    ],
     keyPoints: [
-      'Ambulancia -> Amortiguamiento Crítico (c = 6000 N·s/m): 0% sobreimpulso y retorno en 0.58 s evitan trauma al paciente.',
-      'Carro de carreras -> Suspensión Rígida (alta k y c crítico elevado): mantiene la huella de neumático adherida y la altura del difusor estable.',
-      'Argumentación con datos numéricos medidos, eliminando impresiones subjetivas.',
-      'Cierre y transición a preguntas de la docente y el salón.'
+      'Ambulancia -> Amortiguamiento Crítico (c = 6000 N·s/m, ζ = 1.0): 0% sobreimpulso y retorno en 0.58 s.',
+      'Carro de carreras -> Suspensión Rígida: maximiza tracción de neumáticos y carga aerodinámica.',
+      'Justificación con datos cuantitativos medidos, eliminando apreciaciones subjetivas.',
+      'Cierre formal de la defensa oral y apertura al diálogo con la docente.'
     ]
   }
 ];

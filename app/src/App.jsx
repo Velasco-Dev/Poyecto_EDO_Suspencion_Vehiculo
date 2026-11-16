@@ -86,38 +86,40 @@ export default function App() {
           <div className="space-y-6">
 
             {/* Portada editorial para presentar el objetivo y los resultados clave */}
-            <section className="relative isolate overflow-hidden rounded-[2rem] border border-[#26374d] bg-[#0c1727] px-5 py-6 text-white shadow-[0_22px_55px_-34px_rgba(15,23,42,.7)] sm:px-8 sm:py-8">
-              <div className="pointer-events-none absolute -right-24 -top-36 -z-10 h-96 w-96 rounded-full bg-sky-400/15 blur-3xl" />
-              <div className="pointer-events-none absolute -bottom-44 left-[38%] -z-10 h-80 w-80 rounded-full bg-amber-300/10 blur-3xl" />
+            <section className="relative isolate overflow-hidden rounded-[2rem] border border-white/80 bg-gradient-to-br from-white/95 via-sky-50/50 to-amber-50/40 px-5 py-6 text-slate-900 shadow-[0_20px_50px_-20px_rgba(11,60,115,0.12)] backdrop-blur-xl sm:px-8 sm:py-8">
+              <div className="pointer-events-none absolute -right-24 -top-36 -z-10 h-96 w-96 rounded-full bg-[#0B3C73]/10 blur-3xl" />
+              <div className="pointer-events-none absolute -bottom-44 left-[38%] -z-10 h-80 w-80 rounded-full bg-[#F5A800]/15 blur-3xl" />
               <div className="grid gap-7 lg:grid-cols-[1fr_auto] lg:items-end">
                 <div className="max-w-3xl">
-                  <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-sky-300/30 bg-sky-200/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[.2em] text-sky-100 sm:text-xs">
-                    <Activity className="h-3.5 w-3.5 text-sky-300" /> Laboratorio de ecuaciones diferenciales
+                  <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50/90 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[.2em] text-[#0B3C73] sm:text-xs shadow-xs">
+                    <Activity className="h-3.5 w-3.5 text-blue-700" /> Laboratorio de ecuaciones diferenciales
                   </div>
-                  <h2 className="text-3xl font-black leading-[1.05] tracking-tight sm:text-4xl lg:text-[3.3rem]">
+                  <h2 className="text-3xl font-black leading-[1.05] tracking-tight text-slate-950 sm:text-4xl lg:text-[3.2rem]">
                     La física del movimiento,
-                    <span className="mt-1 block text-amber-300">a la vista.</span>
+                    <span className="mt-1 block text-[#0B3C73]">
+                      a la vista con <span className="text-[#D97706]">dinamismo real.</span>
+                    </span>
                   </h2>
-                  <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-200 sm:text-base">
-                    Comparamos la suspensión de una ambulancia y un auto deportivo. Ajusta masa, rigidez y amortiguamiento; observa cómo responde la carrocería ante un bache.
+                  <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-700 sm:text-base font-medium">
+                    Comparamos la suspensión de una ambulancia y un auto deportivo. Ajusta masa, rigidez y amortiguamiento; observa cómo responde la carrocería ante un bache mediante solución analítica exacta e integración numérica RK4.
                   </p>
                 </div>
                 <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 lg:w-[520px] lg:grid-cols-2">
-                  <div className="rounded-2xl border border-white/10 bg-white/[.06] p-3.5 backdrop-blur">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-300">Régimen actual</span>
-                    <strong className="mt-1 block text-sm font-extrabold text-white sm:text-base">{regimen}</strong>
+                  <div className="rounded-2xl border border-slate-200/90 bg-white/90 p-3.5 backdrop-blur shadow-xs">
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">Régimen actual</span>
+                    <strong className="mt-1 block text-sm font-black text-slate-950 sm:text-base">{regimen}</strong>
                   </div>
-                  <div className="rounded-2xl border border-white/10 bg-white/[.06] p-3.5 backdrop-blur">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-300">Amortiguamiento</span>
-                    <strong className="mt-1 block font-mono text-sm font-extrabold text-amber-300 sm:text-base">ζ = {zeta.toFixed(2)}</strong>
+                  <div className="rounded-2xl border border-slate-200/90 bg-white/90 p-3.5 backdrop-blur shadow-xs">
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">Amortiguamiento</span>
+                    <strong className="mt-1 block font-mono text-sm font-black text-amber-700 sm:text-base">ζ = {zeta.toFixed(2)}</strong>
                   </div>
-                  <div className="rounded-2xl border border-white/10 bg-white/[.06] p-3.5 backdrop-blur">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-300">Asentamiento</span>
-                    <strong className="mt-1 block font-mono text-sm font-extrabold text-sky-200 sm:text-base">{settlingTime.toFixed(2)} s</strong>
+                  <div className="rounded-2xl border border-slate-200/90 bg-white/90 p-3.5 backdrop-blur shadow-xs">
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">Asentamiento (2%)</span>
+                    <strong className="mt-1 block font-mono text-sm font-black text-[#0B3C73] sm:text-base">{settlingTime.toFixed(2)} s</strong>
                   </div>
-                  <div className="rounded-2xl border border-white/10 bg-white/[.06] p-3.5 backdrop-blur">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-300">Frecuencia natural</span>
-                    <strong className="mt-1 block font-mono text-sm font-extrabold text-white sm:text-base">ωₙ = {omega_n.toFixed(2)} rad/s</strong>
+                  <div className="rounded-2xl border border-slate-200/90 bg-white/90 p-3.5 backdrop-blur shadow-xs">
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">Frecuencia natural</span>
+                    <strong className="mt-1 block font-mono text-sm font-black text-slate-950 sm:text-base">ωₙ = {omega_n.toFixed(2)} rad/s</strong>
                   </div>
                 </div>
               </div>
@@ -258,18 +260,32 @@ export default function App() {
                   <p className="border-t border-slate-200 pt-3 text-[11px] leading-relaxed text-slate-700">{focusedVehicle === null ? 'Ambos reciben el mismo bache; el Rayo McQueen usa una suspensión más rígida. Los deslizadores ajustan los dos sistemas conservando esa diferencia.' : 'Los cambios se aplican al vehículo seleccionado. El otro conserva su configuración de referencia.'}</p>
                 </section>
 
-                <section className="relative isolate overflow-hidden rounded-[1.6rem] bg-[#132235] p-4 text-white shadow-[0_14px_35px_-24px_rgba(15,23,42,.8)] sm:p-5">
-                  <div className="pointer-events-none absolute -right-8 -top-10 -z-10 h-32 w-32 rounded-full bg-sky-400/15 blur-2xl" />
+                <section className="relative isolate overflow-hidden rounded-[1.6rem] border border-blue-200/70 bg-gradient-to-br from-white/95 via-blue-50/40 to-amber-50/30 p-4 text-slate-900 shadow-sm sm:p-5">
+                  <div className="pointer-events-none absolute -right-8 -top-10 -z-10 h-32 w-32 rounded-full bg-[#0B3C73]/10 blur-2xl" />
                   <div className="flex items-center justify-between gap-3">
-                    <div><span className="text-[10px] font-bold uppercase tracking-[.18em] text-sky-200">Lectura rápida</span><h3 className="mt-1 text-base font-extrabold">¿Qué nos dicen los valores?</h3></div>
-                    <Gauge className="h-7 w-7 shrink-0 text-amber-300" />
+                    <div>
+                      <span className="text-[10px] font-extrabold uppercase tracking-[.18em] text-[#0B3C73]">Lectura rápida</span>
+                      <h3 className="mt-1 text-base font-black text-slate-950">¿Qué nos dicen los valores?</h3>
+                    </div>
+                    <Gauge className="h-7 w-7 shrink-0 text-amber-600" />
                   </div>
                   <div className="mt-4 grid grid-cols-3 gap-2">
-                    <div className="rounded-xl border border-white/10 bg-white/[.06] p-2.5"><span className="block text-[10px] font-semibold text-slate-200">Masa</span><strong className="mt-1 block text-sm font-extrabold text-white">{m} <small className="text-[10px] text-slate-200">kg</small></strong></div>
-                    <div className="rounded-xl border border-white/10 bg-white/[.06] p-2.5"><span className="block text-[10px] font-semibold text-slate-200">Rigidez</span><strong className="mt-1 block text-sm font-extrabold text-white">{(k / 1000).toFixed(0)} <small className="text-[10px] text-slate-200">kN/m</small></strong></div>
-                    <div className="rounded-xl border border-white/10 bg-white/[.06] p-2.5"><span className="block text-[10px] font-semibold text-slate-200">Sobreimpulso</span><strong className="mt-1 block text-sm font-extrabold text-amber-300">{overshootPct.toFixed(1)}%</strong></div>
+                    <div className="rounded-xl border border-slate-200 bg-white/90 p-2.5 shadow-2xs">
+                      <span className="block text-[10px] font-bold text-slate-500 uppercase">Masa</span>
+                      <strong className="mt-1 block text-sm font-black text-slate-950">{m} <small className="text-[10px] text-slate-500 font-normal">kg</small></strong>
+                    </div>
+                    <div className="rounded-xl border border-slate-200 bg-white/90 p-2.5 shadow-2xs">
+                      <span className="block text-[10px] font-bold text-slate-500 uppercase">Rigidez</span>
+                      <strong className="mt-1 block text-sm font-black text-slate-950">{(k / 1000).toFixed(0)} <small className="text-[10px] text-slate-500 font-normal">kN/m</small></strong>
+                    </div>
+                    <div className="rounded-xl border border-amber-200 bg-amber-50/80 p-2.5 shadow-2xs">
+                      <span className="block text-[10px] font-bold text-amber-800 uppercase">Sobreimpulso</span>
+                      <strong className="mt-1 block text-sm font-black text-amber-700">{overshootPct.toFixed(1)}%</strong>
+                    </div>
                   </div>
-                  <p className="mt-3 text-xs leading-relaxed text-slate-100">{zeta < 1 ? 'El auto rebota varias veces antes de estabilizarse.' : zeta > 1 ? 'La carrocería vuelve sin oscilar y tarda más en asentarse.' : 'El sistema vuelve al equilibrio con rapidez y sin rebotes.'}</p>
+                  <p className="mt-3 text-xs leading-relaxed text-slate-700 font-medium">
+                    {zeta < 1 ? 'El auto rebota varias veces antes de estabilizarse (amortiguamiento subcrítico).' : zeta > 1 ? 'La carrocería vuelve sin oscilar y tarda más en asentarse (modo dominante lento).' : 'El sistema vuelve al equilibrio con la máxima rapidez física y sin ningún rebote (óptimo para ambulancia).'}
+                  </p>
                 </section>
               </div>
             </div>
