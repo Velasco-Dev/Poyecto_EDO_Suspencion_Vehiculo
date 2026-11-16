@@ -1972,9 +1972,6 @@
       document.getElementById('btn-drive').addEventListener('click', toggleDrive);
       document.getElementById('btn-doors').addEventListener('click', toggleDoors);
       document.getElementById('btn-lights').addEventListener('click', toggleLights);
-      document.getElementById('m-btn-drive').addEventListener('click', toggleDrive);
-      document.getElementById('m-btn-doors').addEventListener('click', toggleDoors);
-      document.getElementById('m-btn-lights').addEventListener('click', toggleLights);
       function setXray(enabled) {
         state.xray = enabled;
         const tr = state.xray;
@@ -1991,8 +1988,6 @@
           m.needsUpdate = true;
         });
         document.getElementById('btn-xray').classList.toggle('active', state.xray);
-        const mXray = document.getElementById('m-btn-xray');
-        if (mXray) mXray.className = state.xray ? 'px-2.5 py-1 rounded-lg bg-orange-500/30 text-orange-200 text-[11px] font-medium' : 'px-2.5 py-1 rounded-lg bg-white/10 text-[11px] font-medium';
         document.getElementById('lbl-xray').textContent = state.xray ? 'Activo' : 'Off';
         document.getElementById('lbl-xray').className = state.xray
           ? 'text-[10px] uppercase tracking-wider text-orange-300'
@@ -2011,8 +2006,6 @@
       }
       document.getElementById('btn-xray').addEventListener('click', toggleXray);
       document.getElementById('btn-bumps').addEventListener('click', toggleBumps);
-      document.getElementById('m-btn-xray').addEventListener('click', toggleXray);
-      document.getElementById('m-btn-bumps').addEventListener('click', toggleBumps);
 
       function switchCamera(camKey) {
         const preset = CAMERAS[camKey];
