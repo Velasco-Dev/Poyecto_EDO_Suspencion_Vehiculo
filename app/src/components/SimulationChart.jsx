@@ -362,7 +362,7 @@ export default function SimulationChart({ m, c, k, x0, v0 = 0 }) {
           <span className="text-base font-bold text-amber-600 font-mono">
             {currentMetrics.settlingTime.toFixed(3)} s
           </span>
-          <span className="text-[10px] text-slate-400 block">Criterio |x| ≤ 2% (1 mm)</span>
+          <span className="text-[10px] text-slate-600 block">Criterio |x| ≤ 2% (1 mm)</span>
         </div>
 
         <div className="bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm">
@@ -370,7 +370,7 @@ export default function SimulationChart({ m, c, k, x0, v0 = 0 }) {
           <span className="text-base font-bold text-sky-600 font-mono">
             {currentMetrics.overshootPct.toFixed(2)}%
           </span>
-          <span className="text-[10px] text-slate-400 block">
+          <span className="text-[10px] text-slate-600 block">
             Pico: {(currentMetrics.minDisplacement * 100).toFixed(2)} cm
           </span>
         </div>
@@ -380,7 +380,7 @@ export default function SimulationChart({ m, c, k, x0, v0 = 0 }) {
           <span className="text-base font-bold text-emerald-600 font-mono">
             {currentMetrics.maxRk4Error.toExponential(2)} m
           </span>
-          <span className="text-[10px] text-slate-400 block">Convergencia de 4to orden</span>
+          <span className="text-[10px] text-slate-600 block">Convergencia de 4to orden</span>
         </div>
 
         <div className="bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm">
@@ -389,7 +389,7 @@ export default function SimulationChart({ m, c, k, x0, v0 = 0 }) {
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
             100% Coincidente
           </span>
-          <span className="text-[10px] text-slate-400 block">Validación analítica OK</span>
+          <span className="text-[10px] text-slate-600 block">Validación analítica OK</span>
         </div>
       </div>
     </div>

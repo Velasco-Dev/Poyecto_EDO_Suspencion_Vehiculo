@@ -1,314 +1,200 @@
 import React, { useState } from 'react';
-import { BookOpen, Calculator, PenTool } from 'lucide-react';
+import { BookOpen, Calculator, Sigma } from 'lucide-react';
 import KaTeXMath from './KaTeXMath';
 
 export default function MathDeductionView() {
   const [activeTab, setActiveTab] = useState('planteamiento');
 
+  const tabs = [
+    { id: 'planteamiento', label: '1. Planteamiento físico y EDO' },
+    { id: 'subamortiguado', label: '2. Subamortiguado (c = 1800)' },
+    { id: 'critico', label: '3. Crítico (c = 6000)' },
+    { id: 'sobreamortiguado', label: '4. Sobreamortiguado (c = 9000)' },
+    { id: 'sistema1orden', label: '5. Sistema de 1er orden y RK4' },
+  ];
+
+  const Card = ({ title, icon: Icon = Calculator, children, tone = 'blue' }) => {
+    const tones = {
+      blue: 'border-blue-200 bg-blue-50/60',
+      amber: 'border-amber-200 bg-amber-50/70',
+      purple: 'border-purple-200 bg-purple-50/70',
+      emerald: 'border-emerald-200 bg-emerald-50/70',
+      sky: 'border-sky-200 bg-sky-50/70',
+    };
+    return (
+      <div className={`rounded-2xl border p-4 sm:p-5 shadow-sm ${tones[tone] || tones.blue}`}>
+        <h4 className="mb-3 flex items-center gap-2 text-sm font-extrabold text-slate-900 sm:text-base">
+          <Icon className="h-4.5 w-4.5 text-blue-700" />
+          {title}
+        </h4>
+        <div className="space-y-3 text-sm leading-relaxed text-slate-800">{children}</div>
+      </div>
+    );
+  };
+
+  const Formula = ({ math }) => (
+    <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white p-3 text-center shadow-inner">
+      <KaTeXMath math={math} block={true} />
+    </div>
+  );
+
   return (
-    <div className="flex flex-col gap-6 p-2 sm:p-4 max-w-5xl mx-auto">
-      {/* Cabecera de la sección */}
-      <div className="liquid-glass-card p-6 rounded-2xl border border-white/10 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="flex items-center gap-3 mb-2">
-          <BookOpen className="w-6 h-6 text-[#F5A800]" />
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-            Deducción Matemática Completa a Mano (Puntaje Rúbrica: 1.0)
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-1 sm:p-2">
+      <section className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_14px_40px_-28px_rgba(15,23,42,.45)]">
+        <div className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-blue-100/70 blur-3xl" />
+        <div className="pointer-events-none absolute -left-10 -bottom-20 h-56 w-56 rounded-full bg-amber-100/70 blur-3xl" />
+        <div className="relative z-10">
+          <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-bold uppercase tracking-[.14em] text-blue-800">
+            <BookOpen className="h-4 w-4" /> Rúbrica 1.0 · Deducción matemática
+          </div>
+          <h2 className="text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
+            Deducción analítica completa del modelo de suspensión
           </h2>
+          <p className="mt-3 max-w-4xl text-sm leading-7 text-slate-700 sm:text-base">
+            Desarrollo paso a paso de la ecuación diferencial <KaTeXMath math={"m\\,x''(t)+c\\,x'(t)+k\\,x(t)=0"} block={false} /> para un modelo de cuarto de vehículo.
+            Se parte de <KaTeXMath math={"m=300\\,\\text{kg}"} block={false} />, <KaTeXMath math={"k=30000\\,\\text{N/m}"} block={false} />, <KaTeXMath math={"x(0)=0.05\\,\\text{m}"} block={false} /> y <KaTeXMath math={"x'(0)=0"} block={false} /> (bache de 5 cm).
+          </p>
+          <div className="mt-5 flex flex-wrap gap-2">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`rounded-xl px-3.5 py-2 text-xs font-bold transition sm:text-sm ${
+                  activeTab === tab.id
+                    ? 'bg-blue-700 text-white shadow-sm'
+                    : 'border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 hover:text-slate-950'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
-        <p className="text-sm text-gray-300 leading-relaxed max-w-3xl">
-          Procedimiento analítico paso a paso para la evaluación oral y escrita de la Unidad 3 (Ecuaciones Diferenciales de Orden Superior).
-          Cumple estrictamente con la <strong>Regla de Oro</strong>: <em>"Primero la matemática, después el programa"</em>.
-        </p>
+      </section>
 
-        {/* Barra de pestañas */}
-        <div className="flex flex-wrap gap-2 mt-5 pt-4 border-t border-white/10 text-xs sm:text-sm">
-          {[
-            { id: 'planteamiento', label: '1. Planteamiento Físico y EDO' },
-            { id: 'subamortiguado', label: '2. Caso Subamortiguado (c = 1800)' },
-            { id: 'critico', label: '3. Caso Crítico (c = 6000)' },
-            { id: 'sobreamortiguado', label: '4. Caso Sobreamortiguado (c = 9000)' },
-            { id: 'sistema1orden', label: '5. Reducción a Sistema de 1° Orden' }
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer font-medium ${
-                activeTab === tab.id
-                  ? 'bg-[#0B3C73] text-white border border-[#F5A800]/50 shadow-lg'
-                  : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Contenido según pestaña */}
-      <div className="liquid-glass p-6 rounded-2xl border border-white/10">
-        {/* PESTAÑA 1: PLANTEAMIENTO */}
+      <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
         {activeTab === 'planteamiento' && (
-          <div className="space-y-6">
-            <h3 className="text-lg font-bold text-amber-400 flex items-center gap-2">
-              <Calculator className="w-5 h-5" />
-              1. Modelo de Cuarto de Carro y EDO Canónica
+          <div className="space-y-5">
+            <h3 className="flex items-center gap-2 text-xl font-extrabold text-slate-950">
+              <Sigma className="h-5 w-5 text-blue-700" /> 1. Modelo físico y ecuación diferencial canónica
             </h3>
-
-            <div className="space-y-3 text-sm text-gray-200">
-              <p>
-                Consideramos la cuarta parte de un automóvil (un cuarto de carro), compuesta por una masa suspendida de{' '}
-                <span className="font-mono text-amber-300 font-bold">m = 300 kg</span> que reposa sobre un conjunto
-                resorte-amortiguador con constante de rigidez{' '}
-                <span className="font-mono text-amber-300 font-bold">k = 30 000 N/m</span> y constante de amortiguamiento viscoso{' '}
-                <span className="font-mono text-amber-300 font-bold">c</span>.
-              </p>
-
-              <div className="bg-slate-950/90 p-4 rounded-xl border border-white/10 text-center">
-                <KaTeXMath math="m x''(t) + c x'(t) + k x(t) = 0" block={true} />
-              </div>
-
-              <p>
-                Al pasar por un bache de <strong className="text-amber-300">5 cm</strong>, la posición inicial de la carrocería
-                es <KaTeXMath math="x(0) = 0.05\text{ m}" block={false} />, y se suelta desde el reposo con velocidad nula{' '}
-                <KaTeXMath math="x'(0) = 0\text{ m/s}" block={false} />.
-              </p>
-
-              <div className="bg-slate-950/90 p-4 rounded-xl border border-white/10 text-center">
-                <KaTeXMath math="300 x''(t) + c x'(t) + 30\,000 x(t) = 0 \implies x''(t) + \frac{c}{300} x'(t) + 100 x(t) = 0" block={true} />
-              </div>
+            <p className="text-sm leading-7 text-slate-700 sm:text-base">
+              Consideramos un modelo de <strong>cuarto de carro</strong>: una masa suspendida <KaTeXMath math={"m=300\\,\\text{kg}"} block={false} /> apoyada sobre un resorte de rigidez <KaTeXMath math={"k=30000\\,\\text{N/m}"} block={false} /> y un amortiguador viscoso de coeficiente <KaTeXMath math={"c"} block={false} />. Al pasar por un bache de <strong>5 cm</strong>, el desplazamiento inicial es <KaTeXMath math={"x(0)=0.05\\,\\text{m}"} block={false} /> con velocidad inicial nula <KaTeXMath math={"x'(0)=0"} block={false} />.
+            </p>
+            <Card title="Balance de fuerzas (Segunda Ley de Newton)" tone="blue">
+              <Formula math={"\\sum F = m\\,x''(t) = -k\\,x(t) - c\\,x'(t)"} />
+              <Formula math={"m\\,x''(t) + c\\,x'(t) + k\\,x(t) = 0"} />
+              <Formula math={"300\\,x''(t) + c\\,x'(t) + 30000\\,x(t) = 0 \\;\\Longleftrightarrow\\; x''(t) + \\frac{c}{300}x'(t) + 100\\,x(t)=0"} />
+            </Card>
+            <div className="grid gap-4 md:grid-cols-2">
+              <Card title="Frecuencia natural no amortiguada" tone="amber">
+                <Formula math={"\\omega_n = \\sqrt{\\frac{k}{m}} = \\sqrt{\\frac{30000}{300}} = \\sqrt{100} = 10\\,\\text{rad/s}"} />
+                <p>Representa la frecuencia a la que oscilaría el sistema si no existiera disipación viscosa (<KaTeXMath math={"c=0"} block={false} />).</p>
+              </Card>
+              <Card title="Amortiguamiento crítico" tone="amber">
+                <Formula math={"c_{cr} = 2\\sqrt{m\\,k} = 2\\sqrt{300\\times 30000} = 2\\times 3000 = 6000\\,\\text{N}\\cdot\\text{s/m}"} />
+                <p>Es el valor frontera que separa la respuesta oscilatoria de la respuesta aperiódica.</p>
+              </Card>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-              <div className="liquid-glass-card p-4 rounded-xl border border-white/10">
-                <h4 className="font-bold text-white text-sm mb-2 text-amber-400">Frecuencia Natural no Amortiguada (ωn)</h4>
-                <p className="text-xs text-gray-300 mb-2">Frecuencia intrínseca de oscilación libre del sistema sin fricción:</p>
-                <div className="bg-black/50 p-3 rounded text-center">
-                  <KaTeXMath math="\omega_n = \sqrt{\frac{k}{m}} = \sqrt{\frac{30\,000}{300}} = \sqrt{100} = 10\text{ rad/s}" block={true} />
-                </div>
-              </div>
-
-              <div className="liquid-glass-card p-4 rounded-xl border border-white/10">
-                <h4 className="font-bold text-white text-sm mb-2 text-amber-400">Coeficiente Crítico de Amortiguamiento (ccr)</h4>
-                <p className="text-xs text-gray-300 mb-2">Valor frontera que separa el régimen oscilatorio del aperiódico:</p>
-                <div className="bg-black/50 p-3 rounded text-center">
-                  <KaTeXMath math="c_{cr} = 2\sqrt{m k} = 2\sqrt{300 \times 30\,000} = 2 \times 3000 = 6000\text{ N}\cdot\text{s/m}" block={true} />
-                </div>
-              </div>
-            </div>
+            <Card title="Factor de amortiguamiento adimensional" tone="sky">
+              <Formula math={"\\zeta = \\frac{c}{c_{cr}} = \\frac{c}{2\\sqrt{m\\,k}}"} />
+              <ul className="ml-5 list-disc space-y-1">
+                <li><KaTeXMath math={"\\zeta < 1"} block={false} />: subamortiguado (oscila con decaimiento).</li>
+                <li><KaTeXMath math={"\\zeta = 1"} block={false} />: críticamente amortiguado (retorno más rápido sin oscilación).</li>
+                <li><KaTeXMath math={"\\zeta > 1"} block={false} />: sobreamortiguado (retorno lento sin oscilación).</li>
+              </ul>
+            </Card>
           </div>
         )}
 
-        {/* PESTAÑA 2: SUBAMORTIGUADO */}
         {activeTab === 'subamortiguado' && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-sky-400 flex items-center gap-2">
-                <Calculator className="w-5 h-5" />
-                2. Régimen Subamortiguado: c = 0.3 ccr = 1800 N·s/m (ζ = 0.3)
-              </h3>
-              <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-sky-500/20 text-sky-300 border border-sky-500/40">
-                Produce Oscilación y Rebote
-              </span>
-            </div>
-
-            <div className="space-y-4 text-sm text-gray-200">
-              <div className="bg-slate-900/80 p-4 rounded-xl border border-white/10">
-                <h4 className="font-semibold text-white mb-2">Paso 1: Ecuación Característica</h4>
-                <div className="bg-black/50 p-3 rounded text-center">
-                  <KaTeXMath math="r^2 + \frac{1800}{300}r + 100 = 0 \implies r^2 + 6r + 100 = 0" block={true} />
-                </div>
-              </div>
-
-              <div className="bg-slate-900/80 p-4 rounded-xl border border-white/10">
-                <h4 className="font-semibold text-white mb-2">Paso 2: Cálculo de Raíces Complejas</h4>
-                <div className="bg-black/50 p-3 rounded text-center">
-                  <KaTeXMath math="r = \frac{-6 \pm \sqrt{36 - 400}}{2} = -3 \pm \sqrt{-91} = -3 \pm i\sqrt{91} \approx -3 \pm 9.5394 i" block={true} />
-                </div>
-                <p className="text-xs text-gray-400 text-center mt-2">
-                  Parte real disipativa: α = -3 &nbsp;|&nbsp; Frecuencia amortiguada: ωd = √91 rad/s
-                </p>
-              </div>
-
-              <div className="bg-slate-900/80 p-4 rounded-xl border border-white/10">
-                <h4 className="font-semibold text-white mb-2">Paso 3: Solución General y Constantes</h4>
-                <div className="bg-black/50 p-3 rounded text-center mb-3">
-                  <KaTeXMath math="x(t) = e^{-3t} \left[ A \cos(\sqrt{91} t) + B \sin(\sqrt{91} t) \right]" block={true} />
-                </div>
-                <ul className="text-xs space-y-2 text-gray-300 pl-4 list-disc">
-                  <li>
-                    <strong>Condición inicial de posición x(0) = 0.05 m:</strong><br />
-                    <KaTeXMath math="x(0) = e^0 [A \cos(0) + B \sin(0)] = A \implies A = 0.05" block={false} />
-                  </li>
-                  <li>
-                    <strong>Condición inicial de velocidad x'(0) = 0 m/s:</strong><br />
-                    <KaTeXMath math="x'(0) = -3A + B\sqrt{91} = 0 \implies B = \frac{3(0.05)}{\sqrt{91}} = \frac{0.15}{\sqrt{91}} \approx 0.01572" block={false} />
-                  </li>
-                </ul>
-              </div>
-
-              <div className="p-4 rounded-xl bg-gradient-to-r from-sky-950/70 to-blue-950/70 border border-sky-400/30">
-                <h4 className="font-bold text-white text-sm mb-1 text-sky-300">Solución Particular Exacta:</h4>
-                <div className="bg-black/60 p-3 rounded-lg text-center my-2">
-                  <KaTeXMath math="x(t) = e^{-3t} \left[ 0.05 \cos(\sqrt{91} t) + \frac{0.15}{\sqrt{91}} \sin(\sqrt{91} t) \right]" block={true} />
-                </div>
-                <div className="text-xs text-gray-300 mt-2 space-y-1">
-                  <p>• <strong>Factor e^(-3t):</strong> Término que produce el <em>decaimiento exponencial</em> de la oscilación.</p>
-                  <p>• <strong>Factores cos(√91 t) y sin(√91 t):</strong> Términos que producen la <em>oscilación armónica</em> con frecuencia ωd = 9.54 rad/s.</p>
-                </div>
-              </div>
-            </div>
+          <div className="space-y-5">
+            <h3 className="text-xl font-extrabold text-slate-950">2. Régimen subamortiguado: <KaTeXMath math={"c = 0.3\\,c_{cr} = 1800\\,\\text{N}\\cdot\\text{s/m}"} block={false} />, <KaTeXMath math={"\\zeta=0.3"} block={false} /></h3>
+            <Card title="Paso 1: Ecuación característica" tone="sky">
+              <Formula math={"r^2 + \\frac{1800}{300}r + 100 = 0 \\;\\Longrightarrow\\; r^2 + 6r + 100 = 0"} />
+              <Formula math={"\\Delta = 6^2 - 4(1)(100) = 36 - 400 = -364 < 0"} />
+            </Card>
+            <Card title="Paso 2: Raíces complejas conjugadas" tone="sky">
+              <Formula math={"r_{1,2} = \\frac{-6 \\pm \\sqrt{-364}}{2} = -3 \\pm i\\sqrt{91} \\approx -3 \\pm 9.5394\\,i"} />
+              <p>Parte real disipativa <KaTeXMath math={"\\alpha=3\\,\\text{s}^{-1}"} block={false} /> y frecuencia amortiguada <KaTeXMath math={"\\omega_d=\\sqrt{91}\\,\\text{rad/s}"} block={false} />.</p>
+            </Card>
+            <Card title="Paso 3: Solución general y constantes" tone="blue">
+              <Formula math={"x(t)=e^{-3t}\\left[A\\cos(\\sqrt{91}\\,t)+B\\sin(\\sqrt{91}\\,t)\\right]"} />
+              <Formula math={"x(0)=A=0.05\\,\\text{m}"} />
+              <Formula math={"x'(0)=-3A + B\\sqrt{91}=0 \\;\\Rightarrow\\; B=\\frac{3(0.05)}{\\sqrt{91}}=\\frac{0.15}{\\sqrt{91}}\\approx 0.01572\\,\\text{m}"} />
+            </Card>
+            <Card title="Solución particular exacta" tone="amber">
+              <Formula math={"x(t)=e^{-3t}\\left[0.05\\cos(\\sqrt{91}\\,t)+\\frac{0.15}{\\sqrt{91}}\\sin(\\sqrt{91}\\,t)\\right]\\,\\text{m}"} />
+              <p><strong>Interpretación:</strong> <KaTeXMath math={"e^{-3t}"} block={false} /> produce el decaimiento exponencial y los términos trigonométricos generan la oscilación. Para este caso se obtiene aproximadamente <KaTeXMath math={"M_p\\approx 37.23\\%"} block={false} /> y <KaTeXMath math={"t_s(2\\%)\\approx 1.12\\,\\text{s}"} block={false} />.</p>
+            </Card>
           </div>
         )}
 
-        {/* PESTAÑA 3: CRÍTICO */}
         {activeTab === 'critico' && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-amber-400 flex items-center gap-2">
-                <Calculator className="w-5 h-5" />
-                3. Régimen Críticamente Amortiguado: c = ccr = 6000 N·s/m (ζ = 1.0)
-              </h3>
-              <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                Retorno Óptimo sin Rebote
-              </span>
-            </div>
-
-            <div className="space-y-4 text-sm text-gray-200">
-              <div className="bg-slate-900/80 p-4 rounded-xl border border-white/10">
-                <h4 className="font-semibold text-white mb-2">Paso 1: Ecuación Característica y Raíz Repetida</h4>
-                <div className="bg-black/50 p-3 rounded text-center">
-                  <KaTeXMath math="r^2 + \frac{6000}{300}r + 100 = 0 \implies r^2 + 20r + 100 = (r + 10)^2 = 0" block={true} />
-                </div>
-                <p className="text-xs text-gray-400 text-center mt-2">Raíz real doble repetida: <strong>r₁ = r₂ = -10</strong></p>
-              </div>
-
-              <div className="bg-slate-900/80 p-4 rounded-xl border border-white/10">
-                <h4 className="font-semibold text-white mb-2">Paso 2: Solución General por Reducción de Orden</h4>
-                <div className="bg-black/50 p-3 rounded text-center">
-                  <KaTeXMath math="x(t) = (C_1 + C_2 t) e^{-10t}" block={true} />
-                </div>
-                <p className="text-xs text-gray-300 mt-2">
-                  El término lineal en <em>t</em> asegura la existencia de dos soluciones linealmente independientes en el espacio vectorial.
-                </p>
-              </div>
-
-              <div className="bg-slate-900/80 p-4 rounded-xl border border-white/10">
-                <h4 className="font-semibold text-white mb-2">Paso 3: Condiciones Iniciales</h4>
-                <ul className="text-xs space-y-2 text-gray-300 pl-4 list-disc">
-                  <li><KaTeXMath math="x(0) = C_1 = 0.05" block={false} /></li>
-                  <li><KaTeXMath math="x'(t) = C_2 e^{-10t} - 10(C_1 + C_2 t) e^{-10t}" block={false} /></li>
-                  <li><KaTeXMath math="x'(0) = C_2 - 10C_1 = 0 \implies C_2 = 10(0.05) = 0.5" block={false} /></li>
-                </ul>
-              </div>
-
-              <div className="p-4 rounded-xl bg-gradient-to-r from-amber-950/70 to-orange-950/70 border border-amber-400/40">
-                <h4 className="font-bold text-white text-sm mb-1 text-amber-300">Solución Particular Exacta:</h4>
-                <div className="bg-black/60 p-3 rounded-lg text-center my-2">
-                  <KaTeXMath math="x(t) = (0.05 + 0.5 t) e^{-10t}" block={true} />
-                </div>
-                <p className="text-xs text-gray-300 mt-2">
-                  • <strong>Comportamiento físico:</strong> No posee términos senoidales (cero oscilación). Es la tasa de disipación de energía
-                  más rápida posible, alcanzando el equilibrio en solo <strong>0.58 segundos</strong> sin pasar nunca al otro lado.
-                </p>
-              </div>
-            </div>
+          <div className="space-y-5">
+            <h3 className="text-xl font-extrabold text-slate-950">3. Régimen críticamente amortiguado: <KaTeXMath math={"c=c_{cr}=6000\\,\\text{N}\\cdot\\text{s/m}"} block={false} />, <KaTeXMath math={"\\zeta=1"} block={false} /></h3>
+            <Card title="Paso 1: Ecuación característica y raíz doble" tone="amber">
+              <Formula math={"r^2 + \\frac{6000}{300}r + 100 = 0 \\;\\Longrightarrow\\; r^2 + 20r + 100 = (r+10)^2 = 0"} />
+              <Formula math={"r_1 = r_2 = -10\\,\\text{s}^{-1}"} />
+            </Card>
+            <Card title="Paso 2: Solución general por reducción de orden" tone="amber">
+              <Formula math={"x(t)=(C_1 + C_2 t)\\,e^{-10t}"} />
+              <p>La raíz repetida obliga a introducir el factor lineal <KaTeXMath math={"t"} block={false} /> para obtener dos soluciones linealmente independientes.</p>
+            </Card>
+            <Card title="Paso 3: Condiciones iniciales" tone="blue">
+              <Formula math={"x(0)=C_1=0.05"} />
+              <Formula math={"x'(t)=C_2 e^{-10t} - 10(C_1 + C_2 t)e^{-10t} \\;\\Rightarrow\\; x'(0)=C_2 - 10C_1 = 0"} />
+              <Formula math={"C_2 = 10\\,C_1 = 0.5\\,\\text{m/s}"} />
+            </Card>
+            <Card title="Solución particular exacta" tone="emerald">
+              <Formula math={"x(t)=(0.05 + 0.5\\,t)\\,e^{-10t}\\,\\text{m}"} />
+              <p><strong>Interpretación:</strong> no hay términos senoidales, por lo que no existe sobreimpulso (<KaTeXMath math={"M_p=0\\%"} block={false} />). Es el retorno más rápido al equilibrio, con asentamiento aproximado <KaTeXMath math={"t_s\\approx 0.58\\,\\text{s}"} block={false} />.</p>
+            </Card>
           </div>
         )}
 
-        {/* PESTAÑA 4: SOBREAMORTIGUADO */}
         {activeTab === 'sobreamortiguado' && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-purple-400 flex items-center gap-2">
-                <Calculator className="w-5 h-5" />
-                4. Régimen Sobreamortiguado: c = 1.5 ccr = 9000 N·s/m (ζ = 1.5)
-              </h3>
-              <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40">
-                Retorno Lento / Fricción Elevada
-              </span>
-            </div>
-
-            <div className="space-y-4 text-sm text-gray-200">
-              <div className="bg-slate-900/80 p-4 rounded-xl border border-white/10">
-                <h4 className="font-semibold text-white mb-2">Paso 1: Ecuación Característica y Raíces Reales</h4>
-                <div className="bg-black/50 p-3 rounded text-center">
-                  <KaTeXMath math="r^2 + 30r + 100 = 0 \implies r = \frac{-30 \pm \sqrt{900 - 400}}{2} = -15 \pm 5\sqrt{5}" block={true} />
-                </div>
-                <p className="text-xs text-purple-300 text-center mt-2">
-                  r₁ = -15 + 5√5 ≈ -3.8197 (modo lento) &nbsp;|&nbsp; r₂ = -15 - 5√5 ≈ -26.1803 (modo rápido)
-                </p>
-              </div>
-
-              <div className="bg-slate-900/80 p-4 rounded-xl border border-white/10">
-                <h4 className="font-semibold text-white mb-2">Paso 2: Solución General y Constantes</h4>
-                <div className="bg-black/50 p-3 rounded text-center mb-2">
-                  <KaTeXMath math="x(t) = C_1 e^{r_1 t} + C_2 e^{r_2 t}" block={true} />
-                </div>
-                <div className="text-xs text-gray-300 space-y-1">
-                  <p>• C₁ + C₂ = 0.05</p>
-                  <p>• r₁ C₁ + r₂ C₂ = 0 &implies; <KaTeXMath math="C_1 = 0.025 + 0.015\sqrt{5} \approx 0.05854" block={false} /></p>
-                  <p>• <KaTeXMath math="C_2 = 0.025 - 0.015\sqrt{5} \approx -0.00854" block={false} /></p>
-                </div>
-              </div>
-
-              <div className="p-4 rounded-xl bg-gradient-to-r from-purple-950/70 to-indigo-950/70 border border-purple-400/40">
-                <h4 className="font-bold text-white text-sm mb-1 text-purple-300">Solución Particular Exacta:</h4>
-                <div className="bg-black/60 p-3 rounded-lg text-center my-2">
-                  <KaTeXMath math="x(t) = 0.05854 e^{-3.8197 t} - 0.00854 e^{-26.1803 t}" block={true} />
-                </div>
-                <p className="text-xs text-gray-300 mt-2">
-                  • <strong>Explicación física:</strong> El amortiguador genera tanta fuerza viscosa que el modo rápido r₂ se extingue casi de inmediato,
-                  y el sistema queda gobernado por el decaimiento lento e^(-3.82t), tardando <strong>1.07 s</strong> en asentarse.
-                </p>
-              </div>
-            </div>
+          <div className="space-y-5">
+            <h3 className="text-xl font-extrabold text-slate-950">4. Régimen sobreamortiguado: <KaTeXMath math={"c = 1.5\\,c_{cr} = 9000\\,\\text{N}\\cdot\\text{s/m}"} block={false} />, <KaTeXMath math={"\\zeta=1.5"} block={false} /></h3>
+            <Card title="Paso 1: Ecuación característica y raíces reales" tone="purple">
+              <Formula math={"r^2 + \\frac{9000}{300}r + 100 = 0 \\;\\Longrightarrow\\; r^2 + 30r + 100 = 0"} />
+              <Formula math={"r_{1,2} = \\frac{-30 \\pm \\sqrt{900-400}}{2} = -15 \\pm 5\\sqrt{5}"} />
+              <Formula math={"r_1 \\approx -3.8197\\,\\text{s}^{-1}, \\qquad r_2 \\approx -26.1803\\,\\text{s}^{-1}"} />
+            </Card>
+            <Card title="Paso 2: Solución general y constantes" tone="purple">
+              <Formula math={"x(t)=C_1 e^{r_1 t} + C_2 e^{r_2 t}"} />
+              <Formula math={"C_1 + C_2 = 0.05, \\qquad r_1 C_1 + r_2 C_2 = 0"} />
+              <Formula math={"C_1 = \\frac{-r_2 x_0}{r_1-r_2} \\approx 0.05854, \\qquad C_2 = \\frac{r_1 x_0}{r_1-r_2} \\approx -0.00854"} />
+            </Card>
+            <Card title="Solución particular exacta" tone="blue">
+              <Formula math={"x(t)=0.05854\\,e^{-3.8197t} - 0.00854\\,e^{-26.1803t}\\,\\text{m}"} />
+              <p><strong>Interpretación:</strong> el término rápido <KaTeXMath math={"e^{-26.18t}"} block={false} /> desaparece pronto y el modo lento <KaTeXMath math={"e^{-3.82t}"} block={false} /> domina el retorno. No hay rebote (<KaTeXMath math={"M_p=0\\%"} block={false} />), pero el asentamiento es más lento que en el caso crítico (<KaTeXMath math={"t_s\\approx 1.07\\,\\text{s}"} block={false} />).</p>
+            </Card>
           </div>
         )}
 
-        {/* PESTAÑA 5: SISTEMA DE PRIMER ORDEN */}
         {activeTab === 'sistema1orden' && (
-          <div className="space-y-6">
-            <h3 className="text-lg font-bold text-emerald-400 flex items-center gap-2">
-              <Calculator className="w-5 h-5" />
-              5. Conversión a Sistema de Primer Orden para Algoritmos Numéricos (RK4)
-            </h3>
-
-            <div className="space-y-4 text-sm text-gray-200">
-              <p>
-                Tal como instruye el documento de la Unidad 3, ningún integrador numérico computacional (Euler, Heun, RK4)
-                puede resolver de forma directa una ecuación diferencial de segundo orden. Debe convertirse previamente en un sistema
-                de dos ecuaciones acopladas de primer orden.
-              </p>
-
-              <div className="bg-slate-950/90 p-5 rounded-xl border border-white/10 space-y-3">
-                <p className="text-amber-300 font-bold text-xs uppercase tracking-wider">// 1. Cambio de variables de estado:</p>
-                <div className="text-sm text-white space-y-1">
-                  <p>• <KaTeXMath math="u(t) = x(t)" block={false} /> : Posición vertical de la masa</p>
-                  <p>• <KaTeXMath math="v(t) = x'(t)" block={false} /> : Velocidad vertical de la masa</p>
-                </div>
-                
-                <p className="text-amber-300 font-bold text-xs uppercase tracking-wider pt-2">// 2. Sistema acoplado de primer orden:</p>
-                <div className="bg-black/60 p-4 rounded-lg text-center">
-                  <KaTeXMath math="\begin{cases} u' = v \\ v' = \dfrac{-c v - k u}{m} \end{cases}" block={true} />
-                </div>
-              </div>
-
-              <div className="liquid-glass-card p-4 rounded-xl border border-white/10">
-                <h4 className="font-bold text-white text-sm mb-2 text-emerald-300">Formulación del Algoritmo Runge-Kutta 4 (RK4)</h4>
-                <div className="text-xs text-gray-300 space-y-2">
-                  <KaTeXMath math="k_1 = f(t_i, y_i),\quad k_2 = f\left(t_i + \frac{h}{2}, y_i + \frac{h}{2}k_1\right)" block={true} />
-                  <KaTeXMath math="k_3 = f\left(t_i + \frac{h}{2}, y_i + \frac{h}{2}k_2\right),\quad k_4 = f(t_i + h, y_i + h k_3)" block={true} />
-                  <KaTeXMath math="Y_{i+1} = Y_i + \frac{h}{6}(k_1 + 2k_2 + 2k_3 + k_4)" block={true} />
-                </div>
-                <p className="text-xs text-gray-400 mt-3">
-                  Error de orden local O(h⁵) y global O(h⁴). Con h = 0.0001 s, el error numérico frente a la solución exacta es inferior a 10⁻⁸ metros.
-                </p>
-              </div>
-            </div>
+          <div className="space-y-5">
+            <h3 className="text-xl font-extrabold text-slate-950">5. Conversión a sistema de primer orden y método RK4</h3>
+            <Card title="Cambio de variables de estado" tone="emerald">
+              <Formula math={"u(t)=x(t), \\qquad v(t)=x'(t)"} />
+              <Formula math={"\\begin{cases} u' = v \\\\[4pt] v' = \\dfrac{-c\\,v - k\\,u}{m} \\end{cases}, \\qquad u(0)=0.05,\\; v(0)=0"} />
+              <p>Esta forma es necesaria porque los integradores numéricos estándar (Euler, Heun, RK4) trabajan sobre sistemas de primer orden.</p>
+            </Card>
+            <Card title="Algoritmo Runge-Kutta de cuarto orden (RK4)" tone="blue">
+              <Formula math={"k_1 = f(t_i, y_i),\\quad k_2 = f\\!\\left(t_i+\\frac{h}{2},\\, y_i+\\frac{h}{2}k_1\\right)"} />
+              <Formula math={"k_3 = f\\!\\left(t_i+\\frac{h}{2},\\, y_i+\\frac{h}{2}k_2\\right),\\quad k_4 = f(t_i+h,\\, y_i+h\\,k_3)"} />
+              <Formula math={"y_{i+1} = y_i + \\frac{h}{6}\\left(k_1 + 2k_2 + 2k_3 + k_4\\right)"} />
+              <p>Error local <KaTeXMath math={"O(h^5)"} block={false} /> y error global <KaTeXMath math={"O(h^4)"} block={false} />. Con pasos pequeños (por ejemplo <KaTeXMath math={"h=10^{-4}\\,\\text{s}"} block={false} />) la curva numérica se superpone con la solución analítica.</p>
+            </Card>
+            <Card title="Métricas de ingeniería utilizadas" tone="amber">
+              <Formula math={"|x(t)| \\le 0.02\\,x_0 = 0.001\\,\\text{m} \\quad \\forall\\, t \\ge t_s \\quad (\\text{criterio del }2\\%)"} />
+              <Formula math={"M_p = \\frac{|x_{min}|}{x_0}\\times 100\\% = e^{-\\frac{\\pi\\zeta}{\\sqrt{1-\\zeta^2}}}\\times 100\\% \\quad (\\zeta < 1)"} />
+              <p>Estas métricas permiten comparar objetivamente confort (ambulancia) frente a rigidez y agarre (vehículo de carreras).</p>
+            </Card>
           </div>
         )}
-      </div>
+      </section>
     </div>
   );
 }

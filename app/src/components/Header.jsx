@@ -1,24 +1,24 @@
 import React from 'react';
 import {
   Activity, BarChart3, BookOpen, Presentation,
-  Award, Download, Calculator, Box
+  Award, Download, Calculator
 } from 'lucide-react';
 
 export default function Header({ activeTab, setActiveTab, onOpenFlashcards }) {
   const tabs = [
-    { id: 'simulator', label: 'Laboratorio Interactivo', icon: Activity, color: 'text-blue-600' },
-    { id: 'chart', label: 'Superposición RK4', icon: BarChart3, color: 'text-sky-500' },
-    { id: 'math', label: 'Deducción a Mano', icon: BookOpen, color: 'text-purple-500' },
-    { id: 'calculator', label: 'Calculadora EDO', icon: Calculator, color: 'text-emerald-500' },
-    { id: 'deck', label: 'Exposición (15 Min)', icon: Presentation, color: 'text-amber-500' },
+    { id: 'simulator', label: 'Laboratorio', icon: Activity, color: 'text-blue-600' },
+    { id: 'chart', label: 'RK4', icon: BarChart3, color: 'text-sky-500' },
+    { id: 'math', label: 'Deducción', icon: BookOpen, color: 'text-purple-500' },
+    { id: 'calculator', label: 'Calculadora', icon: Calculator, color: 'text-emerald-500' },
+    { id: 'deck', label: 'Exposición', icon: Presentation, color: 'text-amber-500' },
   ];
 
   return (
-    <header className="sticky top-0 z-40 w-full px-3 py-3 sm:px-6 bg-white/90 backdrop-blur-xl border-b border-slate-200/80 shadow-sm">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+    <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/95 px-3 py-3 shadow-[0_5px_22px_-18px_rgba(15,23,42,.55)] backdrop-blur-xl sm:px-6">
+      <div className="mx-auto flex max-w-[1480px] flex-col items-center justify-between gap-3 xl:flex-row">
 
         {/* Identidad Institucional */}
-        <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
+        <div className="flex w-full items-center justify-between gap-3 md:w-auto md:justify-start xl:shrink-0">
           <div className="flex items-center gap-3">
             <img
               src="./logotipo-actual.webp"
@@ -27,14 +27,14 @@ export default function Header({ activeTab, setActiveTab, onOpenFlashcards }) {
             />
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold tracking-widest text-blue-700 uppercase">
+                <span className="text-[10px] font-extrabold tracking-[.16em] text-blue-800 uppercase sm:text-xs">
                   UNIMAYOR · GRUPO 5
                 </span>
-                <span className="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full border border-blue-200 font-semibold">
+                <span className="rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-800">
                   EDO U3
                 </span>
               </div>
-              <h1 className="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight leading-tight">
+              <h1 className="text-sm font-black leading-tight tracking-tight text-slate-950 sm:text-base">
                 Simulador de Suspensión Vehicular
               </h1>
             </div>
@@ -52,17 +52,17 @@ export default function Header({ activeTab, setActiveTab, onOpenFlashcards }) {
         </div>
 
         {/* Pestañas de Navegación */}
-        <nav className="flex items-center gap-1 p-1 bg-slate-100/80 rounded-xl border border-slate-200 overflow-x-auto w-full md:w-auto text-xs">
+        <nav aria-label="Navegación principal" className="flex w-full min-w-0 items-center justify-start gap-1 overflow-x-auto rounded-xl border border-slate-200 bg-slate-100 p-1 text-xs xl:flex-1 xl:justify-center">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg whitespace-nowrap font-medium transition-all cursor-pointer ${
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg whitespace-nowrap font-semibold transition-all cursor-pointer ${
                   activeTab === tab.id
-                    ? 'bg-white text-slate-900 border border-slate-200 shadow-sm'
-                    : 'text-slate-500 hover:text-slate-900 hover:bg-white/60'
+                    ? 'bg-white text-slate-950 border border-slate-300 shadow-sm'
+                    : 'text-slate-700 hover:text-slate-950 hover:bg-white/70'
                 }`}
               >
                 <Icon className={`w-3.5 h-3.5 ${activeTab === tab.id ? tab.color : ''}`} />
@@ -73,10 +73,10 @@ export default function Header({ activeTab, setActiveTab, onOpenFlashcards }) {
         </nav>
 
         {/* Acciones Rápidas */}
-        <div className="hidden md:flex items-center gap-2">
+        <div className="hidden shrink-0 items-center gap-2 md:flex">
           <button
             onClick={onOpenFlashcards}
-            className="liquid-glass-button-gold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5"
+            className="liquid-glass-button-gold whitespace-nowrap px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 !text-slate-950"
             title="Abrir flashcards de preparación"
           >
             <Award className="w-3.5 h-3.5" />
@@ -86,7 +86,7 @@ export default function Header({ activeTab, setActiveTab, onOpenFlashcards }) {
           <a
             href="./suspension_sim.py"
             download="suspension_sim.py"
-            className="liquid-glass-button px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 text-slate-600 hover:text-slate-900"
+            className="liquid-glass-button whitespace-nowrap px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 text-slate-700 hover:text-slate-950"
             title="Descargar script Python"
           >
             <Download className="w-3.5 h-3.5 text-blue-500" />

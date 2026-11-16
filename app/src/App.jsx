@@ -7,16 +7,14 @@ import PresentationDeck from './components/PresentationDeck';
 import FlashcardsModal from './components/FlashcardsModal';
 import Vehicle3DScene from './components/Vehicle3DScene';
 import SuspensionCalculator from './components/SuspensionCalculator';
-import { 
-  DEFAULT_PARAMS, 
-  PRESETS, 
+import {
+  PRESETS,
   calculateOscillatorProperties, 
   calculateEngineeringMetrics, 
   rk4Integrate 
 } from './physics/suspensionPhysics';
-import { 
-  Sliders, Gauge, ShieldCheck, Sparkles, Award, 
-  HelpCircle, ChevronRight, Activity, Car, HeartPulse, Trophy, Calculator, Box 
+import {
+  Sliders, Gauge, ShieldCheck, ChevronRight, Activity, HeartPulse, Trophy, Box
 } from 'lucide-react';
 
 export default function App() {
@@ -32,10 +30,10 @@ export default function App() {
   const v0 = 0.0;
 
   // Estado del vehículo enfocado para el visor 3D ('ambulancia' | 'carreras' | null)
-  const [focusedVehicle, setFocusedVehicle] = useState('ambulancia');
+  const [focusedVehicle, setFocusedVehicle] = useState(null);
 
   // Propiedades analíticas y métricas computadas en vivo
-  const { omega_n, c_cr, zeta, regimen, omega_d } = useMemo(() => {
+  const { omega_n, c_cr, zeta, regimen } = useMemo(() => {
     return calculateOscillatorProperties(m, k, c);
   }, [m, k, c]);
 
@@ -55,12 +53,22 @@ export default function App() {
     } else if (preset.id === 'race') {
       setFocusedVehicle('carreras');
     } else {
-      setFocusedVehicle(null);
+      setFocusedVehicle('ambulancia');
     }
   };
 
+  const focusVehicle = (vehicle) => {
+    if (vehicle && vehicle !== focusedVehicle) {
+      const preset = vehicle === 'ambulancia' ? PRESETS.AMBULANCIA : PRESETS.CARRERAS;
+      setM(preset.m);
+      setK(preset.k);
+      setC(preset.c);
+    }
+    setFocusedVehicle(vehicle);
+  };
+
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-slate-50 text-slate-900 selection:bg-amber-400 selection:text-slate-950">
+    <div className="min-h-screen flex flex-col justify-between bg-[#f1f4f8] text-slate-900 selection:bg-amber-300 selection:text-slate-950">
       {/* Barra de Navegación Superior */}
       <Header
         activeTab={activeTab}
@@ -69,26 +77,67 @@ export default function App() {
       />
 
       {/* Contenedor Principal */}
-      <main className="flex-1 w-full max-w-7xl mx-auto p-3 sm:p-6 space-y-6">
+      <main className="flex-1 w-full max-w-[1480px] mx-auto p-3 sm:p-6 space-y-6">
         
         {/* ========================================================
             VISTA 1: LABORATORIO INTERACTIVO (SIMULADOR 3D + GRÁFICA)
             ======================================================== */}
         {activeTab === 'simulator' && (
           <div className="space-y-6">
-            
-            {/* 1. Banner de Presets Rápidos */}
-            <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-2 text-xs font-semibold text-slate-700">
-                <Sliders className="w-4 h-4 text-amber-500" />
-                <span>Casos de Estudio Oficiales:</span>
+
+            {/* Portada editorial para presentar el objetivo y los resultados clave */}
+            <section className="relative isolate overflow-hidden rounded-[2rem] border border-[#26374d] bg-[#0c1727] px-5 py-6 text-white shadow-[0_22px_55px_-34px_rgba(15,23,42,.7)] sm:px-8 sm:py-8">
+              <div className="pointer-events-none absolute -right-24 -top-36 -z-10 h-96 w-96 rounded-full bg-sky-400/15 blur-3xl" />
+              <div className="pointer-events-none absolute -bottom-44 left-[38%] -z-10 h-80 w-80 rounded-full bg-amber-300/10 blur-3xl" />
+              <div className="grid gap-7 lg:grid-cols-[1fr_auto] lg:items-end">
+                <div className="max-w-3xl">
+                  <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-sky-300/30 bg-sky-200/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[.2em] text-sky-100 sm:text-xs">
+                    <Activity className="h-3.5 w-3.5 text-sky-300" /> Laboratorio de ecuaciones diferenciales
+                  </div>
+                  <h2 className="text-3xl font-black leading-[1.05] tracking-tight sm:text-4xl lg:text-[3.3rem]">
+                    La física del movimiento,
+                    <span className="mt-1 block text-amber-300">a la vista.</span>
+                  </h2>
+                  <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-200 sm:text-base">
+                    Comparamos la suspensión de una ambulancia y un auto deportivo. Ajusta masa, rigidez y amortiguamiento; observa cómo responde la carrocería ante un bache.
+                  </p>
+                </div>
+                <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 lg:w-[520px] lg:grid-cols-2">
+                  <div className="rounded-2xl border border-white/10 bg-white/[.06] p-3.5 backdrop-blur">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-300">Régimen actual</span>
+                    <strong className="mt-1 block text-sm font-extrabold text-white sm:text-base">{regimen}</strong>
+                  </div>
+                  <div className="rounded-2xl border border-white/10 bg-white/[.06] p-3.5 backdrop-blur">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-300">Amortiguamiento</span>
+                    <strong className="mt-1 block font-mono text-sm font-extrabold text-amber-300 sm:text-base">ζ = {zeta.toFixed(2)}</strong>
+                  </div>
+                  <div className="rounded-2xl border border-white/10 bg-white/[.06] p-3.5 backdrop-blur">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-300">Asentamiento</span>
+                    <strong className="mt-1 block font-mono text-sm font-extrabold text-sky-200 sm:text-base">{settlingTime.toFixed(2)} s</strong>
+                  </div>
+                  <div className="rounded-2xl border border-white/10 bg-white/[.06] p-3.5 backdrop-blur">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-300">Frecuencia natural</span>
+                    <strong className="mt-1 block font-mono text-sm font-extrabold text-white sm:text-base">ωₙ = {omega_n.toFixed(2)} rad/s</strong>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* 1. Casos de estudio */}
+            <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-[0_8px_24px_-18px_rgba(15,23,42,.35)] flex flex-col xl:flex-row xl:items-center justify-between gap-3">
+              <div className="flex items-start gap-2.5 text-xs font-semibold text-slate-800 xl:min-w-[205px]">
+                <Sliders className="w-4 h-4 text-amber-600 mt-0.5" />
+                <div>
+                  <span className="block">Prueba un caso</span>
+                  <span className="block mt-0.5 text-[11px] font-medium leading-relaxed text-slate-600">Configuraciones para la exposición</span>
+                </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2 text-xs">
+              <div className="flex flex-wrap items-center gap-2 text-xs xl:justify-end">
                 <button
                   onClick={() => applyPreset(PRESETS.SUBAMORTIGUADO)}
                   className={`px-3 py-1.5 rounded-xl border transition-all cursor-pointer font-medium ${
-                    Math.abs(c - 1800) < 5 && k === 30000 && !focusedVehicle
+                    Math.abs(c - 1800) < 5 && k === 30000 && focusedVehicle === 'ambulancia'
                       ? 'bg-blue-600 text-white border-blue-500 shadow-sm'
                       : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:text-slate-900'
                   }`}
@@ -99,7 +148,7 @@ export default function App() {
                 <button
                   onClick={() => applyPreset(PRESETS.CRITICO)}
                   className={`px-3 py-1.5 rounded-xl border transition-all cursor-pointer font-medium ${
-                    Math.abs(c - 6000) < 5 && k === 30000 && focusedVehicle !== 'ambulancia'
+                    Math.abs(c - 6000) < 5 && k === 30000 && focusedVehicle === 'ambulancia'
                       ? 'bg-amber-500 text-slate-950 font-bold border-amber-400 shadow-sm'
                       : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:text-slate-900'
                   }`}
@@ -110,7 +159,7 @@ export default function App() {
                 <button
                   onClick={() => applyPreset(PRESETS.SOBREAMORTIGUADO)}
                   className={`px-3 py-1.5 rounded-xl border transition-all cursor-pointer font-medium ${
-                    Math.abs(c - 9000) < 5 && k === 30000 && !focusedVehicle
+                    Math.abs(c - 9000) < 5 && k === 30000 && focusedVehicle === 'ambulancia'
                       ? 'bg-purple-600 text-white border-purple-500 shadow-sm'
                       : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:text-slate-900'
                   }`}
@@ -146,181 +195,96 @@ export default function App() {
               </div>
             </div>
 
-            {/* 2. Grid Principal: 3D Vehicle Scene (5 cols) + Gráfica y Sliders (7 cols) */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-              
-              {/* Columna Izquierda (5 cols): 3D Vehicle Scene (Vehicle3DScene) */}
-              <div className="lg:col-span-5 bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[500px]">
-                {/* Selector de Modo de Visualización (3D vs 2D) */}
-                <div className="flex items-center justify-between pb-3 mb-2 border-b border-slate-100">
+            {/* 2. Escenario 3D protagonista y controles de alto contraste */}
+            <div className="grid grid-cols-1 items-stretch gap-5 lg:grid-cols-12">
+              <section className="flex flex-col rounded-[1.8rem] border border-slate-200 bg-white p-3.5 shadow-[0_12px_36px_-24px_rgba(15,23,42,.45)] sm:p-4 lg:col-span-7">
+                <div className="mb-2 flex items-center justify-between gap-2 border-b border-slate-200 px-1 pb-3">
                   <div className="flex items-center gap-2">
-                    <Box className="w-4 h-4 text-blue-600" />
-                    <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-                      Visualización Física
-                    </span>
+                    <Box className="h-4 w-4 text-blue-700" />
+                    <div>
+                      <span className="block text-xs font-extrabold uppercase tracking-wider text-slate-950">Visualización física</span>
+                      <span className="mt-0.5 hidden text-[10px] font-medium text-slate-700 sm:block">La suspensión se mueve con cada impacto</span>
+                    </div>
                   </div>
-
-                  <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded-xl border border-slate-200 text-[11px] font-medium">
-                    <button
-                      onClick={() => setSimViewMode('3d')}
-                      className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
-                        simViewMode === '3d'
-                          ? 'bg-white text-blue-600 font-bold shadow-xs'
-                          : 'text-slate-600 hover:text-slate-900'
-                      }`}
-                    >
-                      3D Vehicular
-                    </button>
-                    <button
-                      onClick={() => setSimViewMode('2d')}
-                      className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
-                        simViewMode === '2d'
-                          ? 'bg-white text-blue-600 font-bold shadow-xs'
-                          : 'text-slate-600 hover:text-slate-900'
-                      }`}
-                    >
-                      Diagrama 2D
-                    </button>
+                  <div className="flex items-center gap-1 rounded-xl border border-slate-200 bg-slate-100 p-0.5 text-[11px] font-semibold">
+                    <button onClick={() => setSimViewMode('3d')} className={`rounded-lg px-2.5 py-1.5 transition ${simViewMode === '3d' ? 'bg-white font-extrabold text-blue-800 shadow-sm ring-1 ring-slate-200' : 'text-slate-700 hover:text-slate-950'}`}>Modelo 3D</button>
+                    <button onClick={() => setSimViewMode('2d')} className={`rounded-lg px-2.5 py-1.5 transition ${simViewMode === '2d' ? 'bg-white font-extrabold text-blue-800 shadow-sm ring-1 ring-slate-200' : 'text-slate-700 hover:text-slate-950'}`}>Diagrama 2D</button>
                   </div>
                 </div>
-
-                {/* Renderizado de 3D Scene o 2D Animation */}
-                <div className="flex-1 flex flex-col justify-center">
+                <div className="flex-1">
                   {simViewMode === '3d' ? (
-                    <Vehicle3DScene
-                      m={m}
-                      c={c}
-                      k={k}
-                      x0={x0}
-                      v0={v0}
-                      regimen={regimen}
-                      settlingTime={settlingTime}
-                      overshootPct={overshootPct}
-                      focusedVehicle={focusedVehicle}
-                      setFocusedVehicle={setFocusedVehicle}
-                    />
+                    <Vehicle3DScene m={m} c={c} k={k} x0={x0} v0={v0} focusedVehicle={focusedVehicle} setFocusedVehicle={focusVehicle} />
                   ) : (
-                    <SuspensionAnimation
-                      m={m}
-                      c={c}
-                      k={k}
-                      x0={x0}
-                      v0={v0}
-                      regimen={regimen}
-                      settlingTime={settlingTime}
-                      overshootPct={overshootPct}
-                    />
+                    <SuspensionAnimation m={m} c={c} k={k} x0={x0} v0={v0} regimen={regimen} settlingTime={settlingTime} overshootPct={overshootPct} />
                   )}
                 </div>
-              </div>
+              </section>
 
-              {/* Columna Derecha (7 cols): SimulationChart + Parameter Sliders Panel */}
-              <div className="lg:col-span-7 flex flex-col gap-5">
-                
-                {/* Gráfica de Superposición */}
-                <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-sm flex-1 min-h-[350px] flex flex-col justify-between">
-                  <SimulationChart m={m} c={c} k={k} x0={x0} v0={v0} />
-                </div>
-
-                {/* Panel de Controles Deslizantes de Precisión */}
-                <div className="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-amber-600 flex items-center gap-1.5">
-                      <Sliders className="w-4 h-4 text-amber-500" />
-                      Controles de Parámetros Físicos
-                    </span>
-                    <span className="text-xs text-slate-500 font-mono font-semibold">
-                      ζ = {zeta.toFixed(2)} ({regimen})
-                    </span>
+              <div className="flex flex-col gap-4 lg:col-span-5">
+                <section className="space-y-4 rounded-[1.6rem] border border-slate-200 bg-white p-4 shadow-[0_12px_32px_-24px_rgba(15,23,42,.45)] sm:p-5">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-100 text-amber-800"><Sliders className="h-4 w-4" /></span>
+                      <span className="text-xs font-extrabold uppercase tracking-wider text-slate-950">Ajusta el modelo</span>
+                    </div>
+                    <span className="rounded-lg bg-slate-100 px-2.5 py-1.5 font-mono text-[11px] font-bold text-slate-800">ζ = {zeta.toFixed(2)} · {regimen}</span>
                   </div>
 
-                  {/* Slider c: Coeficiente de Amortiguamiento */}
                   <div className="space-y-1.5">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-slate-700 font-medium">
-                        Amortiguamiento c:
-                      </span>
-                      <span className="font-mono font-bold text-amber-600 text-sm">
-                        {c.toFixed(0)} N·s/m ({((c / c_cr) * 100).toFixed(0)}% ccr)
-                      </span>
+                    <div className="flex items-center justify-between gap-2 text-xs">
+                      <span className="font-semibold text-slate-800">Amortiguamiento c</span>
+                      <span className="font-mono text-sm font-extrabold text-amber-700">{c.toFixed(0)} N·s/m <span className="text-xs">({((c / c_cr) * 100).toFixed(0)}% ccr)</span></span>
                     </div>
-                    <input
-                      type="range"
-                      min="0"
-                      max="12000"
-                      step="50"
-                      value={c}
-                      onChange={(e) => setC(parseFloat(e.target.value))}
-                      className="w-full accent-amber-500 cursor-pointer h-2 bg-slate-100 rounded-lg"
-                    />
-                    <div className="flex justify-between text-[10px] text-slate-400 font-mono">
-                      <span>0 (Sin fricción)</span>
-                      <span className="text-blue-600 font-semibold">1800 (0.3 ccr)</span>
-                      <span className="text-amber-600 font-bold">6000 (Crítico ccr)</span>
-                      <span className="text-purple-600 font-semibold">9000 (1.5 ccr)</span>
-                      <span>12000 N·s/m</span>
+                    <input type="range" min="0" max="12000" step="50" value={c} onChange={(e) => setC(parseFloat(e.target.value))} aria-label="Coeficiente de amortiguamiento c" className="h-2 w-full cursor-pointer rounded-lg bg-slate-200 accent-amber-500" />
+                    <div className="grid grid-cols-3 gap-x-2 gap-y-1 font-mono text-[10px] font-semibold text-slate-700 sm:flex sm:justify-between">
+                      <span>0 · libre</span><span className="text-blue-700">1800 · 0.3 ccr</span><span className="text-amber-700">6000 · crítico</span><span className="text-purple-700">9000 · 1.5 ccr</span><span>12000 N·s/m</span>
                     </div>
                   </div>
 
-                  {/* Grid de Controles Secundarios: m, k, x0 */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t border-slate-100">
-                    {/* Masa m */}
-                    <div className="space-y-1">
-                      <div className="flex justify-between text-[11px] text-slate-700">
-                        <span>Masa m:</span>
-                        <span className="font-mono font-bold text-blue-600">{m} kg</span>
-                      </div>
-                      <input
-                        type="range"
-                        min="100"
-                        max="800"
-                        step="10"
-                        value={m}
-                        onChange={(e) => setM(parseFloat(e.target.value))}
-                        className="w-full accent-blue-600 cursor-pointer h-1.5 bg-slate-100 rounded"
-                      />
-                    </div>
-
-                    {/* Rigidez k */}
-                    <div className="space-y-1">
-                      <div className="flex justify-between text-[11px] text-slate-700">
-                        <span>Rigidez k:</span>
-                        <span className="font-mono font-bold text-amber-600">{k.toLocaleString()} N/m</span>
-                      </div>
-                      <input
-                        type="range"
-                        min="10000"
-                        max="60000"
-                        step="1000"
-                        value={k}
-                        onChange={(e) => setK(parseFloat(e.target.value))}
-                        className="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-100 rounded"
-                      />
-                    </div>
-
-                    {/* Bache x0 */}
-                    <div className="space-y-1">
-                      <div className="flex justify-between text-[11px] text-slate-700">
-                        <span>Bache x(0):</span>
-                        <span className="font-mono font-bold text-emerald-600">{(x0 * 100).toFixed(0)} cm</span>
-                      </div>
-                      <input
-                        type="range"
-                        min="0.01"
-                        max="0.15"
-                        step="0.01"
-                        value={x0}
-                        onChange={(e) => setX0(parseFloat(e.target.value))}
-                        className="w-full accent-emerald-500 cursor-pointer h-1.5 bg-slate-100 rounded"
-                      />
-                    </div>
+                  <div className="grid grid-cols-1 gap-3 border-t border-slate-200 pt-3 sm:grid-cols-3">
+                    <label className="space-y-1">
+                      <span className="flex justify-between gap-1 text-[11px] font-semibold text-slate-800"><span>Masa m</span><strong className="font-mono text-blue-800">{m} kg</strong></span>
+                      <input type="range" min="100" max="800" step="10" value={m} onChange={(e) => setM(parseFloat(e.target.value))} aria-label="Masa m" className="h-1.5 w-full cursor-pointer rounded bg-slate-200 accent-blue-700" />
+                    </label>
+                    <label className="space-y-1">
+                      <span className="flex justify-between gap-1 text-[11px] font-semibold text-slate-800"><span>Rigidez k</span><strong className="font-mono text-amber-800">{(k / 1000).toFixed(0)} kN/m</strong></span>
+                      <input type="range" min="10000" max="60000" step="1000" value={k} onChange={(e) => setK(parseFloat(e.target.value))} aria-label="Rigidez k" className="h-1.5 w-full cursor-pointer rounded bg-slate-200 accent-amber-600" />
+                    </label>
+                    <label className="space-y-1">
+                      <span className="flex justify-between gap-1 text-[11px] font-semibold text-slate-800"><span>Bache x(0)</span><strong className="font-mono text-emerald-800">{(x0 * 100).toFixed(0)} cm</strong></span>
+                      <input type="range" min="0.01" max="0.15" step="0.01" value={x0} onChange={(e) => setX0(parseFloat(e.target.value))} aria-label="Altura inicial del bache" className="h-1.5 w-full cursor-pointer rounded bg-slate-200 accent-emerald-600" />
+                    </label>
                   </div>
+                  <p className="border-t border-slate-200 pt-3 text-[11px] leading-relaxed text-slate-700">{focusedVehicle === null ? 'Ambos reciben el mismo bache; el Rayo McQueen usa una suspensión más rígida. Los deslizadores ajustan los dos sistemas conservando esa diferencia.' : 'Los cambios se aplican al vehículo seleccionado. El otro conserva su configuración de referencia.'}</p>
+                </section>
 
-                </div>
-
+                <section className="relative isolate overflow-hidden rounded-[1.6rem] bg-[#132235] p-4 text-white shadow-[0_14px_35px_-24px_rgba(15,23,42,.8)] sm:p-5">
+                  <div className="pointer-events-none absolute -right-8 -top-10 -z-10 h-32 w-32 rounded-full bg-sky-400/15 blur-2xl" />
+                  <div className="flex items-center justify-between gap-3">
+                    <div><span className="text-[10px] font-bold uppercase tracking-[.18em] text-sky-200">Lectura rápida</span><h3 className="mt-1 text-base font-extrabold">¿Qué nos dicen los valores?</h3></div>
+                    <Gauge className="h-7 w-7 shrink-0 text-amber-300" />
+                  </div>
+                  <div className="mt-4 grid grid-cols-3 gap-2">
+                    <div className="rounded-xl border border-white/10 bg-white/[.06] p-2.5"><span className="block text-[10px] font-semibold text-slate-200">Masa</span><strong className="mt-1 block text-sm font-extrabold text-white">{m} <small className="text-[10px] text-slate-200">kg</small></strong></div>
+                    <div className="rounded-xl border border-white/10 bg-white/[.06] p-2.5"><span className="block text-[10px] font-semibold text-slate-200">Rigidez</span><strong className="mt-1 block text-sm font-extrabold text-white">{(k / 1000).toFixed(0)} <small className="text-[10px] text-slate-200">kN/m</small></strong></div>
+                    <div className="rounded-xl border border-white/10 bg-white/[.06] p-2.5"><span className="block text-[10px] font-semibold text-slate-200">Sobreimpulso</span><strong className="mt-1 block text-sm font-extrabold text-amber-300">{overshootPct.toFixed(1)}%</strong></div>
+                  </div>
+                  <p className="mt-3 text-xs leading-relaxed text-slate-100">{zeta < 1 ? 'El auto rebota varias veces antes de estabilizarse.' : zeta > 1 ? 'La carrocería vuelve sin oscilar y tarda más en asentarse.' : 'El sistema vuelve al equilibrio con rapidez y sin rebotes.'}</p>
+                </section>
               </div>
-
             </div>
+
+            {/* Verificación numérica a todo el ancho para facilitar su lectura */}
+            <section className="rounded-[1.8rem] border border-slate-200 bg-white p-4 shadow-[0_12px_36px_-24px_rgba(15,23,42,.45)] sm:p-6">
+              <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <div className="inline-flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[.18em] text-blue-800"><Activity className="h-3.5 w-3.5" /> Respuesta dinámica</div>
+                  <h3 className="mt-1 text-lg font-extrabold tracking-tight text-slate-950 sm:text-xl">Solución exacta y simulación RK4</h3>
+                </div>
+                <p className="max-w-xl text-xs leading-relaxed text-slate-700">Compara el movimiento calculado con el modelo analítico y el método numérico de cuarto orden.</p>
+              </div>
+              <div className="min-h-[450px]"><SimulationChart m={m} c={c} k={k} x0={x0} v0={v0} /></div>
+            </section>
 
             {/* 3. Banner Informativo de Conclusión de Ingeniería */}
             <div className="bg-gradient-to-r from-amber-50/90 to-orange-50/80 p-5 rounded-2xl border border-amber-200/90 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
