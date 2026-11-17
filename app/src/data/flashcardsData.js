@@ -424,7 +424,7 @@ export const SLIDES_PRESENTATION = [
     time: '1:45 - 3:30',
     category: 'Formulación',
     badge: 'EDO 2° Orden',
-    summary: 'Deducción de la EDO lineal homogénea de segundo orden con coeficientes constantes y cálculo de omega_n y c_cr.',
+    summary: 'Deducción de la EDO lineal homogénea de segundo orden con coeficientes constantes y cálculo de ωₙ y c_cr.',
     mainFormula: 'm\\,x\'\'(t) + c\\,x\'(t) + k\\,x(t) = 0 \\iff x\'\'(t) + \\frac{c}{300}x\'(t) + 100\\,x(t) = 0',
     formulaCards: [
       {
@@ -445,14 +445,14 @@ export const SLIDES_PRESENTATION = [
       {
         label: 'Ecuación Característica Auxiliar',
         latex: 'r^2 + \\frac{c}{300}r + 100 = 0',
-        desc: 'Ecuación algebraica cuadrática resultante de proponer x(t) = e^{rt}'
+        desc: 'Ecuación algebraica cuadrática resultante de proponer x(t) = eʳᵗ'
       }
     ],
     keyPoints: [
       'EDO Canónica: x\'\' + (c/300) x\' + 100 x = 0.',
-      'Frecuencia natural del chasis: omega_n = 10 rad/s (1.59 Hz).',
+      'Frecuencia natural del chasis: ωₙ = 10 rad/s (1.59 Hz).',
       'Amortiguamiento crítico de diseño: c_cr = 6000 N·s/m.',
-      'Régimen físico determinado por zeta = c / c_cr.'
+      'Régimen físico determinado por ζ = c / c_cr.'
     ]
   },
   {
