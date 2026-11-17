@@ -316,7 +316,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* Verificación numérica a todo el ancho para facilitar su lectura */}
+            {/* Verificación numérica a todo el ancho para facilitar su lectura 
             <section className="rounded-[1.8rem] border border-slate-200 bg-white p-4 shadow-[0_12px_36px_-24px_rgba(15,23,42,.45)] sm:p-6">
               <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
                 <div>
@@ -326,9 +326,9 @@ export default function App() {
                 <p className="max-w-xl text-xs leading-relaxed text-slate-700">Compara el movimiento calculado con el modelo analítico y el método numérico de cuarto orden.</p>
               </div>
               <div className="min-h-[450px]"><SimulationChart m={m} c={c} k={k} x0={x0} v0={v0} /></div>
-            </section>
+            </section>*/}
 
-            {/* 3. Banner Informativo de Conclusión de Ingeniería */}
+            {/* 3. Banner Informativo de Conclusión de Ingeniería 
             <div className="bg-gradient-to-r from-amber-50/90 to-orange-50/80 p-5 rounded-2xl border border-amber-200/90 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="flex items-start gap-3">
                 <div className="p-2.5 rounded-xl bg-amber-100 text-amber-700 border border-amber-200 mt-0.5">
@@ -352,7 +352,7 @@ export default function App() {
                 <span>Ver Exposición 15 Min</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
-            </div>
+            </div>*/}
 
           </div>
         )}

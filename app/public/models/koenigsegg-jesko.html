@@ -220,6 +220,7 @@
       // 1. CONFIGURACIÓN Y ESTADO
       // =========================================================================
       const PAINTS = [
+        { name: 'Crystal Red', hex: '#f80000', metalness: 0.62, roughness: 0.13, clearcoat: 1.0 },
         { name: 'Pearl White', hex: '#eceef2', metalness: 0.30, roughness: 0.13, clearcoat: 1.0 },
         { name: 'Exposed Carbon', hex: '#1c1f26', metalness: 0.28, roughness: 0.20, clearcoat: 0.96, carbonTint: true },
         { name: 'Tang Orange', hex: '#e85814', metalness: 0.56, roughness: 0.14, clearcoat: 1.0 },
@@ -839,9 +840,9 @@
           }
           gridL.push(rL); gridR.push(rR); gridGlass.push(rG);
         }
-        roofGroup.add(buildGridMesh(gridL, paintMat));
-        roofGroup.add(buildGridMesh(gridR, paintMat));
-        roofGroup.add(buildGridMesh(gridGlass, glassMat, false));
+        roofGroup.add(buildGridMesh(gridL, glassMat, false));
+        roofGroup.add(buildGridMesh(gridR, glassMat, false));
+        roofGroup.add(buildGridMesh(gridGlass, paintMat));
       })();
 
       // Contrafuertes traseros (z: -0.36 a -1.72) + Cristal del motor V8
@@ -908,7 +909,7 @@
             [topPt[0] - px, topPt[1] - py, topPt[2] - pz]
           ]);
         }
-        pivot.add(buildGridMesh(winGrid, glassMat, false));
+        pivot.add(buildGridMesh(winGrid, paintMat, false));
 
         // Brazo aerodinámico curvo del espejo + carcasa lágrima
         const armCurve = new THREE.CatmullRomCurve3([
@@ -1263,14 +1264,15 @@
         cornerGroup.add(spinGroup);
         wheelSpinGroups.push(spinGroup);
 
+        const sc = rimRadius / 0.267;
         const halfW = width * 0.5;
         const tirePts = [
           new THREE.Vector2(rimRadius, -halfW * 0.88),
           new THREE.Vector2(rimRadius + (outerRadius - rimRadius) * 0.45, -halfW),
-          new THREE.Vector2(outerRadius - 0.012, -halfW * 0.94),
+          new THREE.Vector2(outerRadius - 0.012 * sc, -halfW * 0.94),
           new THREE.Vector2(outerRadius, -halfW * 0.72),
           new THREE.Vector2(outerRadius,  halfW * 0.72),
-          new THREE.Vector2(outerRadius - 0.012, halfW * 0.94),
+          new THREE.Vector2(outerRadius - 0.012 * sc, halfW * 0.94),
           new THREE.Vector2(rimRadius + (outerRadius - rimRadius) * 0.45, halfW),
           new THREE.Vector2(rimRadius, halfW * 0.88)
         ];
@@ -1281,76 +1283,76 @@
         spinGroup.add(tire);
 
         const barrelPts = [
-          new THREE.Vector2(rimRadius - 0.015, -halfW * 0.86),
+          new THREE.Vector2(rimRadius - 0.015 * sc, -halfW * 0.86),
           new THREE.Vector2(rimRadius, -halfW * 0.86),
           new THREE.Vector2(rimRadius,  halfW * 0.86),
-          new THREE.Vector2(rimRadius - 0.015, halfW * 0.86)
+          new THREE.Vector2(rimRadius - 0.015 * sc, halfW * 0.86)
         ];
         const barrelGeo = new THREE.LatheGeometry(barrelPts, 40);
         barrelGeo.rotateZ(Math.PI / 2);
         spinGroup.add(new THREE.Mesh(barrelGeo, carbonMat));
 
         const spokeShape = new THREE.Shape();
-        spokeShape.moveTo(-0.018, 0.05);
-        spokeShape.lineTo(-0.012, rimRadius * 0.52);
-        spokeShape.lineTo(-0.055, rimRadius * 0.94);
-        spokeShape.lineTo(-0.032, rimRadius * 0.95);
+        spokeShape.moveTo(-0.018 * sc, 0.05 * sc);
+        spokeShape.lineTo(-0.012 * sc, rimRadius * 0.52);
+        spokeShape.lineTo(-0.055 * sc, rimRadius * 0.94);
+        spokeShape.lineTo(-0.032 * sc, rimRadius * 0.95);
         spokeShape.lineTo(0.0, rimRadius * 0.58);
-        spokeShape.lineTo(0.032, rimRadius * 0.95);
-        spokeShape.lineTo(0.055, rimRadius * 0.94);
-        spokeShape.lineTo(0.012, rimRadius * 0.52);
-        spokeShape.lineTo(0.018, 0.05);
+        spokeShape.lineTo(0.032 * sc, rimRadius * 0.95);
+        spokeShape.lineTo(0.055 * sc, rimRadius * 0.94);
+        spokeShape.lineTo(0.012 * sc, rimRadius * 0.52);
+        spokeShape.lineTo(0.018 * sc, 0.05 * sc);
         spokeShape.closePath();
 
         const spokeGeo = new THREE.ExtrudeGeometry(spokeShape, {
-          depth: 0.022, bevelEnabled: true, bevelSegments: 1, bevelSize: 0.003, bevelThickness: 0.003
+          depth: 0.022 * sc, bevelEnabled: true, bevelSegments: 1, bevelSize: 0.003 * sc, bevelThickness: 0.003 * sc
         });
         spokeGeo.rotateY(Math.PI / 2);
 
         for (let i = 0; i < 5; i++) {
           const spoke = new THREE.Mesh(spokeGeo, carbonMat);
-          spoke.position.x = side * (halfW * 0.84) - 0.011;
+          spoke.position.x = side * (halfW * 0.84 - 0.011 * sc);
           spoke.rotation.x = (i / 5) * Math.PI * 2;
           spinGroup.add(spoke);
         }
 
-        const centerLock = new THREE.Mesh(new THREE.CylinderGeometry(0.044, 0.052, 0.045, 6), accentMat);
+        const centerLock = new THREE.Mesh(new THREE.CylinderGeometry(0.044 * sc, 0.052 * sc, 0.045 * sc, 6), accentMat);
         centerLock.rotation.z = Math.PI / 2;
         centerLock.position.x = side * (halfW * 0.92);
         spinGroup.add(centerLock);
 
         const wheelBadge = new THREE.Mesh(
-          new THREE.PlaneGeometry(0.042, 0.048),
+          new THREE.PlaneGeometry(0.042 * sc, 0.048 * sc),
           new THREE.MeshBasicMaterial({ map: badgeTex, transparent: true })
         );
         wheelBadge.rotation.y = side > 0 ? Math.PI / 2 : -Math.PI / 2;
-        wheelBadge.position.x = side * (halfW * 0.92 + 0.024);
+        wheelBadge.position.x = side * (halfW * 0.92 + 0.024 * sc);
         spinGroup.add(wheelBadge);
 
-        const discRadius = isFront ? 0.205 : 0.1975;
+        const discRadius = isFront ? 0.188 : 0.1975;
         const discMat = new THREE.MeshStandardMaterial({ map: brakeDiscTex, metalness: 0.55, roughness: 0.42 });
-        const disc = new THREE.Mesh(new THREE.CylinderGeometry(discRadius, discRadius, 0.028, 36), discMat);
+        const disc = new THREE.Mesh(new THREE.CylinderGeometry(discRadius, discRadius, 0.028 * sc, 36), discMat);
         disc.rotation.z = Math.PI / 2;
         disc.position.x = side * (halfW * 0.36);
         spinGroup.add(disc);
 
         const calShape = new THREE.Shape();
-        const rIn = discRadius * 0.68, rOut = discRadius + 0.018;
+        const rIn = discRadius * 0.68, rOut = discRadius + 0.018 * sc;
         calShape.absarc(0, 0, rOut, -0.45, 0.45, false);
         calShape.absarc(0, 0, rIn, 0.45, -0.45, true);
         calShape.closePath();
         const calGeo = new THREE.ExtrudeGeometry(calShape, {
-          depth: 0.072, bevelEnabled: true, bevelSegments: 2, bevelSize: 0.005, bevelThickness: 0.005
+          depth: 0.072 * sc, bevelEnabled: true, bevelSegments: 2, bevelSize: 0.005 * sc, bevelThickness: 0.005 * sc
         });
         calGeo.rotateY(Math.PI / 2);
         const caliper = new THREE.Mesh(calGeo, accentMat);
-        caliper.position.x = side * (halfW * 0.36) - 0.036;
+        caliper.position.x = side * (halfW * 0.36) - 0.036 * sc;
         caliper.rotation.x = isFront ? -0.35 : Math.PI + 0.35;
         cornerGroup.add(caliper);
       }
 
-      buildWheelCorner( 0.85,  1.35, 0.346, 0.254, 0.265, true);
-      buildWheelCorner(-0.85,  1.35, 0.346, 0.254, 0.265, true);
+      buildWheelCorner( 0.85,  1.35, 0.328, 0.238, 0.255, true);
+      buildWheelCorner(-0.85,  1.35, 0.328, 0.238, 0.255, true);
       buildWheelCorner( 0.83, -1.35, 0.370, 0.267, 0.345, false);
       buildWheelCorner(-0.83, -1.35, 0.370, 0.267, 0.345, false);
 
@@ -1558,13 +1560,11 @@
         const targetDoor = state.doorsOpen ? 1 : 0;
         state.doorAnim += (targetDoor - state.doorAnim) * Math.min(1, dt * 5.5);
         const d = state.doorAnim;
-        doorLeft.rotation.y = d * 0.42;
-        doorLeft.rotation.x = d * 1.18;
-        doorLeft.rotation.z = -d * 0.36;
+        doorLeft.rotation.set(d * 0.08, d * 0.611, -d * 0.22);
+        doorLeft.position.x = 0.78 + d * 0.07;
 
-        doorRight.rotation.y = -d * 0.42;
-        doorRight.rotation.x = d * 1.18;
-        doorRight.rotation.z = d * 0.36;
+        doorRight.rotation.set(d * 0.08, -d * 0.611, d * 0.22);
+        doorRight.position.x = -0.78 - d * 0.07;
 
         const targetRoof = state.roofRemoved ? 1 : 0;
         state.roofAnim += (targetRoof - state.roofAnim) * Math.min(1, dt * 5.0);

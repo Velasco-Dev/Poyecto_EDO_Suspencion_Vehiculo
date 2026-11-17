@@ -285,6 +285,94 @@ export const TEAM_MEMBERS_FLASHCARDS = [
         answer: 'El vehículo rebotaría durante más de 3 segundos, con un sobreimpulso superior al 70%, induciendo aceleraciones verticales oscilatorias que provocarían cinetosis (mareo severo) y riesgo letal de desestabilización en procedimientos médicos dentro del vehículo.'
       }
     ]
+  },
+  {
+    id: 'modelado-3d',
+    name: 'ARQUITECTURA Y MODELADO 3D (THREE.JS / WEBGL)',
+    shortName: 'Modelado 3D & PBR',
+    role: 'Especialidad Técnica: Generación Paramétrica Procedural, Shaders y Render PBR',
+    timeSlot: 'Arquitectura Gráfica 3D',
+    color: '#059669',
+    topics: [
+      'Arquitectura 100% matemática y procedural en Three.js (WebGL 2.0): cero modelos externos (.obj o .gltf) y peso inferior a 80 KB.',
+      'Modelado de carrocerías complejas: interpolación spline de Catmull-Rom para el Koenigsegg Jesko y box-lofting paramétrico para la ambulancia.',
+      'Geometría analítica de rodadura: LatheGeometry (revolución de perfiles 2D para rines y neumáticos) y ExtrudeGeometry para radios en Y.',
+      'Cinemática de suspensión mecánica real: Coilovers concéntricos telescópicos Öhlins, brazos A en horquilla abierta y ballestas multilámina.',
+      'Pipeline de renderizado fotorrealista PBR: Cook-Torrance BRDF con MeshPhysicalMaterial (clearcoat bicapa, transmisión vítrea y rugosidad física).',
+      'Iluminación de estudio por canvas HDRI equirrectangular, Tone Mapping cinematográfico ACES Filmic y sombras suaves PCF Soft Shadow Map.',
+      'Entorno de carretera infinita con recirculación continua de memoria (Object Pooling) y traslación periódica de coordenadas UV.'
+    ],
+    script: [
+      '“A nivel de ingeniería de software e infografía computacional, el mayor reto del proyecto fue evitar el uso de modelos 3D prediseñados o archivos pesados .GLB o .OBJ de 50 o 100 Megabytes, que colapsan los tiempos de carga web y tienen mallas rígidas que impiden animar la física real.”',
+      '“En su lugar, desarrollamos una arquitectura 100% procedural en código matemático nativo sobre Three.js y WebGL 2.0. Cada curva, panel, rin y componente de suspensión está generado en tiempo de ejecución a partir de primitivas y ecuaciones paramétricas.”',
+      '“Para la carrocería aerodinámica del Koenigsegg Jesko, utilizamos curvas splines de Catmull-Rom en 3D combinadas con nuestra función personalizada buildGridMesh, que genera una cuadrícula paramétrica de vértices interconectados en tiras de triángulos (triangle strips) con cálculo analítico de vectores normales para reflejar la luz con curvatura continua (G2 continuity).”',
+      '“Las ruedas y neumáticos se construyeron con Three.LatheGeometry, aplicando revolución en torno al eje axial de un contorno de sección transversal definido por curvas de Bézier, mientras que los rines de fibra de carbono usan Three.ExtrudeGeometry con 5 radios dobles en estrella y discos de freno perforados generados proceduralmente con un canvas dinámico.”',
+      '“La suspensión no es un simple adorno: es un ensamble mecánico concéntrico tipo Öhlins Racing con un amortiguador cilíndrico de base, un vástago cromado telescópico que entra y sale milimétricamente, y un resorte helicoidal paramétrico (createCoilSpringGeo) que se comprime y expande en tiempo real en perfecta sincronía con la posición $x(t)$ calculada por la EDO a 60 cuadros por segundo.”',
+      '“Para que los vehículos luzcan con acabado de estudio automotriz profesional, implementamos un pipeline Physically Based Rendering (PBR) basado en el modelo de microfacetas de Cook-Torrance con Three.MeshPhysicalMaterial. Añadimos una capa de laca transparente exterior con clearcoat: 1.0 y rugosidad de 0.12, un mapa de entorno HDRI de 360 grados generado dinámicamente en canvas con softboxes de estudio, mapeo tonal cinematográfico ACES Filmic y sombras suaves de alta resolución PCFSoftShadowMap a 2048x2048 píxeles.”',
+      '“Por último, la carretera infinita no requiere un mundo infinito en memoria: el asfalto permanece estático y se desplaza mediante el desfase continuo de sus coordenadas de textura UV (offset.y -= dz * factor), mientras que los postes de luz y árboles se reciclan mediante un patrón de Object Pooling cuando salen del campo de visión ($z < -100\\text{ m}$), garantizando 60 cuadros por segundo constantes sin fugas de memoria.”'
+    ],
+    formulas: [
+      {
+        label: 'Superficie Paramétrica de Revolución (LatheGeometry)',
+        latex: 'S(u, v) = \\begin{pmatrix} r(v)\\cos(u) \\\\ y(v) \\\\ r(v)\\sin(u) \\end{pmatrix},\\quad u \\in [0, 2\\pi],\\; v \\in [0, 1]',
+        whiteboardGuide: 'Escribe el vector paramétrico S(u,v) con componentes r(v)·cos(u), y(v), y r(v)·sin(u). Explica que gira un perfil 2D en torno al eje para crear rines y neumáticos perfectos.',
+        pronunciation: '“Vector de superficie S de u coma v igual a r de v por coseno de u en x, y de v en y, y r de v por seno de u en z”'
+      },
+      {
+        label: 'Interpolación de Splines Cúbicos (Catmull-Rom)',
+        latex: '\\mathbf{P}(t) = \\frac{1}{2} \\begin{bmatrix} 1 & t & t^2 & t^3 \\end{bmatrix} \\begin{bmatrix} 0 & 2 & 0 & 0 \\\\ -1 & 0 & 1 & 0 \\\\ 2 & -5 & 4 & -1 \\\\ -1 & 3 & -3 & 1 \\end{bmatrix} \\begin{bmatrix} \\mathbf{P}_{i-1} \\\\ \\mathbf{P}_i \\\\ \\mathbf{P}_{i+1} \\\\ \\mathbf{P}_{i+2} \\end{bmatrix}',
+        whiteboardGuide: 'Escribe la matriz clásica de Catmull-Rom dividida por 2 multiplicada por los 4 puntos de control Pi-1 a Pi+2. Explica que garantiza continuidad de curvatura en los paneles del carro.',
+        pronunciation: '“P de t igual a un medio del vector de potencias de t por la matriz de coeficientes de Catmull-Rom por los cuatro puntos de control vectoriales”'
+      },
+      {
+        label: 'Ecuación Helicoidal del Resorte de Suspensión',
+        latex: '\\mathbf{r}(s) = \\begin{pmatrix} R\\cos(2\\pi N s) \\\\ L(t)\\cdot s \\\\ R\\sin(2\\pi N s) \\end{pmatrix},\\quad L(t) = L_0 - x(t)',
+        whiteboardGuide: 'Escribe r(s) con R·cos(2π N s), L(t)·s y R·sin(2π N s), donde L(t) = L0 - x(t). Explica que la longitud del resorte varía directamente con el desplazamiento del chasis.',
+        pronunciation: '“Curva espacial r de s igual a radio por coseno de 2 pi N s, altura L de t por s, y radio por seno de 2 pi N s, con L de t igual a longitud inicial menos x de t”'
+      },
+      {
+        label: 'Mapeo Tonal Cinematográfico (ACES Filmic Tone Mapping)',
+        latex: 'f(x) = \\frac{x(2.51x + 0.03)}{x(2.41x + 0.59) + 0.14}',
+        whiteboardGuide: 'Escribe la función racional f(x) de ACES Filmic. Explica que comprime el rango dinámico de altas luces en el metal y la laca sin quemar los blancos ni empastar las sombras.',
+        pronunciation: '“f de x igual a x factor de 2.51 x más 0.03 sobre x factor de 2.41 x más 0.59 más 0.14”'
+      }
+    ],
+    codeReferences: [
+      {
+        file: 'app/public/models/Animacion_Carretera.html',
+        lines: 'Líneas 660 - 675 (Pipeline de Iluminación y Shaders)',
+        explanation: 'Configura renderer.toneMapping = THREE.ACESFilmicToneMapping, shadowMap.type = THREE.PCFSoftShadowMap y genera el canvas equirrectangular de iluminación de estudio HDR.'
+      },
+      {
+        file: 'app/public/models/Animacion_Carretera.html',
+        lines: 'Líneas 958 - 1140 (Generadores de Texturas Procedurales)',
+        explanation: 'Funciones createCarbonMaps(), createBrakeDiscTexture(), createHoneycombTexture() y createAsphaltTexture() que sintetizan mapas de normales y rugosidad en memoria RAM.'
+      },
+      {
+        file: 'app/public/models/Animacion_Carretera.html',
+        lines: 'Líneas 1218 - 1390 (Lofting de Carrocería y Cinemática de Coilovers)',
+        explanation: 'buildGridMesh() genera las superficies bicúbicas de la carrocería y createCoilSpringGeo() construye la hélice telescópica animada en tiempo real por la EDO.'
+      },
+      {
+        file: 'app/src/components/Vehicle3DScene.jsx',
+        lines: 'Líneas 15 - 85 (Montaje React y Render Loop a 60 FPS)',
+        explanation: 'Componente contenedor React que inicializa el lienzo Three.js, maneja el ciclo de vida del contexto WebGL y vincula la animación con el motor de RK4.'
+      }
+    ],
+    trapQuestions: [
+      {
+        question: '¿Por qué no descargaron un modelo 3D ya terminado de internet en formato .GLB o .OBJ?',
+        answer: 'Porque un modelo descargado estándar pesa entre 30 MB y 80 MB, ralentiza la carga web, y sus mallas poligonales vienen fusionadas en un solo bloque estático. Al modelarlo 100% procedural en Three.js con matemáticas puras, el peso total del código es menor a 80 KB, la carga es instantánea y tenemos control paramétrico total para comprimir resortes, deslizar vástagos cromados, rotar rines y articular puertas a 35° en tiempo real con la EDO.'
+      },
+      {
+        question: '¿Qué metodologías y librerías hacen que el render se vea con calidad fotorrealista y no como un gráfico plano?',
+        answer: 'Usamos la librería Three.js sobre WebGL con tres pilares de infografía profesional: 1) Shaders PBR (MeshPhysicalMaterial) con clearcoat 1.0 (bicapa de laca automotriz) y rugosidad microfacetada Cook-Torrance. 2) Iluminación de estudio equirrectangular que aporta reflejos curvos de alta fidelidad. 3) Tone mapping ACES Filmic con sombras suaves PCF Soft Shadow Map a 2048x2048 píxeles.'
+      },
+      {
+        question: '¿Cómo funciona la carretera infinita sin saturar la tarjeta gráfica ni la memoria RAM?',
+        answer: 'La carretera no es una malla infinita; es una geometría finita local donde las coordenadas de textura UV se desplazan continuamente (offset.y -= dz * factor). Además, los objetos circundantes (árboles, postes) implementan un algoritmo de Object Pooling: cuando rebasan z < -100 m, se teletransportan al frente a z = +120 m sin destruir ni reasignar memoria en la GPU.'
+      }
+    ]
   }
 ];
 
@@ -599,6 +687,45 @@ export const SLIDES_PRESENTATION = [
       'Carro de carreras -> Suspensión Rígida: maximiza tracción de neumáticos y carga aerodinámica.',
       'Justificación con datos cuantitativos medidos, eliminando apreciaciones subjetivas.',
       'Cierre formal de la defensa oral y apertura al diálogo con la docente.'
+    ]
+  },
+  {
+    id: 9,
+    title: 'Arquitectura Gráfica: Modelado 3D Procedural y Renderizado PBR',
+    subtitle: 'Simulación Interactiva en Three.js / WebGL sin Dependencias Externas',
+    speaker: 'EQUIPO GRUPO 5 - INGENIERÍA GRÁFICA',
+    time: 'Demostración Técnica',
+    category: 'Computación Gráfica',
+    badge: 'Three.js & PBR',
+    summary: 'Generación matemática procedural del Koenigsegg Jesko, la ambulancia y la pista infinita: splines, geometría de revolución y shaders físicos (PBR).',
+    mainFormula: 'f_r(\\mathbf{\\omega}_i, \\mathbf{\\omega}_o) = \\frac{D\\,F\\,G}{4(\\mathbf{n}\\cdot\\mathbf{\\omega}_i)(\\mathbf{n}\\cdot\\mathbf{\\omega}_o)} \\quad + \\quad \\mathbf{r}(s) = \\begin{pmatrix} R\\cos(2\\pi N s) \\\\ [L_0 - x(t)] s \\\\ R\\sin(2\\pi N s) \\end{pmatrix}',
+    formulaCards: [
+      {
+        label: 'Shaders PBR: BRDF de Cook-Torrance',
+        latex: 'f_r(\\mathbf{\\omega}_i, \\mathbf{\\omega}_o) = k_d \\frac{f_{\\text{lambert}}}{\\pi} + k_s \\frac{D(\\mathbf{h}) F(\\mathbf{v},\\mathbf{h}) G(\\mathbf{l},\\mathbf{v},\\mathbf{h})}{4(\\mathbf{n}\\cdot\\mathbf{\\omega}_i)(\\mathbf{n}\\cdot\\mathbf{\\omega}_o)}',
+        desc: 'Modelo de microfacetas físicas: laca automotriz (clearcoat: 1.0) y metalicidad'
+      },
+      {
+        label: 'Superficie de Revolución (LatheGeometry)',
+        latex: 'S(u, v) = \\big(r(v)\\cos(u), y(v), r(v)\\sin(u)\\big)',
+        desc: 'Generación analítica exacta de neumáticos, rines y discos de freno perforados'
+      },
+      {
+        label: 'Coilover Concéntrico Telescópico',
+        latex: 'L_{\\text{resorte}}(t) = L_0 - x(t)',
+        desc: 'El resorte helicoidal y el vástago cromado se comprimen con la posición exacta de la EDO'
+      },
+      {
+        label: 'Compresión Tonal ACES Filmic',
+        latex: 'f(x) = \\frac{x(2.51x + 0.03)}{x(2.41x + 0.59) + 0.14}',
+        desc: 'Curva de respuesta en S que preserva detalles en altas luces metálicas y sombras'
+      }
+    ],
+    keyPoints: [
+      'Modelado 100% procedural en Three.js / WebGL: cero archivos externos pesados (< 80 KB total).',
+      'Carrocerías con splines de Catmull-Rom, lofting de cuadrícula paramétrica y cinemática dihedral.',
+      'Suspensión Öhlins activa: coilovers concéntricos telescópicos vinculados a x(t) de RK4 a 60 FPS.',
+      'Pipeline de renderizado fotorrealista: ACES Filmic, sombras PCF Soft y mapas HDRI dinámicos.'
     ]
   }
 ];
