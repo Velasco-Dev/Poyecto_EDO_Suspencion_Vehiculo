@@ -72,14 +72,16 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col justify-between bg-[#f1f4f8] text-slate-900 selection:bg-amber-300 selection:text-slate-950">
       {/* Barra de Navegación Superior */}
-      <Header
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        onOpenFlashcards={() => setIsFlashcardsOpen(true)}
-      />
+      <div className="no-print">
+        <Header
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          onOpenFlashcards={() => setIsFlashcardsOpen(true)}
+        />
+      </div>
 
       {/* Contenedor Principal */}
-      <main className="flex-1 w-full max-w-[1480px] mx-auto p-3 sm:p-6 space-y-6">
+      <main className="flex-1 w-full max-w-[1480px] mx-auto p-3 sm:p-6 space-y-6 no-print">
         
         {/* ========================================================
             VISTA 1: LABORATORIO INTERACTIVO (SIMULADOR 3D + GRÁFICA)
@@ -433,7 +435,7 @@ export default function App() {
       />
 
       {/* Pie de Página Formal Unimayor */}
-      <footer className="w-full border-t border-slate-200 bg-white/90 backdrop-blur-md py-4 px-4 sm:px-6 text-xs text-slate-600 mt-8">
+      <footer className="w-full border-t border-slate-200 bg-white/90 backdrop-blur-md py-4 px-4 sm:px-6 text-xs text-slate-600 mt-8 no-print">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
           <div className="flex items-center gap-2">
             <span className="font-bold text-[#0f172a]">Institución Universitaria Colegio Mayor del Cauca</span>

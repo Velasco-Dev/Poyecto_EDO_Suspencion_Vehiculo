@@ -266,26 +266,89 @@ input[type="range"]::-webkit-slider-thumb {
   cursor: pointer;
 }
 
-/* Print Styles */
+/* ==========================================================================
+   ESTILOS DE IMPRESIÓN Y EXPORTACIÓN A PDF (FLASHCARDS SIN CORTES)
+   ========================================================================== */
+.print-only {
+  display: none !important;
+}
+
+@page {
+  size: letter portrait;
+  margin: 10mm 12mm 12mm 12mm;
+}
+
 @media print {
-  body {
-    background: white !important;
-    color: black !important;
+  *, *::before, *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
   }
+
+  html, body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    font-size: 10.5pt !important;
+    line-height: 1.45 !important;
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
   body::before, body::after {
     display: none !important;
   }
+
+  /* Ocultar interfaz web interactiva durante la impresión */
+  header,
+  main,
+  footer,
   .no-print {
     display: none !important;
   }
+
+  /* Mostrar únicamente el contenedor de flashcards estructurado */
   .print-only {
     display: block !important;
+    position: static !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
   }
-  .flashcard-page {
-    page-break-after: always;
-    border: 1px solid #ccc !important;
-    color: #111 !important;
-    background: #fff !important;
-    box-shadow: none !important;
+
+  .print-flashcard-sheet {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    page-break-inside: auto !important;
+    break-inside: auto !important;
+  }
+
+  /* Evitar saltos de página dentro de tarjetas críticas */
+  .print-avoid-break {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Salto de página forzado entre fichas */
+  .print-page-break {
+    break-after: page !important;
+    page-break-after: always !important;
+  }
+
+  .katex-math-render {
+    overflow: visible !important;
+  }
+
+  .katex-math-render .katex {
+    color: #000000 !important;
   }
 }
