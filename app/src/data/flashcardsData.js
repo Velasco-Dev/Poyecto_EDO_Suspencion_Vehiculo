@@ -410,10 +410,10 @@ export const SLIDES_PRESENTATION = [
       }
     ],
     keyPoints: [
-      'Masa suspendida: m = 300 kg (un cuarto de chasis de 1200 kg).',
-      'Rigidez de resorte: k = 30 000 N/m.',
-      'Desplazamiento inicial por bache: x(0) = 0.05 m (5 cm).',
-      'Velocidad inicial en reposo instantáneo: x\'(0) = 0 m/s.'
+      'Masa suspendida: m = 300 kg (un cuarto del chasis de 1 200 kg).',
+      'Rigidez del resorte: k = 30 000 N/m.',
+      'Desplazamiento inicial por el bache: x(0) = 0.05 m (5 cm).',
+      'Velocidad inicial nula (reposo instantáneo en el ápice del bache): x′(0) = 0 m/s.'
     ]
   },
   {
@@ -424,7 +424,7 @@ export const SLIDES_PRESENTATION = [
     time: '1:45 - 3:30',
     category: 'Formulación',
     badge: 'EDO 2° Orden',
-    summary: 'Deducción de la EDO lineal homogénea de segundo orden con coeficientes constantes y cálculo de omega_n y c_cr.',
+    summary: 'Deducción de la EDO lineal homogénea de segundo orden con coeficientes constantes y cálculo de ωₙ y c_cr.',
     mainFormula: 'm\\,x\'\'(t) + c\\,x\'(t) + k\\,x(t) = 0 \\iff x\'\'(t) + \\frac{c}{300}x\'(t) + 100\\,x(t) = 0',
     formulaCards: [
       {
@@ -449,10 +449,10 @@ export const SLIDES_PRESENTATION = [
       }
     ],
     keyPoints: [
-      'EDO Canónica: x\'\' + (c/300) x\' + 100 x = 0.',
-      'Frecuencia natural del chasis: omega_n = 10 rad/s (1.59 Hz).',
-      'Amortiguamiento crítico de diseño: c_cr = 6000 N·s/m.',
-      'Régimen físico determinado por zeta = c / c_cr.'
+      'La ecuación del movimiento queda: x″ + (c/300)x′ + 100x = 0 (dividida entre la masa m = 300 kg).',
+      'Frecuencia natural del chasis: ωₙ = 10 rad/s (equivalente a ~1.59 vueltas por segundo).',
+      'Amortiguamiento crítico de diseño: c_cr = 6 000 N·s/m (el valor límite entre oscilar y no oscilar).',
+      'El tipo de comportamiento lo decide la razón ζ = c / 6 000: si ζ < 1 rebota, si ζ = 1 es perfecto, si ζ > 1 regresa lento.'
     ]
   },
   {
@@ -463,13 +463,13 @@ export const SLIDES_PRESENTATION = [
     time: '3:30 - 5:30',
     category: 'Deducción Exacta',
     badge: 'Matemática Pura',
-    summary: 'Resolución analítica paso a paso: discriminante de la ecuación auxiliar y aplicación de condiciones iniciales.',
+    summary: 'Resolución analítica paso a paso: miramos el discriminante de la ecuación auxiliar y usamos las condiciones iniciales para encontrar la solución exacta en los dos primeros casos.',
     mainFormula: 'x_{\\text{sub}}(t) = e^{-3t}\\left(0.05\\cos(\\sqrt{91}t) + \\frac{0.15}{\\sqrt{91}}\\sin(\\sqrt{91}t)\\right)',
     formulaCards: [
       {
         label: 'Caso 1: Raíces Complejas Conjugadas (c = 1800)',
         latex: 'r_{1,2} = -3 \\pm i\\sqrt{91}',
-        desc: 'Discriminante Δ = 36 - 400 = -364 < 0 (Régimen subamortiguado, ζ = 0.3)'
+        desc: 'Discriminante Δ = 36 − 400 = −364 < 0: negativo → raíces complejas → la suspensión sí rebota (Régimen subamortiguado, ζ = 0.3)'
       },
       {
         label: 'Frecuencia Angular Amortiguada',
@@ -479,19 +479,19 @@ export const SLIDES_PRESENTATION = [
       {
         label: 'Caso 2: Raíz Real Repetida (c = 6000)',
         latex: '(r + 10)^2 = 0 \\implies r_1 = r_2 = -10',
-        desc: 'Discriminante Δ = 400 - 400 = 0 (Régimen críticamente amortiguado, ζ = 1.0)'
+        desc: 'Discriminante Δ = 400 − 400 = 0: el sistema está justo en el límite entre oscilar y no oscilar (Régimen críticamente amortiguado, ζ = 1.0)'
       },
       {
         label: 'Solución Crítica Particular',
         latex: 'x_{\\text{crit}}(t) = (0.05 + 0.5t)e^{-10t}',
-        desc: 'Segunda solución linealmente independiente obtenida por Reducción de Orden'
+        desc: 'Segunda solución linealmente independiente obtenida por Reducción de Orden: como la raíz r = −10 está repetida, se multiplica por t para obtener una segunda función independiente'
       }
     ],
     keyPoints: [
-      'Subamortiguado (c = 1800): Raíces r = -3 ± i*sqrt(91). Decaimiento e^(-3t) y oscilación a wd = 9.54 rad/s.',
-      'Constantes halladas: A = 0.05 m, B = 0.15 / sqrt(91) ≈ 0.01572 m.',
-      'Crítico (c = 6000): Raíz doble r = -10. Solución x(t) = (0.05 + 0.5t)e^(-10t).',
-      'El régimen crítico disipa la perturbación sin rebotar jamás hacia el lado negativo.'
+      'Caso Subamortiguado (c = 1800): el discriminante Δ = 36 − 400 = −364 es negativo → raíces complejas → la suspensión sí rebota y oscila.',
+      'Las raíces son r = −3 ± i√91. El "−3" controla qué tan rápido se apaga el movimiento; "√91 ≈ 9.54" es la velocidad de las oscilaciones.',
+      'Caso Crítico (c = 6000): Δ = 400 − 400 = 0 → raíz doble r = −10. La solución es x(t) = (0.05 + 0.5t)·e^(−10t). Sin rebote, regreso más rápido posible.',
+      'El término extra "t" en la solución crítica aparece porque la raíz está repetida (método matemático: Reducción de Orden de d\'Alembert).'
     ]
   },
   {
@@ -502,35 +502,35 @@ export const SLIDES_PRESENTATION = [
     time: '5:30 - 7:30',
     category: 'Deducción Exacta',
     badge: 'Matemática Pura',
-    summary: 'Resolución matemática cuando c = 9000 N·s/m (zeta = 1.5). Modos exponenciales independientes.',
+    summary: 'Resolución matemática del tercer caso (c = 9 000 N·s/m, ζ = 1.5): el discriminante es positivo, se obtienen dos raíces reales negativas y la suspensión regresa al equilibrio sin oscilar pero de forma más lenta.',
     mainFormula: 'x_{\\text{sobre}}(t) = 0.05854\\,e^{-3.82t} - 0.00854\\,e^{-26.18t}',
     formulaCards: [
       {
         label: 'Ecuación Cuadrática con c = 9000',
         latex: 'r^2 + 30r + 100 = 0 \\implies \\Delta = 900 - 400 = 500 > 0',
-        desc: 'Discriminante positivo estricto: dos raíces reales negativas distintas'
+        desc: 'Discriminante positivo estricto (Δ > 0): dos raíces reales negativas distintas → sin oscilaciones, solo decaimiento exponencial'
       },
       {
         label: 'Raíces Reales Negativas',
         latex: 'r_1 = -15+5\\sqrt{5} \\approx -3.82,\\quad r_2 = -15-5\\sqrt{5} \\approx -26.18',
-        desc: 'r1 es el modo lento de decaimiento y r2 es el modo rápido de amortiguamiento'
+        desc: 'r₁ es el modo lento de decaimiento (el que se ve durante más tiempo) y r₂ es el modo rápido que muere casi enseguida'
       },
       {
         label: 'Modo Lento Dominante',
         latex: 'e^{-3.82t} \\gg e^{-26.18t}',
-        desc: 'El modo rápido muere en 0.15 s; el modo lento domina y retrasa el equilibrio'
+        desc: 'El modo rápido (e^(−26.18t)) muere en apenas ~0.15 s; después, solo el modo lento domina y es el que retrasa el regreso al equilibrio'
       },
       {
         label: 'Constantes de Integración Evaluadas',
         latex: 'C_1 + C_2 = 0.05,\\quad -3.82C_1 - 26.18C_2 = 0',
-        desc: 'C1 = 0.05854 m, C2 = -0.00854 m al evaluar x(0) = 0.05 y x\'(0) = 0'
+        desc: 'C₁ = 0.05854 m y C₂ = −0.00854 m, halladas al evaluar x(0) = 0.05 m y x′(0) = 0 m/s'
       }
     ],
     keyPoints: [
-      'Discriminante Δ = 500 > 0. Raíces r1 = -3.82 y r2 = -26.18.',
-      'x(t) = 0.05854*e^(-3.82t) - 0.00854*e^(-26.18t).',
-      'El término e^(-3.82t) es el modo lento que retrasa el retorno al equilibrio.',
-      'Cero rebote pero movimiento perceptiblemente pesado y tardío.'
+      'Discriminante Δ = 500 > 0: hay DOS raíces reales negativas distintas: r₁ ≈ −3.82 (modo lento) y r₂ ≈ −26.18 (modo rápido).',
+      'La solución completa es: x(t) = 0.05854·e^(−3.82t) − 0.00854·e^(−26.18t).',
+      'El modo rápido (e^(−26.18t)) muere casi instantáneamente (en ~0.15 s); el modo lento (e^(−3.82t)) es el que se "ve" y retrasa el regreso.',
+      'Sin rebote, pero notablemente más lento que el crítico: como si el amortiguador fuera demasiado viscoso y frenara todo en exceso.'
     ]
   },
   {
@@ -566,10 +566,10 @@ export const SLIDES_PRESENTATION = [
       }
     ],
     keyPoints: [
-      'Cambio de variable canónico: u = x (posición), v = x\' (velocidad).',
-      'Sistema de primer orden acoplado: u\' = v, v\' = (-c*v - k*u)/m.',
-      'Integrador Runge-Kutta 4: cuatro evaluaciones por subintervalo con pesos (1, 2, 2, 1)/6.',
-      'Paso fijo h = 1e-4 s: precisión milimétrica sin divergencias.'
+      'Cambio de variable: u = x (posición) y v = x′ (velocidad), convirtiendo una EDO de 2° orden en un sistema de dos ecuaciones de 1° orden.',
+      'Sistema acoplado: u′ = v (la velocidad da la posición) y v′ = (−c·v − k·u)/m (la aceleración).',
+      'Integrador Runge-Kutta 4: promedia cuatro pendientes intermedias con pesos (1, 2, 2, 1)/6 para mayor precisión.',
+      'Paso fijo h = 0.0001 s (0.1 ms): garantiza precisión milimétrica sin que el cálculo se dispare o diverja.'
     ]
   },
   {
@@ -605,10 +605,10 @@ export const SLIDES_PRESENTATION = [
       }
     ],
     keyPoints: [
-      'Superposición milimétrica de las curvas analítica y numérica en [0, 3] segundos.',
-      'Error absoluto máximo medido: apenas 2.3 x 10^-8 metros.',
-      'Cumplimiento total de la regla de oro: la simulación computacional valida la teoría.',
-      'Unidades consistentes en el SI: kg, N/m, N·s/m y segundos.'
+      'Superposición milimétrica de las curvas analítica y numérica durante todo el intervalo de [0, 3] segundos.',
+      'Error absoluto máximo medido: apenas 2.3 × 10⁻⁸ metros (millones de veces más pequeño que un cabello humano).',
+      'Se cumple la "regla de oro": la simulación computacional confirma y valida la deducción matemática a mano.',
+      'Todas las variables están en unidades del Sistema Internacional: kg, N/m, N·s/m y segundos.'
     ]
   },
   {
@@ -644,10 +644,10 @@ export const SLIDES_PRESENTATION = [
       }
     ],
     keyPoints: [
-      'Subamortiguado: ts = 1.12 s, Mp = 37.23% (4 oscilaciones perceptibles).',
-      'Crítico: ts = 0.58 s, Mp = 0.00% (óptimo para estabilidad inmediata).',
-      'Sobreamortiguado: ts = 1.07 s, Mp = 0.00% (lento por alta resistencia fluida).',
-      'Control interactivo en vivo: respuesta en tiempo real al variar el deslizador c.'
+      'Subamortiguado (c = 1800): ts = 1.12 s, sobreimpulso = 37.23% (4 oscilaciones perceptibles antes del reposo).',
+      'Crítico (c = 6000): ts = 0.58 s, sobreimpulso = 0.00% — el más rápido y sin rebote. Óptimo.',
+      'Sobreamortiguado (c = 9000): ts = 1.07 s, sobreimpulso = 0.00% — sin rebote pero lento por la alta resistencia del fluido.',
+      'Control interactivo en vivo: mover el deslizador de c muestra en tiempo real cómo cambia la respuesta de la suspensión.'
     ]
   },
   {
@@ -683,9 +683,9 @@ export const SLIDES_PRESENTATION = [
       }
     ],
     keyPoints: [
-      'Ambulancia -> Amortiguamiento Crítico (c = 6000 N·s/m, ζ = 1.0): 0% sobreimpulso y retorno en 0.58 s.',
-      'Carro de carreras -> Suspensión Rígida: maximiza tracción de neumáticos y carga aerodinámica.',
-      'Justificación con datos cuantitativos medidos, eliminando apreciaciones subjetivas.',
+      'Ambulancia → Amortiguamiento Crítico (c = 6 000 N·s/m, ζ = 1.0): 0% de sobreimpulso y retorno en solo 0.58 s. El paciente no sufre rebotes.',
+      'Carro de carreras → Suspensión Rígida: se aumentan k y c al máximo para mantener el neumático pegado al asfalto y conservar el efecto suelo aerodinámico.',
+      'La decisión se sustenta con números medidos, no con opiniones subjetivas.',
       'Cierre formal de la defensa oral y apertura al diálogo con la docente.'
     ]
   },
