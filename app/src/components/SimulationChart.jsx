@@ -112,7 +112,7 @@ export default function SimulationChart({ m, c, k, x0, v0 = 0, compact = false, 
           tension: 0.1
         },
         {
-          label: 'Analítica Exacta (deducida a mano)',
+          label: 'Analítica Exacta (deducida      )',
           data: currentExactData,
           borderColor: '#f59e0b', // amber-500
           borderWidth: 2.2,

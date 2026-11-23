@@ -2,18 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { 
   ChevronLeft, ChevronRight, Play, Pause, RotateCcw, 
   Maximize2, Minimize2, Clock, User, Award, CheckCircle2,
-  Sparkles, Layers, Sliders, Box, ShieldCheck, HeartPulse, Trophy
+  Sparkles, Layers, Sliders, Box, ShieldCheck, HeartPulse, Trophy,
+  Code2, Terminal
 } from 'lucide-react';
 import { SLIDES_PRESENTATION } from '../data/flashcardsData';
+import { SLIDES_CODE_MAPPING } from '../data/slidesCodeData';
 import SuspensionAnimation from './SuspensionAnimation';
 import SimulationChart from './SimulationChart';
 import KaTeXMath from './KaTeXMath';
+import CodeCalculationModal from './CodeCalculationModal';
 
 export default function PresentationDeck({ m, c, k, x0, v0, regimen, settlingTime, overshootPct }) {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [secondsRemaining, setSecondsRemaining] = useState(15 * 60); // 15 minutos en segundos (900s)
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isCodeModalOpen, setIsCodeModalOpen] = useState(false);
 
   const currentSlide = SLIDES_PRESENTATION[currentSlideIndex];
 
@@ -30,13 +34,18 @@ export default function PresentationDeck({ m, c, k, x0, v0, regimen, settlingTim
     return () => clearInterval(interval);
   }, [isTimerRunning, secondsRemaining]);
 
-  // Atajos de teclado para pasar diapositivas
+  // Atajos de teclado para pasar diapositivas y abrir modal de código
   useEffect(() => {
     const handleKeyDown = (e) => {
+      // Si se está escribiendo en un input, ignorar
+      if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
+
       if (e.key === 'ArrowRight' || e.key === ' ') {
         setCurrentSlideIndex((prev) => Math.min(prev + 1, SLIDES_PRESENTATION.length - 1));
       } else if (e.key === 'ArrowLeft') {
         setCurrentSlideIndex((prev) => Math.max(prev - 1, 0));
+      } else if (e.key === 'c' || e.key === 'C') {
+        setIsCodeModalOpen((prev) => !prev);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -146,13 +155,25 @@ export default function PresentationDeck({ m, c, k, x0, v0, regimen, settlingTim
 
         {/* Encabezado de la Diapositiva */}
         <div className="relative z-10">
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
             <span className="text-xs uppercase tracking-widest text-[#0B3C73] font-extrabold bg-blue-50/90 px-3 py-1 rounded-full border border-blue-200 shadow-xs">
               {currentSlide.category} · {currentSlide.badge}
             </span>
-            {/* <span className="text-xs font-mono text-slate-500 hidden sm:inline">
-              Teclado: [←] Anterior | [→] o [Espacio] Siguiente
-            </span> */}
+            
+            {/* Botón Interactivo de Inspección de Cálculo en Código */}
+            {SLIDES_CODE_MAPPING[currentSlide.id] && (
+              <button
+                onClick={() => setIsCodeModalOpen(true)}
+                className="liquid-glass-button-gold px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-2 cursor-pointer shadow-sm hover:scale-105 active:scale-95 transition-all group"
+                title="Inspeccionar cómo se calculan estas operaciones matemáticas en código (JavaScript y Python). Atajo: tecla [C]"
+              >
+                <Code2 className="w-4 h-4 text-amber-500 group-hover:rotate-12 transition-transform" />
+                <span className="text-slate-950 font-black">Ver Cálculo en Código</span>
+                <span className="text-[10px] font-mono bg-amber-200/90 text-amber-950 px-1.5 py-0.5 rounded font-bold border border-amber-300 hidden sm:inline">
+                  JS / Py [C]
+                </span>
+              </button>
+            )}
           </div>
 
           <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
@@ -177,9 +198,19 @@ export default function PresentationDeck({ m, c, k, x0, v0, regimen, settlingTim
 
                 {/* Banner de Fórmula Central */}
                 <div className="math-formula-box overflow-x-auto text-center">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#0B3C73] block mb-1">
-                    Ecuación Diferencial Canónica del Sistema
-                  </span>
+                  <div className="flex items-center justify-between px-2 mb-1">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#0B3C73]">
+                      Ecuación Diferencial Canónica del Sistema
+                    </span>
+                    <button
+                      onClick={() => setIsCodeModalOpen(true)}
+                      className="text-[10px] font-bold text-amber-800 bg-amber-100 hover:bg-amber-200 px-2 py-0.5 rounded-lg border border-amber-300 flex items-center gap-1 cursor-pointer transition-colors shadow-2xs"
+                      title="Ver cómo se define la EDO en código"
+                    >
+                      <Code2 className="w-3.5 h-3.5 text-amber-600" />
+                      <span>Ver en Código</span>
+                    </button>
+                  </div>
                   <KaTeXMath math={currentSlide.mainFormula} block={true} />
                 </div>
 
@@ -239,9 +270,19 @@ export default function PresentationDeck({ m, c, k, x0, v0, regimen, settlingTim
               {/* Fórmula Central en KaTeX */}
               {currentSlide.mainFormula && (
                 <div className="math-formula-box overflow-x-auto text-center">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#0B3C73] block mb-1">
-                    Fórmula Central
-                  </span>
+                  <div className="flex items-center justify-between px-2 mb-1">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#0B3C73]">
+                      Fórmula Central
+                    </span>
+                    <button
+                      onClick={() => setIsCodeModalOpen(true)}
+                      className="text-[10px] font-bold text-amber-800 bg-amber-100 hover:bg-amber-200 px-2.5 py-0.5 rounded-lg border border-amber-300 flex items-center gap-1 cursor-pointer transition-colors shadow-2xs"
+                      title="Ver deducción y cálculo en código"
+                    >
+                      <Code2 className="w-3.5 h-3.5 text-amber-600" />
+                      <span>Ver en Código</span>
+                    </button>
+                  </div>
                   <KaTeXMath math={currentSlide.mainFormula} block={true} />
                 </div>
               )}
@@ -286,9 +327,19 @@ export default function PresentationDeck({ m, c, k, x0, v0, regimen, settlingTim
           {currentSlide.id === 6 && (
             <div className="space-y-3">
               <div className="math-formula-box py-1.5 px-3 overflow-x-auto text-center">
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#0B3C73] block mb-0.5">
-                  Criterio de Validación: Error Máximo Residual
-                </span>
+                <div className="flex items-center justify-between px-1 mb-0.5">
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#0B3C73]">
+                    Criterio de Validación: Error Máximo Residual
+                  </span>
+                  <button
+                    onClick={() => setIsCodeModalOpen(true)}
+                    className="text-[10px] font-bold text-amber-800 bg-amber-100 hover:bg-amber-200 px-2 py-0.5 rounded-md border border-amber-300 flex items-center gap-1 cursor-pointer transition-colors shadow-2xs"
+                    title="Ver algoritmo de error residual en código"
+                  >
+                    <Code2 className="w-3 h-3 text-amber-600" />
+                    <span>Ver en Código</span>
+                  </button>
+                </div>
                 <KaTeXMath math={currentSlide.mainFormula} block={true} />
               </div>
               <div className="w-full bg-slate-50/70 rounded-2xl border border-slate-200/90 p-3 sm:p-4 shadow-xs">
@@ -301,9 +352,19 @@ export default function PresentationDeck({ m, c, k, x0, v0, regimen, settlingTim
           {currentSlide.id === 7 && (
             <div className="space-y-3">
               <div className="math-formula-box overflow-x-auto text-center">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#0B3C73] block mb-1">
-                  Definición Formal de Tiempo de Asentamiento al 2%
-                </span>
+                <div className="flex items-center justify-between px-2 mb-1">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#0B3C73]">
+                    Definición Formal de Tiempo de Asentamiento al 2%
+                  </span>
+                  <button
+                    onClick={() => setIsCodeModalOpen(true)}
+                    className="text-[10px] font-bold text-amber-800 bg-amber-100 hover:bg-amber-200 px-2.5 py-0.5 rounded-lg border border-amber-300 flex items-center gap-1 cursor-pointer transition-colors shadow-2xs"
+                    title="Ver cálculo de métricas (ts y Mp) en código"
+                  >
+                    <Code2 className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Ver en Código</span>
+                  </button>
+                </div>
                 <KaTeXMath math={currentSlide.mainFormula} block={true} />
               </div>
 
@@ -351,9 +412,19 @@ export default function PresentationDeck({ m, c, k, x0, v0, regimen, settlingTim
           {currentSlide.id === 8 && (
             <div className="space-y-4">
               <div className="math-formula-box overflow-x-auto text-center">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#0B3C73] block mb-1">
-                  Comparación de Criterios de Ingeniería
-                </span>
+                <div className="flex items-center justify-between px-2 mb-1">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#0B3C73]">
+                    Comparación de Criterios de Ingeniería
+                  </span>
+                  <button
+                    onClick={() => setIsCodeModalOpen(true)}
+                    className="text-[10px] font-bold text-amber-800 bg-amber-100 hover:bg-amber-200 px-2.5 py-0.5 rounded-lg border border-amber-300 flex items-center gap-1 cursor-pointer transition-colors shadow-2xs"
+                    title="Ver configuración de presets en código"
+                  >
+                    <Code2 className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Ver en Código</span>
+                  </button>
+                </div>
                 <KaTeXMath math={currentSlide.mainFormula} block={true} />
               </div>
 
@@ -442,6 +513,21 @@ export default function PresentationDeck({ m, c, k, x0, v0, regimen, settlingTim
             </span>
           </div> */}
         </div>
+
+        {/* Modal Interactivo de Cálculo en Código */}
+        <CodeCalculationModal
+          isOpen={isCodeModalOpen}
+          onClose={() => setIsCodeModalOpen(false)}
+          slideId={currentSlide.id}
+          m={m}
+          c={c}
+          k={k}
+          x0={x0}
+          v0={v0}
+          regimen={regimen}
+          settlingTime={settlingTime}
+          overshootPct={overshootPct}
+        />
 
       </div>
     </div>

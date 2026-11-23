@@ -288,6 +288,81 @@
     .spec-label { color: #ffffff !important; }
     .spec-val { font-weight: 600 !important; color: #ffffff !important; }
 
+    /* ═══════════════ PANEL DE TELEMETRÍA FÍSICA EDO ═══════════════ */
+    .panel-physics-box {
+      border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
+      padding-top: 8px !important;
+      margin-top: 4px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 6px !important;
+    }
+    .physics-regime-badge {
+      font-size: 10px !important;
+      font-weight: 700 !important;
+      padding: 4px 8px !important;
+      border-radius: 8px !important;
+      text-align: center !important;
+      background: rgba(245, 168, 0, 0.22) !important;
+      color: #fef08a !important;
+      border: 1px solid rgba(245, 168, 0, 0.45) !important;
+      letter-spacing: 0.02em !important;
+    }
+    .physics-stats-grid {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 4px !important;
+      font-size: 10px !important;
+    }
+    .stat-cell {
+      background: rgba(0, 0, 0, 0.35) !important;
+      padding: 4px 6px !important;
+      border-radius: 6px !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      display: flex !important;
+      flex-direction: column !important;
+    }
+    .stat-label {
+      color: #94a3b8 !important;
+      font-size: 9px !important;
+    }
+    .stat-val {
+      font-family: monospace !important;
+      font-weight: 700 !important;
+      color: #f8fafc !important;
+    }
+    .text-amber { color: #f59e0b !important; }
+    .text-blue { color: #38bdf8 !important; }
+    .text-emerald { color: #34d47f !important; }
+    .btn-bump-action {
+      background: linear-gradient(135deg, rgba(245, 168, 0, 0.35), rgba(217, 119, 6, 0.45)) !important;
+      border: 1px solid rgba(245, 168, 0, 0.6) !important;
+      color: #fef08a !important;
+      font-weight: 700 !important;
+      font-size: 10.5px !important;
+      padding: 6px 8px !important;
+      border-radius: 8px !important;
+      cursor: pointer !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 5px !important;
+      transition: all 0.2s ease !important;
+      font-family: inherit !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
+    }
+    .btn-bump-action:hover {
+      background: linear-gradient(135deg, rgba(245, 168, 0, 0.55), rgba(217, 119, 6, 0.65)) !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 12px rgba(245, 168, 0, 0.5) !important;
+    }
+    .physics-explanation {
+      font-size: 9px !important;
+      color: #cbd5e1 !important;
+      line-height: 1.35 !important;
+      margin: 0 !important;
+    }
+
     /* ═══════════════ BARRA INFERIOR DE CÁMARAS (FOOTER) ═══════════════ */
     footer.cam-bar {
       position: fixed !important;
@@ -481,10 +556,12 @@
       </div>
       <div class="header-text">
         <div class="header-title-row">
-          <h1 class="header-title">JESKO vs AMBULANCIA TIPO III</h1>
-          <span class="header-badge">Escala 1:1</span>
+          <h1 class="header-title" id="header-physics-title">JESKO vs AMBULANCIA TIPO III</h1>
+          <span class="header-badge" id="header-physics-badge">Escala 1:1</span>
         </div>
-        <p class="header-subtitle">Modelos completos en carretera panorámica · 1.21 m vs 2.59 m de altura</p>
+        <p class="header-subtitle" id="header-physics-subtitle">
+          ζ = 1.00 (Crítico) · m = 300 kg · k = 30 kN/m · c = 6000 N·s/m · ts = 0.58s
+        </p>
       </div>
     </div>
 
@@ -536,6 +613,41 @@
         <span class="spec-label">Ambulancia (Der.):</span>
         <span class="spec-val">6.53 × 2.44 × 2.59 m</span>
       </div>
+    </div>
+
+    <!-- Telemetría Dinámica de Suspensión EDO -->
+    <div class="panel-physics-box" id="panel-physics-box">
+      <span class="panel-section-title">Física de Suspensión (EDO)</span>
+      <div class="physics-regime-badge" id="hud-regime-badge">
+        Críticamente Amortiguado (ζ = 1.00)
+      </div>
+      <div class="physics-stats-grid">
+        <div class="stat-cell">
+          <span class="stat-label">Amortiguador c:</span>
+          <span class="stat-val" id="hud-c-val">6000 N·s/m</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-label">Rigidez k:</span>
+          <span class="stat-val" id="hud-k-val">30 kN/m</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-label">Masa m:</span>
+          <span class="stat-val" id="hud-m-val">300 kg</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-label">Desplazamiento x:</span>
+          <span class="stat-val text-amber" id="hud-x-disp">0.0 cm</span>
+        </div>
+      </div>
+      <button id="btn-hud-bump" type="button" class="btn-bump-action" title="Perturbar chasis con bache (x0)">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+        <span>Probar Bache (5 cm)</span>
+      </button>
+      <p class="physics-explanation" id="hud-physics-exp">
+        Retorno óptimo al reposo en 0.58s sin oscilación (0% sobreimpulso).
+      </p>
     </div>
   </aside>
 
@@ -2104,6 +2216,111 @@
         });
       });
 
+      // ═══════════════ MOTOR DE SUSPENSIÓN FÍSICA EDO 2° ORDEN ═══════════════
+      const phys = {
+        m: 300.0,
+        k: 30000.0,
+        c: 6000.0,
+        x0: 0.05,
+        zeta: 1.0,
+        regimen: 'Críticamente amortiguado',
+        settlingTime: 0.58,
+        overshootPct: 0.0,
+        focusedVehicle: null,
+
+        jesko_m: 300.0,
+        jesko_k: 50000.0,
+        jesko_c: 8500.0,
+
+        amb: {
+          heave: 0.0,
+          heaveVel: 0.0,
+          pitch: 0.0,
+          pitchVel: 0.0
+        },
+        jesko: {
+          heave: 0.0,
+          heaveVel: 0.0,
+          pitch: 0.0,
+          pitchVel: 0.0
+        }
+      };
+
+      function updatePhysicsHUD() {
+        const titleEl = document.getElementById('header-physics-title');
+        const badgeEl = document.getElementById('header-physics-badge');
+        const subEl = document.getElementById('header-physics-subtitle');
+
+        if (titleEl && badgeEl) {
+          if (phys.focusedVehicle === 'carreras') {
+            titleEl.textContent = 'KOENIGSEGG JESKO ATTACK';
+            badgeEl.textContent = 'Pista & Efecto Suelo';
+          } else if (phys.focusedVehicle === 'ambulancia') {
+            titleEl.textContent = 'AMBULANCIA TIPO III (MÉDICA)';
+            badgeEl.textContent = 'Confort Clínico';
+          } else {
+            titleEl.textContent = 'JESKO vs AMBULANCIA TIPO III';
+            badgeEl.textContent = 'Escala 1:1';
+          }
+        }
+
+        if (subEl) {
+          subEl.textContent = `ζ = ${phys.zeta.toFixed(2)} (${phys.regimen}) · m = ${phys.m.toFixed(0)} kg · k = ${(phys.k / 1000).toFixed(0)} kN/m · c = ${phys.c.toFixed(0)} N·s/m · ts = ${phys.settlingTime.toFixed(2)}s · Mp = ${phys.overshootPct.toFixed(1)}%`;
+        }
+
+        const regimeBadge = document.getElementById('hud-regime-badge');
+        if (regimeBadge) {
+          regimeBadge.textContent = `${phys.regimen} (ζ = ${phys.zeta.toFixed(2)})`;
+          if (phys.zeta < 0.99) {
+            regimeBadge.style.background = 'rgba(56, 189, 248, 0.25)';
+            regimeBadge.style.borderColor = 'rgba(56, 189, 248, 0.6)';
+            regimeBadge.style.color = '#7dd3fc';
+          } else if (phys.zeta > 1.01) {
+            regimeBadge.style.background = 'rgba(168, 85, 247, 0.25)';
+            regimeBadge.style.borderColor = 'rgba(168, 85, 247, 0.6)';
+            regimeBadge.style.color = '#d8b4fe';
+          } else {
+            regimeBadge.style.background = 'rgba(245, 168, 0, 0.25)';
+            regimeBadge.style.borderColor = 'rgba(245, 168, 0, 0.6)';
+            regimeBadge.style.color = '#fef08a';
+          }
+        }
+
+        const cEl = document.getElementById('hud-c-val');
+        if (cEl) cEl.textContent = `${phys.c.toFixed(0)} N·s/m`;
+
+        const kEl = document.getElementById('hud-k-val');
+        if (kEl) kEl.textContent = `${(phys.k / 1000).toFixed(0)} kN/m`;
+
+        const mEl = document.getElementById('hud-m-val');
+        if (mEl) mEl.textContent = `${phys.m.toFixed(0)} kg`;
+
+        const expEl = document.getElementById('hud-physics-exp');
+        if (expEl) {
+          if (phys.zeta < 0.99) {
+            expEl.textContent = `Subamortiguado: Oscilación con rebote pronunciado (~${phys.overshootPct.toFixed(1)}%). Tarda ${phys.settlingTime.toFixed(2)}s en disiparse.`;
+          } else if (phys.zeta > 1.01) {
+            expEl.textContent = `Sobreamortiguado: Fluido altamente viscoso; retorno lento (${phys.settlingTime.toFixed(2)}s) sin sobreimpulso.`;
+          } else {
+            expEl.textContent = `Crítico: Retorno más rápido al reposo (${phys.settlingTime.toFixed(2)}s) con 0% de oscilación. Óptimo clínico.`;
+          }
+        }
+      }
+
+      function triggerBumpImpulse(amplitude) {
+        const amp = (amplitude !== undefined && amplitude !== null && amplitude > 0) ? amplitude : (phys.x0 || 0.05);
+        // Perturbación instantánea: desplaza la masa hacia arriba emulando la cresta del bache
+        phys.amb.heave = amp;
+        phys.amb.heaveVel = 0;
+        phys.jesko.heave = amp;
+        phys.jesko.heaveVel = 0;
+      }
+
+      const btnHudBump = document.getElementById('btn-hud-bump');
+      if (btnHudBump) {
+        btnHudBump.addEventListener('click', () => triggerBumpImpulse(phys.x0));
+      }
+
       // Comunicación con la aplicación React principal
       window.addEventListener('message', (e) => {
         if (!e.data || typeof e.data !== 'object') return;
@@ -2111,7 +2328,20 @@
           switchCamera(e.data.camera);
         }
         if (e.data.type === 'trigger-bump') {
-          if (!state.bumpsOn) toggleBumps();
+          triggerBumpImpulse(e.data.x0);
+        }
+        if (e.data.type === 'update-physics' && e.data.params) {
+          const p = e.data.params;
+          phys.m = p.m || phys.m;
+          phys.k = p.k || phys.k;
+          phys.c = p.c !== undefined ? p.c : phys.c;
+          phys.x0 = p.x0 !== undefined ? p.x0 : phys.x0;
+          phys.zeta = p.zeta !== undefined ? p.zeta : (phys.c / (2 * Math.sqrt(phys.m * phys.k)));
+          phys.regimen = p.regimen || phys.regimen;
+          phys.settlingTime = p.settlingTime !== undefined ? p.settlingTime : phys.settlingTime;
+          phys.overshootPct = p.overshootPct !== undefined ? p.overshootPct : phys.overshootPct;
+          phys.focusedVehicle = p.focusedVehicle;
+          updatePhysicsHUD();
         }
         if (e.data.type === 'toggle-doors') {
           toggleDoors();
@@ -2198,16 +2428,76 @@
           });
         }
 
-        // Física visual de suspensión en ambos vehículos
-        const jFrontBump = state.driving ? getBumpHeightAt(1.35) : (state.bumpsOn ? Math.max(0, Math.sin(elapsed * 2.5)) * 0.065 : 0);
-        const jRearBump  = state.driving ? getBumpHeightAt(-1.35) : (state.bumpsOn ? Math.max(0, -Math.sin(elapsed * 2.5)) * 0.065 : 0);
-        const jBodyHeave = (jFrontBump + jRearBump) * 0.22;
-        const jBodyPitch = (jFrontBump - jRearBump) * 0.012;
-        jeskoBody.position.y += (jBodyHeave - jeskoBody.position.y) * Math.min(1, dt * 12);
-        jeskoBody.rotation.x += (jBodyPitch - jeskoBody.rotation.x) * Math.min(1, dt * 12);
+        // ═══════════════ INTEGRACIÓN FÍSICA EDO 2° ORDEN (m*x'' + c*x' + k*x = F) ═══════════════
+        const subSteps = 4;
+        const subDt = dt / subSteps;
 
+        // Determinar parámetros activos
+        const isJeskoFocused = phys.focusedVehicle === 'carreras';
+        const ambM = isJeskoFocused ? 300.0 : phys.m;
+        const ambK = isJeskoFocused ? 30000.0 : phys.k;
+        const ambC = isJeskoFocused ? 6000.0 : phys.c;
+
+        const jeskoM = isJeskoFocused ? phys.m : phys.jesko_m;
+        const jeskoK = isJeskoFocused ? phys.k : phys.jesko_k;
+        const jeskoC = isJeskoFocused ? phys.c : phys.jesko_c;
+
+        for (let s = 0; s < subSteps; s++) {
+          // Altura de bandas y baches en la posición de cada eje
+          const jF_road = state.driving ? getBumpHeightAt(1.35) : (state.bumpsOn ? Math.max(0, Math.sin(elapsed * 2.5)) * 0.04 : 0);
+          const jR_road = state.driving ? getBumpHeightAt(-1.35) : (state.bumpsOn ? Math.max(0, -Math.sin(elapsed * 2.5)) * 0.04 : 0);
+          const aF_road = state.driving ? getBumpHeightAt(2.35) : (state.bumpsOn ? Math.max(0, Math.sin(elapsed * 2.5 + 0.8)) * 0.05 : 0);
+          const aR_road = state.driving ? getBumpHeightAt(-1.155) : (state.bumpsOn ? Math.max(0, -Math.sin(elapsed * 2.5 + 0.8)) * 0.05 : 0);
+
+          // 1. Dinámica de la Ambulancia (EDO canónica 2° orden)
+          const aRoadHeave = (aF_road + aR_road) * 0.5;
+          const aRoadPitch = (aF_road - aR_road) * 0.25;
+
+          const aDeflection = phys.amb.heave - aRoadHeave;
+          const aHeaveForce = -ambK * aDeflection - ambC * phys.amb.heaveVel;
+          const aHeaveAccel = aHeaveForce / ambM;
+          phys.amb.heaveVel += aHeaveAccel * subDt;
+          phys.amb.heave += phys.amb.heaveVel * subDt;
+
+          const aPitchDeflection = phys.amb.pitch - aRoadPitch;
+          const aPitchTorque = -ambK * aPitchDeflection * 1.5 - ambC * phys.amb.pitchVel * 1.5;
+          const aPitchAccel = aPitchTorque / (ambM * 0.6);
+          phys.amb.pitchVel += aPitchAccel * subDt;
+          phys.amb.pitch += phys.amb.pitchVel * subDt;
+
+          // 2. Dinámica del Koenigsegg Jesko (EDO canónica 2° orden)
+          const jRoadHeave = (jF_road + jR_road) * 0.5;
+          const jRoadPitch = (jF_road - jR_road) * 0.25;
+
+          const jDeflection = phys.jesko.heave - jRoadHeave;
+          const jHeaveForce = -jeskoK * jDeflection - jeskoC * phys.jesko.heaveVel;
+          const jHeaveAccel = jHeaveForce / jeskoM;
+          phys.jesko.heaveVel += jHeaveAccel * subDt;
+          phys.jesko.heave += phys.jesko.heaveVel * subDt;
+
+          const jPitchDeflection = phys.jesko.pitch - jRoadPitch;
+          const jPitchTorque = -jeskoK * jPitchDeflection * 1.5 - jeskoC * phys.jesko.pitchVel * 1.5;
+          const jPitchAccel = jPitchTorque / (jeskoM * 0.5);
+          phys.jesko.pitchVel += jPitchAccel * subDt;
+          phys.jesko.pitch += phys.jesko.pitchVel * subDt;
+        }
+
+        // Posicionar carrocerías según la física EDO
+        ambBody.position.y = phys.amb.heave;
+        ambBody.rotation.x = phys.amb.pitch;
+
+        jeskoBody.position.y = phys.jesko.heave;
+        jeskoBody.rotation.x = phys.jesko.pitch;
+
+        const aFrontBump = state.driving ? getBumpHeightAt(2.35) : (state.bumpsOn ? Math.max(0, Math.sin(elapsed * 2.5 + 0.8)) * 0.05 : 0);
+        const aRearBump  = state.driving ? getBumpHeightAt(-1.155) : (state.bumpsOn ? Math.max(0, -Math.sin(elapsed * 2.5 + 0.8)) * 0.05 : 0);
+        ambRearAxle.position.y = 0.40 + aRearBump;
+
+        const jFrontBump = state.driving ? getBumpHeightAt(1.35) : (state.bumpsOn ? Math.max(0, Math.sin(elapsed * 2.5)) * 0.04 : 0);
+        const jRearBump  = state.driving ? getBumpHeightAt(-1.35) : (state.bumpsOn ? Math.max(0, -Math.sin(elapsed * 2.5)) * 0.04 : 0);
+
+        // Actualizar cinemática de suspensión del Jesko
         jSuspCorners.forEach((c) => {
-          // Recorrido de suspensión natural e idéntico para adelante y atrás
           const bH = c.z > 0 ? jFrontBump : jRearBump;
           c.corner.position.y = c.baseY + bH;
           const comp = bH - jeskoBody.position.y;
@@ -2218,25 +2508,18 @@
           c.upperArmF.position.y = (c.baseY + 0.09) + jeskoBody.position.y + comp * 0.5;
           c.upperArmR.position.y = (c.baseY + 0.09) + jeskoBody.position.y + comp * 0.5;
           c.coiloverGroup.position.y = c.baseCoilY + jeskoBody.position.y + comp * 0.5;
-          c.springMesh.scale.y = Math.max(0.55, 1.0 - comp * 3.8);
+          c.springMesh.scale.y = Math.max(0.45, Math.min(1.5, 1.0 - comp * 3.8));
           c.shockRod.position.y = 0.16 - comp * 0.15;
         });
 
-        const aFrontBump = state.driving ? getBumpHeightAt(2.35) : (state.bumpsOn ? Math.max(0, Math.sin(elapsed * 2.5 + 0.8)) * 0.08 : 0);
-        const aRearBump  = state.driving ? getBumpHeightAt(-1.155) : (state.bumpsOn ? Math.max(0, -Math.sin(elapsed * 2.5 + 0.8)) * 0.08 : 0);
-        const aBodyHeave = (aFrontBump + aRearBump) * 0.35;
-        const aBodyPitch = (aFrontBump - aRearBump) * 0.016;
-        ambBody.position.y += (aBodyHeave - ambBody.position.y) * Math.min(1, dt * 7);
-        ambBody.rotation.x += (aBodyPitch - ambBody.rotation.x) * Math.min(1, dt * 7);
-        ambRearAxle.position.y = 0.40 + aRearBump;
-
+        // Actualizar cinemática de suspensión de la Ambulancia
         aSuspCorners.forEach((c) => {
           const bH = c.z > 0 ? aFrontBump : aRearBump;
           c.corner.position.y = c.baseY + bH;
           const comp = bH - ambBody.position.y;
           if (c.frontCoilGroup) {
             c.frontCoilGroup.position.y = (c.baseY - 0.03) + ambBody.position.y + comp * 0.45;
-            c.springMesh.scale.y = Math.max(0.55, 1.0 - comp * 3.2);
+            c.springMesh.scale.y = Math.max(0.45, Math.min(1.5, 1.0 - comp * 3.2));
             c.shockRod.position.y = 0.22 - comp * 0.14;
           }
           if (c.controlArm) {
@@ -2245,12 +2528,26 @@
           }
           if (c.leafMesh) {
             c.leafMesh.position.y = bH * 0.65;
-            c.leafMesh.scale.y = Math.max(0.45, 1.0 - comp * 2.5);
+            c.leafMesh.scale.y = Math.max(0.45, Math.min(1.5, 1.0 - comp * 2.5));
           }
           if (c.rearShock) {
             c.rearShock.position.y = (c.baseY + 0.18) + ambBody.position.y + comp * 0.5;
           }
         });
+
+        // Actualizar indicador de desplazamiento instantáneo x(t) en la telemetría
+        const dispEl = document.getElementById('hud-x-disp');
+        if (dispEl) {
+          const activeHeave = (phys.focusedVehicle === 'carreras' ? phys.jesko.heave : phys.amb.heave) * 100;
+          dispEl.textContent = (activeHeave >= 0 ? '+' : '') + activeHeave.toFixed(1) + ' cm';
+          if (Math.abs(activeHeave) < 0.15) {
+            dispEl.className = 'stat-val text-emerald';
+          } else if (activeHeave < 0) {
+            dispEl.className = 'stat-val text-blue';
+          } else {
+            dispEl.className = 'stat-val text-amber';
+          }
+        }
 
         if (state.camAnim) {
           state.camAnim.progress += dt * 2.2;

@@ -74,14 +74,32 @@ function StepCard({ num, title, desc, math, children, isHighlight = false }) {
   );
 }
 
-export default function SuspensionCalculator() {
+export default function SuspensionCalculator({
+  m: propM,
+  setM: propSetM,
+  k: propK,
+  setK: propSetK,
+  c: propC,
+  setC: propSetC,
+  x0: propX0,
+  setX0: propSetX0
+} = {}) {
   // --------------------------------------------------------------------------
-  // ESTADO DE PARÁMETROS INTERACTIVOS DEL SISTEMA
+  // ESTADO DE PARÁMETROS INTERACTIVOS DEL SISTEMA (SINCRONIZABLE CON PROPS)
   // --------------------------------------------------------------------------
-  const [m, setM] = useState(300.0);       // Masa suspendida (cuarto de carro) [kg]
-  const [k, setK] = useState(30000.0);     // Rigidez del resorte [N/m]
-  const [c, setC] = useState(1800.0);      // Amortiguamiento viscoso [N·s/m]
-  const [x0, setX0] = useState(0.05);      // Desplazamiento inicial por bache [m] (5 cm)
+  const [internalM, setInternalM] = useState(300.0);       // Masa suspendida (cuarto de carro) [kg]
+  const [internalK, setInternalK] = useState(30000.0);     // Rigidez del resorte [N/m]
+  const [internalC, setInternalC] = useState(6000.0);      // Amortiguamiento viscoso [N·s/m]
+  const [internalX0, setInternalX0] = useState(0.05);      // Desplazamiento inicial por bache [m] (5 cm)
+
+  const m = propM !== undefined ? propM : internalM;
+  const setM = propSetM || setInternalM;
+  const k = propK !== undefined ? propK : internalK;
+  const setK = propSetK || setInternalK;
+  const c = propC !== undefined ? propC : internalC;
+  const setC = propSetC || setInternalC;
+  const x0 = propX0 !== undefined ? propX0 : internalX0;
+  const setX0 = propSetX0 || setInternalX0;
   const v0 = 0.0;                          // Velocidad inicial en reposo [m/s]
 
   // --------------------------------------------------------------------------

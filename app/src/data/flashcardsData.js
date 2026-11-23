@@ -78,7 +78,7 @@ export const TEAM_MEMBERS_FLASHCARDS = [
     id: 'duban',
     name: 'GOMEZ HOYOS DUBAN ALEXANDER',
     shortName: 'Duban Gómez',
-    role: 'Ponente 2: Deducción Analítica Completa a Mano',
+    role: 'Ponente 2: Deducción Analítica Completa',
     timeSlot: '3:30 - 7:30 (4 minutos 00 seg)',
     color: '#F5A800',
     topics: [
@@ -457,7 +457,7 @@ export const SLIDES_PRESENTATION = [
   },
   {
     id: 3,
-    title: 'Solución Analítica a Mano: Casos 1 y 2',
+    title: 'Solución Analítica: Casos 1 y 2',
     subtitle: 'Régimen Subamortiguado vs. Críticamente Amortiguado',
     speaker: 'GOMEZ HOYOS DUBAN ALEXANDER',
     time: '3:30 - 5:30',
@@ -496,7 +496,7 @@ export const SLIDES_PRESENTATION = [
   },
   {
     id: 4,
-    title: 'Solución Analítica a Mano: Caso 3 (Sobreamortiguado)',
+    title: 'Solución Analítica: Caso 3 (Sobreamortiguado)',
     subtitle: 'Raíces Reales Distintas y Modo Dominante Lento',
     speaker: 'GOMEZ HOYOS DUBAN ALEXANDER',
     time: '5:30 - 7:30',
@@ -607,7 +607,7 @@ export const SLIDES_PRESENTATION = [
     keyPoints: [
       'Superposición milimétrica de las curvas analítica y numérica durante todo el intervalo de [0, 3] segundos.',
       'Error absoluto máximo medido: apenas 2.3 × 10⁻⁸ metros (millones de veces más pequeño que un cabello humano).',
-      'Se cumple la "regla de oro": la simulación computacional confirma y valida la deducción matemática a mano.',
+      'Se cumple la "regla de oro": la simulación computacional confirma y valida la deducción matemática.',
       'Todas las variables están en unidades del Sistema Internacional: kg, N/m, N·s/m y segundos.'
     ]
   },

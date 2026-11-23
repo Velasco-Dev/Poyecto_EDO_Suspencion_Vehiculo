@@ -15,13 +15,15 @@ import {
   rk4Integrate 
 } from './physics/suspensionPhysics';
 import {
-  Sliders, Gauge, ShieldCheck, ChevronRight, Activity, HeartPulse, Trophy, Box, Eye
+  Sliders, Gauge, ShieldCheck, ChevronRight, Activity, HeartPulse, Trophy, Box, Eye,
+  Calculator, X
 } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('simulator'); // 'simulator' | 'chart' | 'math' | 'calculator' | 'deck'
   const [isFlashcardsOpen, setIsFlashcardsOpen] = useState(false);
   const [isTechnicalModalOpen, setIsTechnicalModalOpen] = useState(false);
+  const [isCalculatorModalOpen, setIsCalculatorModalOpen] = useState(false);
   const [simViewMode, setSimViewMode] = useState('3d'); // '3d' | '2d'
 
   // Parámetros reactivos del sistema físico
@@ -30,6 +32,9 @@ export default function App() {
   const [c, setC] = useState(6000.0); // Inicia en crítico
   const [x0, setX0] = useState(0.05);
   const v0 = 0.0;
+
+  // Disparador reactivo de perturbación (bache) para el modelo 3D
+  const [bumpTrigger, setBumpTrigger] = useState(0);
 
   // Estado del vehículo enfocado para el visor 3D ('ambulancia' | 'carreras' | null)
   const [focusedVehicle, setFocusedVehicle] = useState(null);
@@ -54,9 +59,9 @@ export default function App() {
       setFocusedVehicle('ambulancia');
     } else if (preset.id === 'race') {
       setFocusedVehicle('carreras');
-    } else {
-      setFocusedVehicle('ambulancia');
     }
+    // Provocar perturbación inmediata para ver el comportamiento en la simulación 3D
+    setBumpTrigger((prev) => prev + 1);
   };
 
   const focusVehicle = (vehicle) => {
@@ -65,9 +70,21 @@ export default function App() {
       setM(preset.m);
       setK(preset.k);
       setC(preset.c);
+      setBumpTrigger((prev) => prev + 1);
     }
     setFocusedVehicle(vehicle);
   };
+
+  // Manejar tecla ESC para cerrar modal de la calculadora
+  React.useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && isCalculatorModalOpen) {
+        setIsCalculatorModalOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isCalculatorModalOpen]);
 
   return (
     <div className="min-h-screen flex flex-col justify-between bg-[#f1f4f8] text-slate-900 selection:bg-amber-300 selection:text-slate-950">
@@ -143,10 +160,11 @@ export default function App() {
                 <button
                   onClick={() => applyPreset(PRESETS.SUBAMORTIGUADO)}
                   className={`px-3 py-1.5 rounded-xl border transition-all cursor-pointer font-medium ${
-                    Math.abs(c - 1800) < 5 && k === 30000 && focusedVehicle === 'ambulancia'
-                      ? 'bg-blue-600 text-white border-blue-500 shadow-sm'
+                    Math.abs(c - 1800) < 50 && Math.abs(k - 30000) < 500
+                      ? 'bg-blue-600 text-white border-blue-500 shadow-sm font-bold'
                       : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:text-slate-900'
                   }`}
+                  title="Configurar régimen subamortiguado (c = 1800 N·s/m, ζ = 0.3) y probar rebote"
                 >
                   1. Subamortiguado (0.3 ccr)
                 </button>
@@ -154,10 +172,11 @@ export default function App() {
                 <button
                   onClick={() => applyPreset(PRESETS.CRITICO)}
                   className={`px-3 py-1.5 rounded-xl border transition-all cursor-pointer font-medium ${
-                    Math.abs(c - 6000) < 5 && k === 30000 && focusedVehicle === 'ambulancia'
+                    Math.abs(c - 6000) < 50 && Math.abs(k - 30000) < 500
                       ? 'bg-amber-500 text-slate-950 font-bold border-amber-400 shadow-sm'
                       : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:text-slate-900'
                   }`}
+                  title="Configurar régimen críticamente amortiguado (c = 6000 N·s/m, ζ = 1.0) y probar retorno óptimo"
                 >
                   2. Crítico (ccr = 6000)
                 </button>
@@ -165,10 +184,11 @@ export default function App() {
                 <button
                   onClick={() => applyPreset(PRESETS.SOBREAMORTIGUADO)}
                   className={`px-3 py-1.5 rounded-xl border transition-all cursor-pointer font-medium ${
-                    Math.abs(c - 9000) < 5 && k === 30000 && focusedVehicle === 'ambulancia'
-                      ? 'bg-purple-600 text-white border-purple-500 shadow-sm'
+                    Math.abs(c - 9000) < 50 && Math.abs(k - 30000) < 500
+                      ? 'bg-purple-600 text-white border-purple-500 shadow-sm font-bold'
                       : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:text-slate-900'
                   }`}
+                  title="Configurar régimen sobreamortiguado (c = 9000 N·s/m, ζ = 1.5) y probar retorno lento"
                 >
                   3. Sobreamortiguado (1.5 ccr)
                 </button>
@@ -178,10 +198,11 @@ export default function App() {
                 <button
                   onClick={() => applyPreset(PRESETS.AMBULANCIA, 'ambulancia')}
                   className={`px-3 py-1.5 rounded-xl border transition-all cursor-pointer text-xs flex items-center gap-1.5 font-medium ${
-                    focusedVehicle === 'ambulancia' && Math.abs(c - 6000) < 5
-                      ? 'bg-emerald-600 text-white border-emerald-500 shadow-sm'
+                    focusedVehicle === 'ambulancia'
+                      ? 'bg-emerald-600 text-white border-emerald-500 shadow-sm font-bold'
                       : 'bg-slate-50 text-emerald-800 border-emerald-200 hover:bg-emerald-50'
                   }`}
+                  title="Enfocar Ambulancia Tipo III con amortiguamiento crítico (c = 6000 N·s/m)"
                 >
                   <HeartPulse className={`w-3.5 h-3.5 ${focusedVehicle === 'ambulancia' ? 'text-white' : 'text-emerald-600'}`} />
                   <span>Ambulancia</span>
@@ -190,13 +211,26 @@ export default function App() {
                 <button
                   onClick={() => applyPreset(PRESETS.CARRERAS, 'carreras')}
                   className={`px-3 py-1.5 rounded-xl border transition-all cursor-pointer text-xs flex items-center gap-1.5 font-medium ${
-                    focusedVehicle === 'carreras' && Math.abs(c - 8500) < 5
-                      ? 'bg-rose-600 text-white border-rose-500 shadow-sm'
+                    focusedVehicle === 'carreras'
+                      ? 'bg-rose-600 text-white border-rose-500 shadow-sm font-bold'
                       : 'bg-slate-50 text-rose-800 border-rose-200 hover:bg-rose-50'
                   }`}
+                  title="Enfocar Koenigsegg Jesko con suspensión rígida deportiva (k = 50 kN/m, c = 8500 N·s/m)"
                 >
                   <Trophy className={`w-3.5 h-3.5 ${focusedVehicle === 'carreras' ? 'text-white' : 'text-rose-600'}`} />
                   <span>Koenigsegg Jesko</span>
+                </button>
+
+                <div className="h-4 w-px bg-slate-200 mx-1 hidden sm:block" />
+
+                {/* Nuevo Botón: Calculadora EDO Completa en Modal */}
+                <button
+                  onClick={() => setIsCalculatorModalOpen(true)}
+                  className="px-3.5 py-1.5 rounded-xl border border-blue-400 bg-blue-50/90 hover:bg-blue-100 text-blue-900 font-bold transition-all cursor-pointer text-xs flex items-center gap-1.5 shadow-2xs"
+                  title="Abrir la Calculadora Analítica Paso a Paso (11 Pasos Matemáticos)"
+                >
+                  <Calculator className="w-3.5 h-3.5 text-blue-700" />
+                  <span>Calculadora EDO</span>
                 </button>
               </div>
             </div>
@@ -239,6 +273,9 @@ export default function App() {
                       v0={v0}
                       regimen={regimen}
                       zeta={zeta}
+                      settlingTime={settlingTime}
+                      overshootPct={overshootPct}
+                      bumpTrigger={bumpTrigger}
                       focusedVehicle={focusedVehicle}
                       setFocusedVehicle={focusVehicle}
                       isTechnicalOpen={isTechnicalModalOpen}
@@ -433,6 +470,78 @@ export default function App() {
         isOpen={isFlashcardsOpen}
         onClose={() => setIsFlashcardsOpen(false)}
       />
+
+      {/* Modal Interactivo de la Calculadora EDO (Activado desde Laboratorio) */}
+      {isCalculatorModalOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/70 backdrop-blur-md animate-fadeIn"
+          onClick={() => setIsCalculatorModalOpen(false)}
+        >
+          <div
+            className="liquid-glass bg-white text-slate-900 border border-white/90 shadow-2xl rounded-3xl w-full max-w-5xl max-h-[92vh] flex flex-col overflow-hidden relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Encabezado del modal */}
+            <div className="p-4 sm:p-5 border-b border-slate-200 flex items-center justify-between gap-3 bg-gradient-to-r from-blue-50/90 to-amber-50/50">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-2xl bg-[#0B3C73] text-white shadow-md">
+                  <Calculator className="w-5 h-5 text-amber-400" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-blue-100 text-[#0B3C73] border border-blue-200">
+                      Laboratorio · Análisis Paso a Paso
+                    </span>
+                    <span className="text-[11px] font-mono text-slate-500 hidden sm:inline">
+                      m = {m} kg · k = {(k / 1000).toFixed(0)} kN/m · c = {c.toFixed(0)} N·s/m
+                    </span>
+                  </div>
+                  <h3 className="text-base sm:text-lg font-black text-slate-950 tracking-tight mt-0.5">
+                    Calculadora Analítica Completa (11 Pasos Matemáticos)
+                  </h3>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setIsCalculatorModalOpen(false)}
+                className="p-2 rounded-xl text-slate-500 hover:text-slate-950 hover:bg-slate-200/60 transition-colors cursor-pointer"
+                title="Cerrar calculadora (ESC)"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Contenido de la Calculadora con Scroll */}
+            <div className="p-3 sm:p-6 overflow-y-auto flex-1 bg-slate-50/50">
+              <SuspensionCalculator
+                m={m}
+                setM={setM}
+                c={c}
+                setC={setC}
+                k={k}
+                setK={setK}
+                x0={x0}
+                setX0={setX0}
+              />
+            </div>
+
+            {/* Pie del modal */}
+            <div className="p-3 sm:p-4 border-t border-slate-200 bg-white flex items-center justify-between text-xs text-slate-600">
+              <span className="text-[11px] text-slate-500 font-mono hidden sm:inline">
+                Sincronizado en tiempo real con los deslizadores del laboratorio y la simulación 3D.
+              </span>
+              <button
+                onClick={() => setIsCalculatorModalOpen(false)}
+                className="liquid-glass-button-gold px-4 py-1.5 rounded-xl text-xs font-bold cursor-pointer ml-auto"
+              >
+                Cerrar Calculadora
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Pie de Página Formal Unimayor */}
       <footer className="w-full border-t border-slate-200 bg-white/90 backdrop-blur-md py-4 px-4 sm:px-6 text-xs text-slate-600 mt-8 no-print">

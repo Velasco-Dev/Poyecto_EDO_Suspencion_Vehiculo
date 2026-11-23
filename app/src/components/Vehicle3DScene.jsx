@@ -25,6 +25,9 @@ export default function Vehicle3DScene({
   v0 = 0.0,
   regimen = 'Crítico',
   zeta = 1.0,
+  settlingTime = 0.58,
+  overshootPct = 0.0,
+  bumpTrigger = 0,
   focusedVehicle = null,
   setFocusedVehicle,
   isTechnicalOpen: externalModalOpen,
@@ -73,6 +76,32 @@ export default function Vehicle3DScene({
     },
     [isModalOpen, postToIframe]
   );
+
+  // Sincronizar parámetros físicos de la suspensión reactivamente a los iframes 3D
+  useEffect(() => {
+    broadcast({
+      type: 'update-physics',
+      params: {
+        m,
+        c,
+        k,
+        x0,
+        v0,
+        regimen,
+        zeta,
+        settlingTime,
+        overshootPct,
+        focusedVehicle
+      }
+    });
+  }, [m, c, k, x0, v0, regimen, zeta, settlingTime, overshootPct, focusedVehicle, broadcast]);
+
+  // Sincronizar disparador de bache (cuando se presiona un caso o preset)
+  useEffect(() => {
+    if (bumpTrigger > 0) {
+      broadcast({ type: 'trigger-bump', x0: x0 || 0.05 });
+    }
+  }, [bumpTrigger, x0, broadcast]);
 
   // Sincronizar cámara cuando cambia el vehículo enfocado desde los presets
   useEffect(() => {
@@ -156,30 +185,15 @@ export default function Vehicle3DScene({
 
         {/* Acciones principales simplificadas */}
         <div className="pointer-events-auto flex items-center gap-1.5">
-          {/* Botón Simular Bache 
+          {/* Botón Simular Bache */}
           <button
             onClick={handleTriggerBump}
-            className="flex items-center gap-1 rounded-xl border border-white/15 bg-black/60 px-2.5 py-1.5 text-[11px] font-semibold text-slate-200 shadow hover:bg-white/15 hover:text-white transition cursor-pointer backdrop-blur-md"
-            title="Activar o probar baches en la ruta"
+            className="flex items-center gap-1.5 rounded-xl border border-amber-500/50 bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 px-2.5 py-1.5 text-[11px] font-bold shadow transition cursor-pointer backdrop-blur-md"
+            title="Activar perturbación de bache (5 cm) para probar la suspensión EDO"
           >
-            <Activity className="h-3.5 w-3.5 text-amber-400" />
-            <span className="hidden sm:inline">Baches</span>
-          </button>*/}
-
-          {/* Botón Puertas Jesko (Switch 35°) 
-          <button
-            onClick={handleToggleDoors}
-            className={`flex items-center gap-2 rounded-xl border px-2.5 py-1.5 text-[11px] font-semibold transition cursor-pointer backdrop-blur-md shadow ${doorsActive
-              ? 'border-orange-500/80 bg-orange-500/25 text-orange-200'
-              : 'border-white/15 bg-black/60 text-slate-200 hover:bg-white/15 hover:text-white'
-              }`}
-            title="Abrir o cerrar puertas"
-          >
-            <span className="hidden sm:inline">Puertas</span>
-            <div className={`w-7 h-4 rounded-full p-0.5 transition-colors ${doorsActive ? 'bg-orange-500' : 'bg-white/20'}`}>
-              <div className={`w-3 h-3 rounded-full bg-white transition-transform ${doorsActive ? 'translate-x-3' : 'translate-x-0'}`} />
-            </div>
-          </button>*/}
+            <Activity className="h-3.5 w-3.5 text-amber-400 animate-pulse" />
+            <span className="hidden sm:inline">Probar Bache</span>
+          </button>
 
           {/* Botón Rayos X (Suspensión) */}
           <button
@@ -202,16 +216,6 @@ export default function Vehicle3DScene({
           >
             <RotateCcw className="h-3.5 w-3.5" />
           </button>
-
-          {/* BOTÓN PROTAGONISTA: VISTA TÉCNICA (Lanza el modal) 
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-xs px-3 py-1.5 shadow-md shadow-blue-900/40 transition-all cursor-pointer border border-blue-400/30"
-            title="Abrir Vista Técnica interactiva completa con cámaras y telemetría"
-          >
-            <Maximize2 className="h-3.5 w-3.5 text-blue-200" />
-            <span>Vista Técnica</span>
-          </button>*/}
         </div>
       </div>
 
@@ -243,6 +247,14 @@ export default function Vehicle3DScene({
             loading="eager"
             onLoad={() => {
               postToIframe(cardIframeRef, { type: 'set-ui-visibility', visible: false });
+              postToIframe(cardIframeRef, {
+                type: 'update-physics',
+                params: { m, c, k, x0, v0, regimen, zeta, settlingTime, overshootPct, focusedVehicle }
+              });
+              let camera = 'overview';
+              if (focusedVehicle === 'carreras') camera = 'jesko';
+              else if (focusedVehicle === 'ambulancia') camera = 'ambulance';
+              postToIframe(cardIframeRef, { type: 'set-camera', camera });
             }}
           />
         )}
@@ -254,9 +266,12 @@ export default function Vehicle3DScene({
           <span className="font-semibold text-white">Interacción:</span> Arrastra para rotar · Rueda para zoom · Clic en <strong className="text-blue-300">Vista Técnica</strong> para pantalla completa
         </div>
         <div className="pointer-events-auto hidden sm:flex items-center gap-1.5 rounded-xl border border-white/10 bg-black/60 px-2.5 py-1 text-[10px] text-slate-300 backdrop-blur-md">
+          <span className={`w-2 h-2 rounded-full ${zeta < 0.99 ? 'bg-blue-400' : (zeta > 1.01 ? 'bg-purple-400' : 'bg-amber-400')} animate-pulse`} />
+          <span className="font-bold text-white">{regimen}</span>
+          <span>·</span>
           <span className="text-amber-400 font-bold">ζ = {zeta.toFixed(2)}</span>
           <span>·</span>
-          <span>{regimen}</span>
+          <span className="text-slate-300 font-mono">c = {c.toFixed(0)} N·s/m</span>
         </div>
       </div>
 
@@ -328,6 +343,14 @@ export default function Vehicle3DScene({
               loading="eager"
               onLoad={() => {
                 postToIframe(modalIframeRef, { type: 'set-ui-visibility', visible: true });
+                postToIframe(modalIframeRef, {
+                  type: 'update-physics',
+                  params: { m, c, k, x0, v0, regimen, zeta, settlingTime, overshootPct, focusedVehicle }
+                });
+                let camera = 'overview';
+                if (focusedVehicle === 'carreras') camera = 'jesko';
+                else if (focusedVehicle === 'ambulancia') camera = 'ambulance';
+                postToIframe(modalIframeRef, { type: 'set-camera', camera });
               }}
             />
           </div>
