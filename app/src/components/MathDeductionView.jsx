@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
-import { BookOpen, Calculator, Sigma } from 'lucide-react';
+import { BookOpen, Calculator, Sigma, Presentation, Terminal, Activity, ArrowRight, Sparkles } from 'lucide-react';
 import KaTeXMath from './KaTeXMath';
 
-export default function MathDeductionView() {
+export default function MathDeductionView({ onNavigateToSlide }) {
   const [activeTab, setActiveTab] = useState('planteamiento');
 
   const tabs = [
-    { id: 'planteamiento', label: '1. Planteamiento físico y EDO' },
-    { id: 'subamortiguado', label: '2. Subamortiguado (c = 1800)' },
-    { id: 'critico', label: '3. Crítico (c = 6000)' },
-    { id: 'sobreamortiguado', label: '4. Sobreamortiguado (c = 9000)' },
-    { id: 'sistema1orden', label: '5. Sistema de 1er orden y RK4' },
+    { id: 'planteamiento', label: '1. Planteamiento físico y EDO', slideId: 2, speaker: 'Cruz Anacona Angela' },
+    { id: 'subamortiguado', label: '2. Subamortiguado (c = 1800)', slideId: 3, speaker: 'Gómez Hoyos Duban' },
+    { id: 'critico', label: '3. Crítico (c = 6000)', slideId: 3, speaker: 'Gómez Hoyos Duban' },
+    { id: 'sobreamortiguado', label: '4. Sobreamortiguado (c = 9000)', slideId: 4, speaker: 'Gómez Hoyos Duban' },
+    { id: 'sistema1orden', label: '5. Sistema de 1er orden y RK4', slideId: 5, speaker: 'Torres Angulo Jose' },
   ];
+
+  const currentTabObj = tabs.find(t => t.id === activeTab) || tabs[0];
 
   const Card = ({ title, icon: Icon = Calculator, children, tone = 'blue' }) => {
     const tones = {
@@ -40,26 +42,60 @@ export default function MathDeductionView() {
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-1 sm:p-2">
+      {/* Banner de Integración Total en Exposición */}
       <section className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_14px_40px_-28px_rgba(15,23,42,.45)]">
         <div className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-blue-100/70 blur-3xl" />
         <div className="pointer-events-none absolute -left-10 -bottom-20 h-56 w-56 rounded-full bg-amber-100/70 blur-3xl" />
         <div className="relative z-10">
-          <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-bold uppercase tracking-[.14em] text-blue-800">
-            <BookOpen className="h-4 w-4" /> Rúbrica 1.0 · Deducción matemática
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-bold uppercase tracking-[.14em] text-blue-800">
+              <BookOpen className="h-4 w-4" /> Rúbrica 1.0 · Deducción matemática completa
+            </div>
+
+            {onNavigateToSlide && (
+              <button
+                onClick={() => onNavigateToSlide(currentTabObj.slideId)}
+                className="liquid-glass-button-gold px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-sm hover:scale-105 transition-all"
+                title="Abrir esta deducción directamente dentro de la diapositiva de la exposición con código y simulación interactiva"
+              >
+                <Presentation className="w-4 h-4 text-[#0B3C73]" />
+                <span>Ver en Modo Exposición (Diapositiva {currentTabObj.slideId})</span>
+                <ArrowRight className="w-3.5 h-3.5 text-amber-900" />
+              </button>
+            )}
           </div>
+
           <h2 className="text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
             Deducción analítica completa del modelo de suspensión
           </h2>
-          <p className="mt-3 max-w-4xl text-sm leading-7 text-slate-700 sm:text-base">
+          <p className="mt-3 max-w-4xl text-sm leading-7 text-slate-700 sm:text-base font-medium">
             Desarrollo paso a paso de la ecuación diferencial <KaTeXMath math={"m\\,x''(t)+c\\,x'(t)+k\\,x(t)=0"} block={false} /> para un modelo de cuarto de vehículo.
-            Se parte de <KaTeXMath math={"m=300\\,\\text{kg}"} block={false} />, <KaTeXMath math={"k=30000\\,\\text{N/m}"} block={false} />, <KaTeXMath math={"x(0)=0.05\\,\\text{m}"} block={false} /> y <KaTeXMath math={"x'(0)=0"} block={false} /> (bache de 5 cm).
+            Partiendo de <KaTeXMath math={"m=300\\,\\text{kg}"} block={false} />, <KaTeXMath math={"k=30000\\,\\text{N/m}"} block={false} />, <KaTeXMath math={"x(0)=0.05\\,\\text{m}"} block={false} /> y <KaTeXMath math={"x'(0)=0"} block={false} /> (bache de 5 cm).
           </p>
+
+          <div className="mt-4 p-3 bg-gradient-to-r from-blue-50 via-amber-50/70 to-blue-50 rounded-2xl border border-blue-200 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-800">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
+              <span>
+                <strong>Apartado Integrado:</strong> Toda esta deducción se encuentra enlazada dentro del <strong>Modo Exposición</strong> con el botón <em>"Deducción, Código & App en Vivo"</em> para comparar teoría, código (JS/Py) y física 3D en un solo lugar.
+              </span>
+            </div>
+            {onNavigateToSlide && (
+              <button
+                onClick={() => onNavigateToSlide(currentTabObj.slideId)}
+                className="px-3 py-1 rounded-lg bg-[#0B3C73] text-white font-bold hover:bg-blue-900 transition-colors cursor-pointer shrink-0"
+              >
+                Abrir Diapositiva {currentTabObj.slideId}
+              </button>
+            )}
+          </div>
+
           <div className="mt-5 flex flex-wrap gap-2">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`rounded-xl px-3.5 py-2 text-xs font-bold transition sm:text-sm ${
+                className={`rounded-xl px-3.5 py-2 text-xs font-bold transition sm:text-sm cursor-pointer ${
                   activeTab === tab.id
                     ? 'bg-blue-700 text-white shadow-sm'
                     : 'border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 hover:text-slate-950'

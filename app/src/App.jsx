@@ -39,6 +39,16 @@ export default function App() {
   // Estado del vehículo enfocado para el visor 3D ('ambulancia' | 'carreras' | null)
   const [focusedVehicle, setFocusedVehicle] = useState(null);
 
+  // Estados para enlazar deducción analítica directamente con diapositiva y modal en Exposición
+  const [deckTargetSlide, setDeckTargetSlide] = useState(null);
+  const [deckAutoOpenModal, setDeckAutoOpenModal] = useState(false);
+
+  const handleNavigateToDeckSlide = (slideId) => {
+    setDeckTargetSlide(slideId);
+    setDeckAutoOpenModal(true);
+    setActiveTab('deck');
+  };
+
   // Propiedades analíticas y métricas computadas en vivo
   const { omega_n, c_cr, zeta, regimen } = useMemo(() => {
     return calculateOscillatorProperties(m, k, c);
@@ -421,7 +431,7 @@ export default function App() {
             VISTA 3: DEDUCCIÓN MATEMÁTICA A MANO (RÚBRICA 1.0)
             ======================================================== */}
         {activeTab === 'math' && (
-          <MathDeductionView />
+          <MathDeductionView onNavigateToSlide={handleNavigateToDeckSlide} />
         )}
 
         {/* ========================================================
@@ -460,6 +470,8 @@ export default function App() {
             regimen={regimen}
             settlingTime={settlingTime}
             overshootPct={overshootPct}
+            targetSlideId={deckTargetSlide}
+            autoOpenModal={deckAutoOpenModal}
           />
         )}
 
