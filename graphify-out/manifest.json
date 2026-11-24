@@ -1,0 +1,182 @@
+{
+  ".github/workflows/deploy.yml": {
+    "mtime": 1794256098.7365215,
+    "seen": 1795496449.1737223,
+    "ast_hash": "5b6f2611ba5703d6f6c29a420fa56a2a",
+    "semantic_hash": "5b6f2611ba5703d6f6c29a420fa56a2a"
+  },
+  "app/package.json": {
+    "mtime": 1794845038.055203,
+    "seen": 1795496449.1737273,
+    "ast_hash": "def2301418d8d4a5c7abaee2b786ce88",
+    "semantic_hash": "def2301418d8d4a5c7abaee2b786ce88"
+  },
+  "app/public/suspension_sim.py": {
+    "mtime": 1794253773.990894,
+    "seen": 1795496449.17373,
+    "ast_hash": "7e046aa66f4477519ca4af26bd60aa40",
+    "semantic_hash": "7e046aa66f4477519ca4af26bd60aa40"
+  },
+  "app/src/App.jsx": {
+    "mtime": 1795506032.574859,
+    "seen": 1795506245.3625479,
+    "ast_hash": "6545067f15f566bddb400875778f0e77",
+    "semantic_hash": ""
+  },
+  "app/src/components/ClassComparisonView.jsx": {
+    "mtime": 1795399682.389038,
+    "seen": 1795496449.1737325,
+    "ast_hash": "f10e6647808fdce40951d2ce34b2db16",
+    "semantic_hash": "f10e6647808fdce40951d2ce34b2db16"
+  },
+  "app/src/components/CodeCalculationModal.jsx": {
+    "mtime": 1795508178.4792404,
+    "seen": 1795508217.7812548,
+    "ast_hash": "7b89a7990267eb8c210e2489b5c8b894",
+    "semantic_hash": ""
+  },
+  "app/src/components/FlashcardsModal.jsx": {
+    "mtime": 1795507094.4988396,
+    "seen": 1795507191.9344788,
+    "ast_hash": "ef8335979be9c1784306e7bac231033d",
+    "semantic_hash": ""
+  },
+  "app/src/components/Header.jsx": {
+    "mtime": 1795503435.1228242,
+    "seen": 1795503491.4166467,
+    "ast_hash": "a0f4d47af424d2fdd90dc3e6eaca5c2b",
+    "semantic_hash": ""
+  },
+  "app/src/components/KaTeXMath.jsx": {
+    "mtime": 1795508670.9035652,
+    "seen": 1795508758.3015883,
+    "ast_hash": "1695b24d2b9d11b340233a7952b70def",
+    "semantic_hash": ""
+  },
+  "app/src/components/MathDeductionView.jsx": {
+    "mtime": 1795400017.0384903,
+    "seen": 1795496449.1737385,
+    "ast_hash": "ab8515c2f929eb3f6b7583af320c0cc5",
+    "semantic_hash": "ab8515c2f929eb3f6b7583af320c0cc5"
+  },
+  "app/src/components/PresentationDeck.jsx": {
+    "mtime": 1795508727.5115128,
+    "seen": 1795508758.3015919,
+    "ast_hash": "7ae61c3d45bd5c5766f3ca5d2796f789",
+    "semantic_hash": ""
+  },
+  "app/src/components/SimulationChart.jsx": {
+    "mtime": 1795400017.0400004,
+    "seen": 1795496449.173741,
+    "ast_hash": "473c8818f9f3fee93203793e758fb966",
+    "semantic_hash": "473c8818f9f3fee93203793e758fb966"
+  },
+  "app/src/components/SuspensionAnimation.jsx": {
+    "mtime": 1794845038.0577736,
+    "seen": 1795496449.173742,
+    "ast_hash": "5ad7b2c9efc72239eb8969799b955d56",
+    "semantic_hash": "5ad7b2c9efc72239eb8969799b955d56"
+  },
+  "app/src/components/SuspensionCalculator.jsx": {
+    "mtime": 1795503103.2608173,
+    "seen": 1795503130.7597513,
+    "ast_hash": "8479762ba1a97f896414813a07f3c726",
+    "semantic_hash": ""
+  },
+  "app/src/components/Vehicle3DScene.jsx": {
+    "mtime": 1795497461.4997613,
+    "seen": 1795500305.5492694,
+    "ast_hash": "a9e390757ecef3ef61b328c2865eb380",
+    "semantic_hash": ""
+  },
+  "app/src/data/flashcardsData.js": {
+    "mtime": 1795507179.4141502,
+    "seen": 1795507191.9344928,
+    "ast_hash": "76ca6ac7e4a4a39e7f86cf5e3d6a85ce",
+    "semantic_hash": ""
+  },
+  "app/src/data/slidesCodeData.js": {
+    "mtime": 1795508120.4993384,
+    "seen": 1795508217.7812705,
+    "ast_hash": "5db81b0bccf219a752068cba5a2d2beb",
+    "semantic_hash": ""
+  },
+  "app/src/main.jsx": {
+    "mtime": 1794254903.4782467,
+    "seen": 1795496449.1737478,
+    "ast_hash": "3cc2ebd189bb195669925d86d661115e",
+    "semantic_hash": "3cc2ebd189bb195669925d86d661115e"
+  },
+  "app/src/physics/suspensionPhysics.js": {
+    "mtime": 1794253811.968732,
+    "seen": 1795496449.1737487,
+    "ast_hash": "151b96c0d046342df4d1d9e0d65bc510",
+    "semantic_hash": "151b96c0d046342df4d1d9e0d65bc510"
+  },
+  "app/vite.config.js": {
+    "mtime": 1794253744.4331744,
+    "seen": 1795496449.17375,
+    "ast_hash": "b96386478e17d39ed006891f44c416a9",
+    "semantic_hash": "b96386478e17d39ed006891f44c416a9"
+  },
+  "python/suspension_sim.py": {
+    "mtime": 1794253773.990894,
+    "seen": 1795496449.173751,
+    "ast_hash": "7e046aa66f4477519ca4af26bd60aa40",
+    "semantic_hash": "7e046aa66f4477519ca4af26bd60aa40"
+  },
+  "FLASHCARDS_DEFENSA_GRUPO_5.md": {
+    "mtime": 1794255128.2120657,
+    "seen": 1795500305.54928,
+    "ast_hash": "073aa48e8d34405b23c6caa102671299",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1795501042.5111876,
+    "seen": 1795501726.6794927,
+    "ast_hash": "e336c02370e793f47a9f9d823fc358b3",
+    "semantic_hash": ""
+  },
+  "app/index.html": {
+    "mtime": 1795508660.4853725,
+    "seen": 1795508758.30161,
+    "ast_hash": "c5ea98566b77cbd34ad43b89d222dda7",
+    "semantic_hash": ""
+  },
+  "app/public/models/Animacion_Carretera.html": {
+    "mtime": 1795504164.4908552,
+    "seen": 1795504199.588493,
+    "ast_hash": "5022f93291dc83ee3072f1896dedced0",
+    "semantic_hash": ""
+  },
+  "app/public/models/ambulancia-tipo-iii.html": {
+    "mtime": 1794853951.3848302,
+    "seen": 1795500305.5492854,
+    "ast_hash": "18fa9a7522e74111774dad1914edc42a",
+    "semantic_hash": ""
+  },
+  "app/public/models/koenigsegg-jesko.html": {
+    "mtime": 1795399682.375299,
+    "seen": 1795500305.5492868,
+    "ast_hash": "802ac634fa9dae2dfced6c0f3b7d33cb",
+    "semantic_hash": ""
+  },
+  "requirements.txt": {
+    "mtime": 1794254150.9051092,
+    "seen": 1795500305.549288,
+    "ast_hash": "a373e712c72fbc8accffdefc164cb190",
+    "semantic_hash": ""
+  },
+  "app/package-lock.json": {
+    "mtime": 1795400017.0364318,
+    "seen": 1795500305.5492892,
+    "ast_hash": "b392543a3d07801e261551741b8f8d26",
+    "semantic_hash": ""
+  },
+  "package-lock.json": {
+    "mtime": 1795400017.0422993,
+    "seen": 1795500305.54929,
+    "ast_hash": "a265221337f1142a5946655bdf787b18",
+    "semantic_hash": ""
+  }
+}

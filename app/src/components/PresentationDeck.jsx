@@ -3,7 +3,7 @@ import {
   ChevronLeft, ChevronRight, Play, Pause, RotateCcw, 
   Maximize2, Minimize2, Clock, User, Award, CheckCircle2,
   Sparkles, Layers, Sliders, Box, ShieldCheck, HeartPulse, Trophy,
-  Code2, Terminal, BookOpen, Activity, Compass, Flame
+  Code2, Terminal, BookOpen, Activity, Compass, Flame, Cpu, Palette
 } from 'lucide-react';
 import { SLIDES_PRESENTATION } from '../data/flashcardsData';
 import { SLIDES_CODE_MAPPING } from '../data/slidesCodeData';
@@ -22,7 +22,8 @@ export default function PresentationDeck({
   settlingTime, 
   overshootPct,
   targetSlideId = null,
-  autoOpenModal = false
+  autoOpenModal = false,
+  onNavigateToSimulator = null
 }) {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [secondsRemaining, setSecondsRemaining] = useState(15 * 60); // 15 minutos en segundos (900s)
@@ -164,6 +165,16 @@ export default function PresentationDeck({
           >
             {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
           </button>
+          {/* {onNavigateToSimulator && (
+            <button
+              onClick={onNavigateToSimulator}
+              className="liquid-glass-button px-2.5 py-1.5 rounded-xl text-xs font-bold text-[#0B3C73] hover:text-blue-900 border border-blue-200/90 flex items-center gap-1.5 cursor-pointer shadow-2xs hover:shadow-xs transition-all active:scale-95 ml-1"
+              title="Abrir Laboratorio interactivo 3D completo"
+            >
+              <Activity className="w-3.5 h-3.5 text-blue-600" />
+              <span className="hidden md:inline">Laboratorio</span>
+            </button>
+          )} */}
         </div>
       </div>
 
@@ -512,6 +523,143 @@ export default function PresentationDeck({
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* DIAPOSITIVA 9: VISUALIZACIÓN 3D: THREE.JS, WEBGL Y CONEXIÓN CON LA EDO */}
+          {currentSlide.id === 9 && (
+            <div className="space-y-4">
+              {/* Relación Central Intuitiva */}
+              <div className="math-formula-box overflow-x-auto text-center py-2 px-3">
+                <div className="flex items-center justify-between px-2 mb-1">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#0B3C73]">
+                    Vínculo Físico-Matemático en Tiempo Real
+                  </span>
+                  <button
+                    onClick={() => setIsCodeModalOpen(true)}
+                    className="text-[10px] font-bold text-amber-900 bg-amber-100 hover:bg-amber-200 px-2.5 py-1 rounded-lg border border-amber-300 flex items-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
+                    title="Ver código fuente y lógica de conexión 3D"
+                  >
+                    <BookOpen className="w-3.5 h-3.5 text-[#0B3C73]" />
+                    <Code2 className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Deducción, Código & App</span>
+                  </button>
+                </div>
+                <KaTeXMath math="m\,\ddot{x} + c\,\dot{x} + k\,x = 0 \quad \Longrightarrow \quad L_{\text{resorte}}(t) = L_0 - x(t)" block={true} />
+                <p className="text-[11px] text-slate-600 font-medium mt-1">
+                  La solución matemática de la EDO le indica a la suspensión 3D exactamente cuánto comprimirse o estirarse a 60 cuadros por segundo.
+                </p>
+              </div>
+
+              {/* 3 Pilares Explicativos en Lenguaje Claro */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {/* 1. ¿Qué es Three.js? */}
+                <div className="liquid-glass-card p-4 rounded-2xl border border-blue-200/90 shadow-2xs flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="p-1.5 rounded-lg bg-blue-100 text-[#0B3C73]">
+                        <Box className="w-4 h-4" />
+                      </span>
+                      <span className="text-xs font-black text-[#0B3C73] uppercase tracking-wide">
+                        1. ¿Por qué Three.js?
+                      </span>
+                    </div>
+                    <h4 className="text-xs font-bold text-slate-900 mb-1.5">
+                      Simplifica la codificación de WebGL
+                    </h4>
+                    <p className="text-xs text-slate-700 leading-relaxed font-medium">
+                      Programar gráficos directamente en <strong>WebGL</strong> requeriría cientos de líneas de código bajo nivel para la tarjeta gráfica (GPU). <strong>Three.js</strong> simplifica todo eso, permitiéndonos crear la pista, las luces, cámaras y vehículos con comandos limpios y directos en JavaScript.
+                    </p>
+                  </div>
+                </div>
+
+                {/* 2. Modelado sin Archivos Pesados */}
+                <div className="liquid-glass-card p-4 rounded-2xl border border-purple-200/90 shadow-2xs flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="p-1.5 rounded-lg bg-purple-100 text-purple-800">
+                        <Layers className="w-4 h-4" />
+                      </span>
+                      <span className="text-xs font-black text-purple-900 uppercase tracking-wide">
+                        2. Modelado por Código
+                      </span>
+                    </div>
+                    <h4 className="text-xs font-bold text-slate-900 mb-1.5">
+                      Menos de 80 KB · Cero descargas
+                    </h4>
+                    <p className="text-xs text-slate-700 leading-relaxed font-medium">
+                      <strong>No descargamos modelos 3D externos</strong> (que pesan 50+ MB y tardan en abrir). Todo se construye matemáticamente: los neumáticos y rines se generan haciendo girar una silueta (revolución); la carrocería usa curvas suaves (splines); y el asfalto se dibuja en memoria. Carga al instante.
+                    </p>
+                  </div>
+                </div>
+
+                {/* 3. Sentido Físico de la Visual */}
+                <div className="liquid-glass-card p-4 rounded-2xl border border-emerald-200/90 shadow-2xs flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="p-1.5 rounded-lg bg-emerald-100 text-emerald-800">
+                        <Activity className="w-4 h-4" />
+                      </span>
+                      <span className="text-xs font-black text-emerald-900 uppercase tracking-wide">
+                        3. Sentido Físico
+                      </span>
+                    </div>
+                    <h4 className="text-xs font-bold text-slate-900 mb-1.5">
+                      Física Real de la Ambulancia
+                    </h4>
+                    <p className="text-xs text-slate-700 leading-relaxed font-medium">
+                      En cada instante, el simulador calcula <KaTeXMath math="x(t)" block={false} />. El resorte 3D se comprime y la carrocería se mueve con esa medida exacta. Al poner <strong>amortiguamiento crítico (<KaTeXMath math="\zeta = 1.0" block={false} />)</strong>, la ambulancia absorbe el bache de inmediato sin rebotar, asegurando la vida del paciente.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* GUIÓN EXPLICATIVO PARA EL EXPOSITOR (1 MINUTO SIN FALLOS) 
+              <div className="liquid-glass-card p-4 sm:p-5 rounded-2xl border-2 border-amber-300 bg-amber-50/50 shadow-sm">
+                <div className="flex items-center justify-between gap-2 mb-2.5">
+                  <div className="flex items-center gap-2">
+                    <span className="p-1.5 rounded-lg bg-amber-200 text-amber-900">
+                      <Sparkles className="w-4 h-4" />
+                    </span>
+                    <h4 className="text-xs sm:text-sm font-black text-amber-950 uppercase tracking-wider">
+                      Guión Resumido para el Expositor (Qué decir en 1 minuto sin fallos)
+                    </h4>
+                  </div>
+                  <span className="text-[10px] font-extrabold bg-amber-200/80 text-amber-900 px-2.5 py-0.5 rounded-full border border-amber-300">
+                    Lectura Rápida
+                  </span>
+                </div>
+                <div className="bg-white/90 p-3.5 sm:p-4 rounded-xl border border-amber-200/90 text-xs sm:text-[13px] text-slate-800 leading-relaxed font-medium space-y-2">
+                  <p>
+                    <strong className="text-[#0B3C73]">1. Sobre las herramientas:</strong> «Para la parte visual utilizamos <strong>Three.js</strong>, una librería que simplifica el uso de <strong>WebGL</strong> en el navegador. En lugar de escribir código complejo de bajo nivel para la GPU, nos permite crear las luces, materiales y cámaras de manera muy sencilla y directa».
+                  </p>
+                  <p>
+                    <strong className="text-[#0B3C73]">2. Sobre el modelado:</strong> «Un gran logro técnico es que <strong>no descargamos modelos 3D pesados de internet</strong>. Toda la ambulancia, el Jesko y la pista fueron construidos con fórmulas y curvas matemáticas por código. Por eso el proyecto pesa menos de 80 KB y carga de forma instantánea».
+                  </p>
+                  <p>
+                    <strong className="text-[#0B3C73]">3. Sobre la física y las fórmulas:</strong> «La animación está conectada directamente con la matemática: en cada instante calculamos <KaTeXMath math="x(t)" block={false} /> con nuestra ecuación diferencial y se la enviamos al resorte para que se comprima. Como demostramos en la teoría, cuando la ambulancia está en amortiguamiento crítico (<KaTeXMath math="\zeta = 1.0" block={false} />), el vehículo absorbe el impacto de golpe y regresa a su nivel sin ningún rebote oscilatorio».
+                  </p>
+                </div>
+              </div>*/}
+
+              {/* Botón de Enlace al Laboratorio 
+              {onNavigateToSimulator && (
+                <div className="p-3 bg-gradient-to-r from-blue-50/90 to-amber-50/90 rounded-2xl border border-blue-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-2xs">
+                  <div className="flex items-center gap-2">
+                    <Activity className="w-4 h-4 text-blue-600 shrink-0" />
+                    <span className="text-xs text-slate-800 font-bold">
+                      ¿Deseas comprobar esta respuesta física en vivo en el Laboratorio?
+                    </span>
+                  </div>
+                  <button
+                    onClick={onNavigateToSimulator}
+                    className="liquid-glass-button-gold px-4 py-2 rounded-xl text-xs font-black text-slate-950 flex items-center gap-1.5 shadow-xs hover:shadow-md transition-all active:scale-95 shrink-0"
+                  >
+                    <Box className="w-4 h-4 text-slate-950" />
+                    <span>Ir a Laboratorio (Diagrama 2D & 3D)</span>
+                  </button>
+                </div>
+              )}*/}
             </div>
           )}
         </div>

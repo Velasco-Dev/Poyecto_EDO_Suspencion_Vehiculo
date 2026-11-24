@@ -20,11 +20,11 @@ import {
 } from 'lucide-react';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('simulator'); // 'simulator' | 'chart' | 'math' | 'calculator' | 'deck'
+  const [activeTab, setActiveTab] = useState('deck'); // 'deck' (Exposición como ventana principal por defecto) | 'simulator'
   const [isFlashcardsOpen, setIsFlashcardsOpen] = useState(false);
   const [isTechnicalModalOpen, setIsTechnicalModalOpen] = useState(false);
   const [isCalculatorModalOpen, setIsCalculatorModalOpen] = useState(false);
-  const [simViewMode, setSimViewMode] = useState('3d'); // '3d' | '2d'
+  const [simViewMode, setSimViewMode] = useState('2d'); // '2d' (Diagrama 2D inicial por defecto para sorprender luego con 3D) | '3d'
 
   // Parámetros reactivos del sistema físico
   const [m, setM] = useState(300.0);
@@ -135,20 +135,27 @@ export default function App() {
                     Comparamos la suspensión de una ambulancia y un auto deportivo. Ajusta masa, rigidez y amortiguamiento; observa cómo responde la carrocería ante un bache mediante solución analítica exacta e integración numérica RK4.
                   </p>
                 </div>
-                <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 lg:w-[520px] lg:grid-cols-2">
-                  <div className="rounded-2xl border border-slate-200/90 bg-white/90 p-3.5 backdrop-blur shadow-xs">
-                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">Régimen actual</span>
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:w-[520px] lg:grid-cols-2">
+                  <div className="group rounded-2xl border border-slate-200/90 bg-white/95 p-3.5 backdrop-blur shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 relative overflow-hidden">
+                    <div className={`absolute top-0 left-0 right-0 h-1 ${zeta < 1 ? 'bg-blue-500' : zeta === 1 ? 'bg-amber-500' : 'bg-purple-500'}`} />
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">Régimen actual</span>
+                      <span className={`h-2 w-2 rounded-full ${zeta < 1 ? 'bg-blue-500 animate-pulse' : zeta === 1 ? 'bg-amber-500' : 'bg-purple-500'}`} />
+                    </div>
                     <strong className="mt-1 block text-sm font-black text-slate-950 sm:text-base">{regimen}</strong>
                   </div>
-                  <div className="rounded-2xl border border-slate-200/90 bg-white/90 p-3.5 backdrop-blur shadow-xs">
+                  <div className="group rounded-2xl border border-slate-200/90 bg-white/95 p-3.5 backdrop-blur shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 relative overflow-hidden">
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-amber-500" />
                     <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">Amortiguamiento</span>
                     <strong className="mt-1 block font-mono text-sm font-black text-amber-700 sm:text-base">ζ = {zeta.toFixed(2)}</strong>
                   </div>
-                  <div className="rounded-2xl border border-slate-200/90 bg-white/90 p-3.5 backdrop-blur shadow-xs">
+                  <div className="group rounded-2xl border border-slate-200/90 bg-white/95 p-3.5 backdrop-blur shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 relative overflow-hidden">
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-[#0B3C73]" />
                     <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">Asentamiento (2%)</span>
                     <strong className="mt-1 block font-mono text-sm font-black text-[#0B3C73] sm:text-base">{settlingTime.toFixed(2)} s</strong>
                   </div>
-                  <div className="rounded-2xl border border-slate-200/90 bg-white/90 p-3.5 backdrop-blur shadow-xs">
+                  <div className="group rounded-2xl border border-slate-200/90 bg-white/95 p-3.5 backdrop-blur shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 relative overflow-hidden">
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-indigo-500" />
                     <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">Frecuencia natural</span>
                     <strong className="mt-1 block font-mono text-sm font-black text-slate-950 sm:text-base">ωₙ = {omega_n.toFixed(2)} rad/s</strong>
                   </div>
@@ -161,7 +168,7 @@ export default function App() {
               <div className="flex items-start gap-2.5 text-xs font-semibold text-slate-800 xl:min-w-[205px]">
                 <Sliders className="w-4 h-4 text-amber-600 mt-0.5" />
                 <div>
-                  <span className="block">Prueba un caso</span>
+                  <span className="block font-bold">Prueba un caso</span>
                   <span className="block mt-0.5 text-[11px] font-medium leading-relaxed text-slate-600">Configuraciones para la exposición</span>
                 </div>
               </div>
@@ -169,10 +176,10 @@ export default function App() {
               <div className="flex flex-wrap items-center gap-2 text-xs xl:justify-end">
                 <button
                   onClick={() => applyPreset(PRESETS.SUBAMORTIGUADO)}
-                  className={`px-3 py-1.5 rounded-xl border transition-all cursor-pointer font-medium ${
+                  className={`px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer font-bold duration-200 active:scale-95 ${
                     Math.abs(c - 1800) < 50 && Math.abs(k - 30000) < 500
-                      ? 'bg-blue-600 text-white border-blue-500 shadow-sm font-bold'
-                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:text-slate-900'
+                      ? 'bg-blue-600 text-white border-blue-500 shadow-sm ring-2 ring-blue-300'
+                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-blue-50/70 hover:text-blue-900 hover:border-blue-200'
                   }`}
                   title="Configurar régimen subamortiguado (c = 1800 N·s/m, ζ = 0.3) y probar rebote"
                 >
@@ -181,10 +188,10 @@ export default function App() {
 
                 <button
                   onClick={() => applyPreset(PRESETS.CRITICO)}
-                  className={`px-3 py-1.5 rounded-xl border transition-all cursor-pointer font-medium ${
+                  className={`px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer font-bold duration-200 active:scale-95 ${
                     Math.abs(c - 6000) < 50 && Math.abs(k - 30000) < 500
-                      ? 'bg-amber-500 text-slate-950 font-bold border-amber-400 shadow-sm'
-                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:text-slate-900'
+                      ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-sm ring-2 ring-amber-300'
+                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-amber-50/70 hover:text-amber-900 hover:border-amber-200'
                   }`}
                   title="Configurar régimen críticamente amortiguado (c = 6000 N·s/m, ζ = 1.0) y probar retorno óptimo"
                 >
@@ -193,10 +200,10 @@ export default function App() {
 
                 <button
                   onClick={() => applyPreset(PRESETS.SOBREAMORTIGUADO)}
-                  className={`px-3 py-1.5 rounded-xl border transition-all cursor-pointer font-medium ${
+                  className={`px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer font-bold duration-200 active:scale-95 ${
                     Math.abs(c - 9000) < 50 && Math.abs(k - 30000) < 500
-                      ? 'bg-purple-600 text-white border-purple-500 shadow-sm font-bold'
-                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:text-slate-900'
+                      ? 'bg-purple-600 text-white border-purple-500 shadow-sm ring-2 ring-purple-300'
+                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-purple-50/70 hover:text-purple-900 hover:border-purple-200'
                   }`}
                   title="Configurar régimen sobreamortiguado (c = 9000 N·s/m, ζ = 1.5) y probar retorno lento"
                 >
@@ -207,10 +214,10 @@ export default function App() {
 
                 <button
                   onClick={() => applyPreset(PRESETS.AMBULANCIA, 'ambulancia')}
-                  className={`px-3 py-1.5 rounded-xl border transition-all cursor-pointer text-xs flex items-center gap-1.5 font-medium ${
+                  className={`px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer text-xs flex items-center gap-1.5 font-bold duration-200 active:scale-95 ${
                     focusedVehicle === 'ambulancia'
-                      ? 'bg-emerald-600 text-white border-emerald-500 shadow-sm font-bold'
-                      : 'bg-slate-50 text-emerald-800 border-emerald-200 hover:bg-emerald-50'
+                      ? 'bg-emerald-600 text-white border-emerald-500 shadow-sm ring-2 ring-emerald-300'
+                      : 'bg-slate-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100/70'
                   }`}
                   title="Enfocar Ambulancia Tipo III con amortiguamiento crítico (c = 6000 N·s/m)"
                 >
@@ -220,10 +227,10 @@ export default function App() {
 
                 <button
                   onClick={() => applyPreset(PRESETS.CARRERAS, 'carreras')}
-                  className={`px-3 py-1.5 rounded-xl border transition-all cursor-pointer text-xs flex items-center gap-1.5 font-medium ${
+                  className={`px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer text-xs flex items-center gap-1.5 font-bold duration-200 active:scale-95 ${
                     focusedVehicle === 'carreras'
-                      ? 'bg-rose-600 text-white border-rose-500 shadow-sm font-bold'
-                      : 'bg-slate-50 text-rose-800 border-rose-200 hover:bg-rose-50'
+                      ? 'bg-rose-600 text-white border-rose-500 shadow-sm ring-2 ring-rose-300'
+                      : 'bg-slate-50 text-rose-800 border-rose-200 hover:bg-rose-100/70'
                   }`}
                   title="Enfocar Koenigsegg Jesko con suspensión rígida deportiva (k = 50 kN/m, c = 8500 N·s/m)"
                 >
@@ -236,7 +243,7 @@ export default function App() {
                 {/* Nuevo Botón: Calculadora EDO Completa en Modal */}
                 <button
                   onClick={() => setIsCalculatorModalOpen(true)}
-                  className="px-3.5 py-1.5 rounded-xl border border-blue-400 bg-blue-50/90 hover:bg-blue-100 text-blue-900 font-bold transition-all cursor-pointer text-xs flex items-center gap-1.5 shadow-2xs"
+                  className="px-3.5 py-1.5 rounded-xl border border-blue-300 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 text-[#0B3C73] font-black transition-all cursor-pointer text-xs flex items-center gap-1.5 shadow-2xs hover:shadow-xs active:scale-95"
                   title="Abrir la Calculadora Analítica Paso a Paso (11 Pasos Matemáticos)"
                 >
                   <Calculator className="w-3.5 h-3.5 text-blue-700" />
@@ -268,8 +275,8 @@ export default function App() {
                       </button>
                     )}
                     <div className="flex items-center gap-1 rounded-xl border border-slate-200 bg-slate-100 p-0.5 text-[11px] font-semibold">
-                      <button onClick={() => setSimViewMode('3d')} className={`rounded-lg px-2.5 py-1.5 transition ${simViewMode === '3d' ? 'bg-white font-extrabold text-blue-800 shadow-sm ring-1 ring-slate-200' : 'text-slate-700 hover:text-slate-950'}`}>Modelo 3D</button>
                       <button onClick={() => setSimViewMode('2d')} className={`rounded-lg px-2.5 py-1.5 transition ${simViewMode === '2d' ? 'bg-white font-extrabold text-blue-800 shadow-sm ring-1 ring-slate-200' : 'text-slate-700 hover:text-slate-950'}`}>Diagrama 2D</button>
+                      <button onClick={() => setSimViewMode('3d')} className={`rounded-lg px-2.5 py-1.5 transition ${simViewMode === '3d' ? 'bg-white font-extrabold text-blue-800 shadow-sm ring-1 ring-slate-200' : 'text-slate-700 hover:text-slate-950'}`}>Modelo 3D</button>
                     </div>
                   </div>
                 </div>
@@ -298,13 +305,13 @@ export default function App() {
               </section>
 
               <div className="flex flex-col gap-4 lg:col-span-5">
-                <section className="space-y-4 rounded-[1.6rem] border border-slate-200 bg-white p-4 shadow-[0_12px_32px_-24px_rgba(15,23,42,.45)] sm:p-5">
-                  <div className="flex items-center justify-between gap-2">
+                <section className="space-y-4 rounded-3xl border border-slate-200/90 bg-white/95 p-4 sm:p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur">
+                  <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-3">
                     <div className="flex items-center gap-2">
-                      <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-100 text-amber-800"><Sliders className="h-4 w-4" /></span>
-                      <span className="text-xs font-extrabold uppercase tracking-wider text-slate-950">Ajusta el modelo</span>
+                      <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-100/80 text-amber-800 shadow-2xs"><Sliders className="h-4 w-4" /></span>
+                      <span className="text-xs font-black uppercase tracking-wider text-slate-950">Ajusta el modelo</span>
                     </div>
-                    <span className="rounded-lg bg-slate-100 px-2.5 py-1.5 font-mono text-[11px] font-bold text-slate-800">ζ = {zeta.toFixed(2)} · {regimen}</span>
+                    <span className="rounded-xl bg-slate-100/90 px-3 py-1 font-mono text-[11px] font-bold text-slate-800 border border-slate-200 shadow-2xs">ζ = {zeta.toFixed(2)} · {regimen}</span>
                   </div>
 
                   <div className="space-y-1.5">
@@ -314,11 +321,11 @@ export default function App() {
                     </div>
                     <input type="range" min="0" max="12000" step="50" value={c} onChange={(e) => setC(parseFloat(e.target.value))} aria-label="Coeficiente de amortiguamiento c" className="h-2 w-full cursor-pointer rounded-lg bg-slate-200 accent-amber-500" />
                     <div className="grid grid-cols-3 gap-x-2 gap-y-1 font-mono text-[10px] font-semibold text-slate-700 sm:flex sm:justify-between">
-                      <span>0 · libre</span><span className="text-blue-700">1800 · 0.3 ccr</span><span className="text-amber-700">6000 · crítico</span><span className="text-purple-700">9000 · 1.5 ccr</span><span>12000 N·s/m</span>
+                      <span>0 · libre</span><span className="text-blue-700 font-bold">1800 · 0.3 ccr</span><span className="text-amber-700 font-bold">6000 · crítico</span><span className="text-purple-700 font-bold">9000 · 1.5 ccr</span><span>12000 N·s/m</span>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 gap-3 border-t border-slate-200 pt-3 sm:grid-cols-3">
+                  <div className="grid grid-cols-1 gap-3 border-t border-slate-100 pt-3 sm:grid-cols-3">
                     <label className="space-y-1">
                       <span className="flex justify-between gap-1 text-[11px] font-semibold text-slate-800"><span>Masa m</span><strong className="font-mono text-blue-800">{m} kg</strong></span>
                       <input type="range" min="100" max="800" step="10" value={m} onChange={(e) => setM(parseFloat(e.target.value))} aria-label="Masa m" className="h-1.5 w-full cursor-pointer rounded bg-slate-200 accent-blue-700" />
@@ -332,10 +339,10 @@ export default function App() {
                       <input type="range" min="0.01" max="0.15" step="0.01" value={x0} onChange={(e) => setX0(parseFloat(e.target.value))} aria-label="Altura inicial del bache" className="h-1.5 w-full cursor-pointer rounded bg-slate-200 accent-emerald-600" />
                     </label>
                   </div>
-                  <p className="border-t border-slate-200 pt-3 text-[11px] leading-relaxed text-slate-700">{focusedVehicle === null ? 'Ambos reciben el mismo bache; el Koenigsegg responde con una suspensión más firme. Los deslizadores ajustan ambos sistemas conservando esa diferencia.' : 'Los cambios se aplican al vehículo seleccionado. El otro conserva su configuración de referencia.'}</p>
+                  <p className="border-t border-slate-100 pt-3 text-[11px] leading-relaxed text-slate-600 font-medium">{focusedVehicle === null ? 'Ambos reciben el mismo bache; el Koenigsegg responde con una suspensión más firme. Los deslizadores ajustan ambos sistemas conservando esa diferencia.' : 'Los cambios se aplican al vehículo seleccionado. El otro conserva su configuración de referencia.'}</p>
                 </section>
 
-                <section className="relative isolate overflow-hidden rounded-[1.6rem] border border-blue-200/70 bg-gradient-to-br from-white/95 via-blue-50/40 to-amber-50/30 p-4 text-slate-900 shadow-sm sm:p-5">
+                <section className="relative isolate overflow-hidden rounded-3xl border border-blue-200/80 bg-gradient-to-br from-white/95 via-sky-50/40 to-amber-50/30 p-4 sm:p-5 text-slate-900 shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur">
                   <div className="pointer-events-none absolute -right-8 -top-10 -z-10 h-32 w-32 rounded-full bg-[#0B3C73]/10 blur-2xl" />
                   <div className="flex items-center justify-between gap-3">
                     <div>
@@ -345,15 +352,15 @@ export default function App() {
                     <Gauge className="h-7 w-7 shrink-0 text-amber-600" />
                   </div>
                   <div className="mt-4 grid grid-cols-3 gap-2">
-                    <div className="rounded-xl border border-slate-200 bg-white/90 p-2.5 shadow-2xs">
+                    <div className="rounded-xl border border-slate-200/90 bg-white/95 p-2.5 shadow-2xs hover:shadow-xs transition-shadow">
                       <span className="block text-[10px] font-bold text-slate-500 uppercase">Masa</span>
                       <strong className="mt-1 block text-sm font-black text-slate-950">{m} <small className="text-[10px] text-slate-500 font-normal">kg</small></strong>
                     </div>
-                    <div className="rounded-xl border border-slate-200 bg-white/90 p-2.5 shadow-2xs">
+                    <div className="rounded-xl border border-slate-200/90 bg-white/95 p-2.5 shadow-2xs hover:shadow-xs transition-shadow">
                       <span className="block text-[10px] font-bold text-slate-500 uppercase">Rigidez</span>
                       <strong className="mt-1 block text-sm font-black text-slate-950">{(k / 1000).toFixed(0)} <small className="text-[10px] text-slate-500 font-normal">kN/m</small></strong>
                     </div>
-                    <div className="rounded-xl border border-amber-200 bg-amber-50/80 p-2.5 shadow-2xs">
+                    <div className="rounded-xl border border-amber-200/90 bg-amber-50/90 p-2.5 shadow-2xs hover:shadow-xs transition-shadow">
                       <span className="block text-[10px] font-bold text-amber-800 uppercase">Sobreimpulso</span>
                       <strong className="mt-1 block text-sm font-black text-amber-700">{overshootPct.toFixed(1)}%</strong>
                     </div>
@@ -472,6 +479,7 @@ export default function App() {
             overshootPct={overshootPct}
             targetSlideId={deckTargetSlide}
             autoOpenModal={deckAutoOpenModal}
+            onNavigateToSimulator={() => setActiveTab('simulator')}
           />
         )}
 
@@ -525,9 +533,10 @@ export default function App() {
               </button>
             </div>
 
-            {/* Contenido de la Calculadora con Scroll */}
-            <div className="p-3 sm:p-6 overflow-y-auto flex-1 bg-slate-50/50">
+            {/* Contenido de la Calculadora con 'Variables del Sistema' fijas arriba */}
+            <div className="flex-1 flex flex-col overflow-hidden bg-slate-50/50">
               <SuspensionCalculator
+                isModal={true}
                 m={m}
                 setM={setM}
                 c={c}

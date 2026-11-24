@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   UserCheck, Clock, BookOpen, Code, HelpCircle, 
   Printer, CheckCircle2, Award, ShieldAlert, X,
-  PenTool, Volume2, Info, Download, FileText
+  PenTool, Volume2, Info, Download, FileText, Sparkles
 } from 'lucide-react';
 import { TEAM_MEMBERS_FLASHCARDS } from '../data/flashcardsData';
 import KaTeXMath from './KaTeXMath';
@@ -104,6 +104,25 @@ function PrintableFlashcard({ member, isLast }) {
           ))}
         </div>
       </section>
+
+      {/* Guión Resumido para el Expositor (1 minuto sin fallos) */}
+      {member.quickScript1Min && (
+        <section className="mb-3.5 print-avoid-break">
+          <div className="p-3 rounded-lg border-2 border-amber-400 bg-amber-50/70">
+            <h2 className="text-[9.5pt] font-black uppercase tracking-wider text-amber-950 mb-1.5 flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full inline-block bg-amber-500" />
+              Guión Resumido para el Expositor (Qué decir en 1 minuto sin fallos)
+            </h2>
+            <div className="space-y-1.5 text-[9pt] text-slate-900 leading-relaxed font-medium">
+              {member.quickScript1Min.map((p, i) => (
+                <p key={i} className="pl-2 border-l-2 border-amber-500">
+                  <FormattedMathText text={p} />
+                </p>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* 3. Guion Verbal Exacto */}
       <section className="mb-4">
@@ -466,6 +485,28 @@ export default function FlashcardsModal({ isOpen, onClose }) {
                 ))}
               </div>
             </div>
+
+            {/* Guión Resumido para el Expositor (1 minuto sin fallos) */}
+            {currentMember.quickScript1Min && (
+              <div className="liquid-glass-card p-4 sm:p-5 rounded-2xl border-2 border-amber-300 bg-amber-50/60 shadow-sm space-y-2.5">
+                <div className="flex items-center justify-between gap-2">
+                  <h4 className="text-xs sm:text-sm font-black text-amber-950 uppercase tracking-wider flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-amber-600" />
+                    Guión Resumido para el Expositor (Qué decir en 1 minuto sin fallos)
+                  </h4>
+                  <span className="text-[10px] font-extrabold bg-amber-200/80 text-amber-900 px-2.5 py-0.5 rounded-full border border-amber-300 shrink-0">
+                    Lectura Rápida
+                  </span>
+                </div>
+                <div className="bg-white/95 p-3.5 sm:p-4 rounded-xl border border-amber-200 text-xs sm:text-[13px] text-slate-800 leading-relaxed font-medium space-y-2">
+                  {currentMember.quickScript1Min.map((p, i) => (
+                    <p key={i} className="pl-3 border-l-3 border-amber-500">
+                      <FormattedMathText text={p} />
+                    </p>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* 2. Guion Textual Recomendado */}
             <div className="space-y-2">

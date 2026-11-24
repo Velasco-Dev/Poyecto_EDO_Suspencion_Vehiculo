@@ -18,6 +18,11 @@ export const TEAM_MEMBERS_FLASHCARDS = [
       'Origen físico de cada término: las 3 fuerzas del modelo vistas en clase (resorte $-kx$, amortiguador $-cx\'$ y fuerza externa $F(t)=0$).',
       'Cálculo analítico de la frecuencia natural ($\\omega_n = 10\\text{ rad/s}$) y amortiguamiento crítico ($c_{cr} = 6000\\text{ N}\\cdot\\text{s/m}$).'
     ],
+    quickScript1Min: [
+      '«Buenos días profesora y compañeros. El modelo de cuarto de carro simplifica el vehículo a una masa suspendida de $m = 300\\text{ kg}$, un resorte $k = 30\\,000\\text{ N/m}$ y un amortiguador de fricción viscosa $c$.»',
+      '«Al pasar un bache de $5\\text{ cm}$, por Segunda Ley de Newton la suma de fuerzas produce la EDO homogénea: $m x\'\' + c x\' + k x = 0$, con condiciones iniciales $x(0) = 0.05\\text{ m}$ y velocidad $x\'(0) = 0\\text{ m/s}$.»',
+      '«Calculamos los dos parámetros maestros: la frecuencia natural $\\omega_n = \\sqrt{k/m} = 10\\text{ rad/s}$ y el amortiguamiento crítico $c_{cr} = 2\\sqrt{mk} = 6000\\text{ N}\\cdot\\text{s/m}$, que divide físicamente el comportamiento entre oscilar o volver suavemente al reposo.»'
+    ],
     script: [
       '“Buenos días profesora y compañeros. Nuestro equipo, el Grupo 5, desarrolló el análisis analítico y computacional del Proyecto 1: La suspensión de un vehículo.”',
       '“En dinámica vehicular, el modelo de un cuarto de carro simplifica el vehículo a una masa suspendida $m = 300\\text{ kg}$ (la cuarta parte de la carrocería) soportada por un resorte elástico $k = 30\\,000\\text{ N/m}$ y un amortiguador de fricción viscosa $c$.”',
@@ -86,6 +91,11 @@ export const TEAM_MEMBERS_FLASHCARDS = [
       'Criterio de la profesora visto en clase: “el discriminante $\\Delta = c^2 - 4mk$ define todo”.',
       'Resolución matemática paso a paso de los 3 casos asignados (subamortiguado, crítico y sobreamortiguado).',
       'Aplicación rigurosa de las condiciones iniciales para hallar las constantes exactas.'
+    ],
+    quickScript1Min: [
+      '«Partiendo de $m r^2 + c r + k = 0$, el discriminante $\\Delta = c^2 - 4mk$ define el comportamiento físico del sistema.»',
+      '«En el Caso 1 (Subamortiguado, $c = 1800\\text{ N}\\cdot\\text{s/m}$, $\\zeta = 0.3$), $\\Delta = -364 < 0$ produce raíces complejas $r = -3 \\pm 9.54i$. La solución $x(t) = e^{-3t}[0.05\\cos(9.54t) + 0.0157\\sin(9.54t)]$ genera oscilaciones amortiguadas periódicas.»',
+      '«En los Casos 2 y 3: el régimen crítico ($c = 6000$, $\\Delta = 0$, $r = -10$) elimina toda oscilación con retorno en $0.58\\text{ s}$; mientras que el sobreamortiguado ($c = 9000$, $\\Delta > 0$) vuelve lentamente en $1.07\\text{ s}$ por la raíz lenta $r_1 = -3.82$.»'
     ],
     script: [
       '“Continuando con el desarrollo, como lo exige la regla de oro: primero la matemática, después el código. Asumimos una solución de la forma $x(t) = e^{r t}$, obteniendo la ecuación característica $r^2 + \\frac{c}{300}r + 100 = 0$.”',
@@ -156,6 +166,11 @@ export const TEAM_MEMBERS_FLASHCARDS = [
       'Superposición de curvas: verificación de coincidencia numérica vs. analítica exacta.',
       'Control del paso temporal fijo $h = 10^{-4}\\text{ s}$ y cota de error residual $\\max |x_{\\text{num}} - x_{\\text{exact}}| < 10^{-6}\\text{ m}$.'
     ],
+    quickScript1Min: [
+      '«Para verificar los resultados en computadora, transformamos la EDO de 2° orden a un sistema acoplado de 1° orden: $u\' = v$ (velocidad) y $v\' = (-cv - ku)/m$ (aceleración).»',
+      '«Implementamos el método numérico Runge-Kutta 4 (RK4) con paso fijo $h = 0.001\\text{ s}$, promediando 4 pendientes $(k_1 + 2k_2 + 2k_3 + k_4)/6$ con un error local de orden $O(h^5)$.»',
+      '«Al superponer la curva numérica de RK4 con la analítica exacta, el error residual máximo es menor a $10^{-6}\\text{ m}$ (menos de 3 micras), validando con rigor matemático que la simulación es idéntica a la teoría.»'
+    ],
     script: [
       '“Para verificar computacionalmente lo deducido por Duban, convertimos la EDO de segundo orden en un sistema acoplado de primer orden definiendo variables de estado $u = x$ (posición) y $v = x\'$ (velocidad).”',
       '“El sistema resultante es: $u\' = v$, y $v\' = \\frac{-c v - k u}{m}$. Ningún integrador numérico estándar resuelve directamente orden 2; esta transformación canónica es el estándar en simulación física moderna.”',
@@ -225,6 +240,11 @@ export const TEAM_MEMBERS_FLASHCARDS = [
       'Demostración en vivo de la animación interactiva con el control deslizante de $c$.',
       'Defensa de la conclusión de ingeniería con números reales: Ambulancia vs. Carro de carreras.',
       'Cierre de la exposición y apertura a la sesión de preguntas (Q&A).'
+    ],
+    quickScript1Min: [
+      '«Medimos las métricas de ingeniería: el caso subamortiguado tiene un sobreimpulso del $37.23\\%$ y tarda $1.12\\text{ s}$ en asentarse con 4 rebotes violentos. El caso crítico tiene $0.00\\%$ de sobreimpulso y se estabiliza en solo $0.58\\text{ s}$.»',
+      '«Veredicto de la Ambulancia: Amortiguamiento crítico ($c = 6000\\text{ N}\\cdot\\text{s/m}$, $\\zeta = 1.0$), porque absorbe el bache de inmediato sin rebotes oscilatorios, protegiendo al paciente con trauma o cirugías en tránsito.»',
+      '«Veredicto del Carro de Carreras (Jesko): Suspensión dura con $k = 50\\,000\\text{ N/m}$ y $c = 8500\\text{ N}\\cdot\\text{s/m}$, sacrificando confort para mantener la huella de agarre y el efecto suelo aerodinámico a más de 300 km/h.»'
     ],
     script: [
       '“Finalmente, la matemática cobra sentido cuando tomamos decisiones de ingeniería fundamentadas en datos. Programamos la medición de las dos métricas clave exigidas por la rúbrica:”',
@@ -301,6 +321,11 @@ export const TEAM_MEMBERS_FLASHCARDS = [
       'Pipeline de renderizado fotorrealista PBR: Cook-Torrance BRDF con MeshPhysicalMaterial (clearcoat bicapa, transmisión vítrea y rugosidad física).',
       'Iluminación de estudio por canvas HDRI equirrectangular, Tone Mapping cinematográfico ACES Filmic y sombras suaves PCF Soft Shadow Map.',
       'Entorno de carretera infinita con recirculación continua de memoria (Object Pooling) y traslación periódica de coordenadas UV.'
+    ],
+    quickScript1Min: [
+      '«Para la parte visual utilizamos Three.js, una librería que simplifica el uso de WebGL en el navegador. En lugar de escribir código complejo de bajo nivel para la GPU, nos permite crear las luces, materiales y cámaras de manera muy sencilla y directa.»',
+      '«Un gran logro técnico es que no descargamos modelos 3D pesados de internet. Toda la ambulancia, el Jesko, los personajes y la pista fueron construidos con fórmulas y curvas matemáticas por código. Por eso el proyecto pesa menos de 80 KB y carga de forma instantánea.»',
+      '«La animación está conectada directamente con la matemática: en cada instante calculamos $x(t)$ con nuestra ecuación diferencial y se la enviamos al resorte para que se comprima a 60 FPS. En la ambulancia ($\\zeta = 1.0$), el resorte absorbe el impacto de golpe y regresa a su nivel sin rebotar, validando visualmente la teoría.»'
     ],
     script: [
       '“A nivel de ingeniería de software e infografía computacional, el mayor reto del proyecto fue evitar el uso de modelos 3D prediseñados o archivos pesados .GLB o .OBJ de 50 o 100 Megabytes, que colapsan los tiempos de carga web y tienen mallas rígidas que impiden animar la física real.”',
@@ -691,41 +716,41 @@ export const SLIDES_PRESENTATION = [
   },
   {
     id: 9,
-    title: 'Arquitectura Gráfica: Modelado 3D Procedural y Renderizado PBR',
-    subtitle: 'Simulación Interactiva en Three.js / WebGL sin Dependencias Externas',
+    title: 'Visualización 3D: Three.js, WebGL y Animación de la EDO',
+    subtitle: 'Cómo se Simplificó la Computación Gráfica y se Conectó con las Fórmulas Físicas',
     speaker: 'EQUIPO GRUPO 5 - INGENIERÍA GRÁFICA',
-    time: 'Demostración Técnica',
-    category: 'Computación Gráfica',
-    badge: 'Three.js & PBR',
-    summary: 'Generación matemática procedural del Koenigsegg Jesko, la ambulancia y la pista infinita: splines, geometría de revolución y shaders físicos (PBR).',
-    mainFormula: 'f_r(\\mathbf{\\omega}_i, \\mathbf{\\omega}_o) = \\frac{D\\,F\\,G}{4(\\mathbf{n}\\cdot\\mathbf{\\omega}_i)(\\mathbf{n}\\cdot\\mathbf{\\omega}_o)} \\quad + \\quad \\mathbf{r}(s) = \\begin{pmatrix} R\\cos(2\\pi N s) \\\\ [L_0 - x(t)] s \\\\ R\\sin(2\\pi N s) \\end{pmatrix}',
+    time: 'Demostración Técnica (1 Minuto)',
+    category: 'Computación Gráfica & Física',
+    badge: 'Three.js & WebGL',
+    summary: 'Three.js simplifica el uso de WebGL en el navegador. En lugar de modelos 3D externos pesados, todo se genera por código matemático y la solución de la EDO x(t) mueve la suspensión en tiempo real.',
+    mainFormula: 'm\\,\\ddot{x} + c\\,\\dot{x} + k\\,x = 0 \\quad \\Longrightarrow \\quad L_{\\text{resorte}}(t) = L_0 - x(t)',
     formulaCards: [
       {
-        label: 'Shaders PBR: BRDF de Cook-Torrance',
-        latex: 'f_r(\\mathbf{\\omega}_i, \\mathbf{\\omega}_o) = k_d \\frac{f_{\\text{lambert}}}{\\pi} + k_s \\frac{D(\\mathbf{h}) F(\\mathbf{v},\\mathbf{h}) G(\\mathbf{l},\\mathbf{v},\\mathbf{h})}{4(\\mathbf{n}\\cdot\\mathbf{\\omega}_i)(\\mathbf{n}\\cdot\\mathbf{\\omega}_o)}',
-        desc: 'Modelo de microfacetas físicas: laca automotriz (clearcoat: 1.0) y metalicidad'
+        label: '1. Three.js sobre WebGL',
+        latex: '\\text{JavaScript} \\xrightarrow{\\text{Three.js}} \\text{WebGL (GPU)}',
+        desc: 'Facilita crear objetos 3D, luces y cámaras sin lidiar con código complejo de bajo nivel para la tarjeta gráfica.'
       },
       {
-        label: 'Superficie de Revolución (LatheGeometry)',
-        latex: 'S(u, v) = \\big(r(v)\\cos(u), y(v), r(v)\\sin(u)\\big)',
-        desc: 'Generación analítica exacta de neumáticos, rines y discos de freno perforados'
+        label: '2. Modelado por Código (< 80 KB)',
+        latex: 'S(u, v) = \\big(r(v)\\cos u,\\, y(v),\\, r(v)\\sin u\\big)',
+        desc: 'Cero descargas pesadas de internet: los autos, rines y carretera se construyen mediante fórmulas y curvas matemáticas.'
       },
       {
-        label: 'Coilover Concéntrico Telescópico',
+        label: '3. Movimiento Real del Resorte',
         latex: 'L_{\\text{resorte}}(t) = L_0 - x(t)',
-        desc: 'El resorte helicoidal y el vástago cromado se comprimen con la posición exacta de la EDO'
+        desc: 'La posición calculada por la EDO a 60 cuadros por segundo comprime o estira el resorte en pantalla de forma idéntica a la teoría.'
       },
       {
-        label: 'Compresión Tonal ACES Filmic',
-        latex: 'f(x) = \\frac{x(2.51x + 0.03)}{x(2.41x + 0.59) + 0.14}',
-        desc: 'Curva de respuesta en S que preserva detalles en altas luces metálicas y sombras'
+        label: '4. Respuesta de la Ambulancia',
+        latex: '\\zeta = 1.0 \\implies \\text{Cero Rebote}',
+        desc: 'En amortiguamiento crítico, el muelle absorbe el bache al instante y no oscila, protegiendo al paciente en la camilla.'
       }
     ],
     keyPoints: [
-      'Modelado 100% procedural en Three.js / WebGL: cero archivos externos pesados (< 80 KB total).',
-      'Carrocerías con splines de Catmull-Rom, lofting de cuadrícula paramétrica y cinemática dihedral.',
-      'Suspensión Öhlins activa: coilovers concéntricos telescópicos vinculados a x(t) de RK4 a 60 FPS.',
-      'Pipeline de renderizado fotorrealista: ACES Filmic, sombras PCF Soft y mapas HDRI dinámicos.'
+      '¿Qué es Three.js?: Una librería que nos simplifica programar gráficos 3D en WebGL de manera rápida y elegante.',
+      'Cero descargas pesadas: No usamos archivos 3D de internet; todo se sintetiza en menos de 80 KB por código.',
+      'Conexión física: La solución x(t) de nuestra ecuación diferencial controla la suspensión a 60 FPS.',
+      'En la ambulancia (crítico ζ=1), el vehículo absorbe el impacto de inmediato sin oscilaciones molestas.'
     ]
   }
 ];

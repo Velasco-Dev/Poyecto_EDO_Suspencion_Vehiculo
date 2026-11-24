@@ -1,0 +1,4 @@
+project_name=simulador-suspension-edo
+query_depth=2
+query_budget=2000
+root=.

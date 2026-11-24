@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Poyecto_EDO_Suspencion_Vehiculo — Complete Call Flow &amp; Architecture Documentation</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+:root {
+  --bg: #0f172a; --surface: #1e293b; --border: #334155;
+  --text: #e2e8f0; --muted: #94a3b8; --accent: #38bdf8;
+  --warn: #fbbf24; --err: #f87171; --ok: #34d399;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+.container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+h1 { font-size: 2.4rem; margin-bottom: 8px; background: linear-gradient(135deg, var(--accent), #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+h2 { font-size: 1.7rem; margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); }
+h3 { font-size: 1.25rem; margin: 32px 0 12px; color: var(--accent); }
+h4 { font-size: 1.05rem; margin: 20px 0 8px; color: var(--warn); }
+p { margin: 8px 0; color: var(--muted); }
+.subtitle { color: var(--muted); font-size: 1.1rem; margin-bottom: 32px; }
+.mermaid { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 20px 0; overflow-x: auto; position: relative; }
+.mermaid.is-enhanced { padding: 0; overflow: hidden; min-height: 260px; }
+.mermaid-viewport { padding: 54px 24px 24px; overflow: hidden; cursor: grab; touch-action: none; min-height: 260px; }
+.mermaid-viewport.is-dragging { cursor: grabbing; }
+.mermaid-viewport svg { max-width: none !important; height: auto; transform-origin: 0 0; transition: transform 120ms ease; }
+.mermaid-toolbar { position: absolute; top: 10px; right: 10px; z-index: 3; display: flex; align-items: center; gap: 6px; padding: 6px; background: rgba(15,23,42,0.92); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.28); }
+.mermaid-toolbar button, .mermaid-toolbar .zoom-level { height: 28px; min-width: 32px; border: 1px solid var(--border); border-radius: 6px; background: #1e293b; color: var(--text); font: 600 0.78rem system-ui, sans-serif; display: inline-flex; align-items: center; justify-content: center; }
+.mermaid-toolbar button { cursor: pointer; }
+.mermaid-toolbar button:hover { border-color: var(--accent); color: var(--accent); }
+.mermaid-toolbar .zoom-level { min-width: 52px; color: var(--muted); background: transparent; }
+.call-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.92rem; }
+.call-table th { background: #1a2744; color: var(--accent); text-align: left; padding: 10px 14px; border: 1px solid var(--border); }
+.call-table td { padding: 8px 14px; border: 1px solid var(--border); vertical-align: top; }
+.call-table tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; }
+.tag-async { background: #7c3aed33; color: #a78bfa; }
+.tag-class { background: #05966933; color: var(--ok); }
+.tag-func { background: #2563eb33; color: var(--accent); }
+.tag-cmd { background: #d9770633; color: var(--warn); }
+.tag-endpoint { background: #dc262633; color: var(--err); }
+.tag-hook { background: #db277733; color: #f472b6; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin: 16px 0; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; margin: 16px 0; }
+.arrow-chain { font-family: 'Fira Code', monospace; font-size: 0.85rem; color: var(--accent); padding: 10px; background: rgba(56,189,248,0.06); border-radius: 6px; }
+code { font-family: 'Fira Code', 'Cascadia Code', monospace; background: rgba(255,255,255,0.06); padding: 1px 6px; border-radius: 3px; font-size: 0.88em; }
+ul, ol { margin: 8px 0 8px 24px; color: var(--muted); }
+li { margin: 4px 0; }
+a { color: var(--accent); }
+hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+.nav { position: sticky; top: 0; background: var(--bg); z-index: 10; padding: 12px 0; border-bottom: 1px solid var(--border); display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.9rem; }
+.nav a { text-decoration: none; }
+.nav a:hover { text-decoration: underline; }
+@media (max-width: 768px) { .container { padding: 16px; } h1 { font-size: 1.8rem; } }
+
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>Poyecto_EDO_Suspencion_Vehiculo — Complete Call Flow &amp; Architecture Documentation</h1>
+<p class="subtitle">Generated from graphify knowledge graph: 149 nodes, 289 edges, 12 communities. Commit: 8f9339c</p>
+
+<div class="nav">
+    <a href="#overview">Architecture Overview</a>
+    <a href="#extract-pipeline">Extraction Pipeline</a>
+    <a href="#build-graph">Graph Build</a>
+    <a href="#ingest-cache-update">Ingestion &amp; Updates</a>
+    <a href="#app-components-flashcardsmodaljsx">App Components Flashcardsmodaljsx</a>
+    <a href="#deployyml-github-workflows">Deployyml Github Workflows</a>
+</div>
+
+<!-- ====== Architecture Overview ====== -->
+<h2 id="overview">1. Architecture Overview</h2>
+
+<div class="mermaid">
+
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    EXTRACT_PIPELINE_5F350230("Extraction Pipeline<br/><small>31 nodes</small>")
+    class EXTRACT_PIPELINE_5F350230 module;
+    BUILD_GRAPH_321CBB04("Graph Build<br/><small>75 nodes</small>")
+    class BUILD_GRAPH_321CBB04 module;
+    INGEST_CACHE_UPDATE_FF457338("Ingestion &amp; Updates<br/><small>17 nodes</small>")
+    class INGEST_CACHE_UPDATE_FF457338 module;
+    APP_COMPONENTS_FLASHCARDSMODALJSX_3C7C9E13("App Components Flashcardsmodaljsx<br/><small>13 nodes</small>")
+    class APP_COMPONENTS_FLASHCARDSMODALJSX_3C7C9E13 module;
+    DEPLOYYML_GITHUB_WORKFLOWS_63705130("Deployyml Github Workflows<br/><small>13 nodes</small>")
+    class DEPLOYYML_GITHUB_WORKFLOWS_63705130 module;
+    BUILD_GRAPH_321CBB04 -->|calls x16| APP_COMPONENTS_FLASHCARDSMODALJSX_3C7C9E13
+    APP_COMPONENTS_FLASHCARDSMODALJSX_3C7C9E13 -->|imports x8| BUILD_GRAPH_321CBB04
+    DEPLOYYML_GITHUB_WORKFLOWS_63705130 -->|contains| INGEST_CACHE_UPDATE_FF457338
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<div class="grid">
+  <div class="card">
+    <h4>Architecture Layers</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>Layer</th><th>Nodes</th><th>Communities</th></tr>
+      <tr><td>Extraction Pipeline</td><td>31</td><td><code>0</code></td></tr><tr><td>Graph Build</td><td>75</td><td><code>1, 5, 6, 7, 9, 10, 11, 8</code></td></tr><tr><td>Ingestion &amp; Updates</td><td>17</td><td><code>3</code></td></tr><tr><td>App Components Flashcardsmodaljsx</td><td>13</td><td><code>2</code></td></tr><tr><td>Deployyml Github Workflows</td><td>13</td><td><code>4</code></td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Core Flow</h4>
+    <div class="arrow-chain">Extraction Pipeline -&gt; Graph Build -&gt; App Components Flashcardsmodaljsx -&gt; Ingestion &amp; Updates -&gt; Deployyml Github Workflows</div>
+  </div>
+</div>
+<div class="grid">
+  <div class="card">
+    <h4>Graph Report Highlights</h4>
+    <ul>
+      <li>149 nodes · 289 edges · 12 communities (9 shown, 3 thin omitted)</li>
+      <li>Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS</li>
+      <li>Token cost: 0 input · 0 output</li>
+      <li>1. `react` - 15 edges</li>
+      <li>2. `App()` - 14 edges</li>
+      <li>3. `KaTeXMath()` - 13 edges</li>
+    </ul>
+  </div>
+</div>
+<hr>
+<!-- ====== 2. Extraction Pipeline ====== -->
+<h2 id="extract-pipeline">2. Extraction Pipeline</h2>
+<p>Extraction Pipeline groups implementation around suspension, simpy, public, python, mostly in app/public/suspension_sim.py, python/suspension_sim.py. This section covers 31 nodes and 50 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Extraction Pipeline (31 nodes, 50 edges)
+    subgraph extract_pipeline_app_public_suspension_sim_py_ae12df68["app/public/suspension_sim.py"]
+        app_public_suspension_sim_7ed1ba28("suspension_sim.py")
+        app_public_suspension_sim_integrador_rk4_0fdca27b("integrador_rk4()<br/><small>app/public/suspension_sim.py</small>")
+        app_public_suspension_sim_x_analitica_sobreamort_ceee43e9("x analitica sobreamortiguado()<br/><small>app/public/suspension_sim.py</small>")
+        app_public_suspension_sim_x_analitica_subamortig_693d80f9("x_analitica_subamortiguado()<br/><small>app/public/suspension_sim.py</small>")
+        app_public_suspension_sim_calcular_metricas_b27b6414("calcular_metricas()<br/><small>app/public/suspension_sim.py</small>")
+        app_public_suspension_sim_sistema_edo_2e698153("sistema_edo()<br/><small>app/public/suspension_sim.py</small>")
+        app_public_suspension_sim_x_analitica_critico_ad9cb3c1("x_analitica_critico()<br/><small>app/public/suspension_sim.py</small>")
+        app_public_suspension_sim_rationale_1_5c183ab3("=======================================...<br/><small>app/public/suspension_sim.py</small>")
+    end
+    subgraph extract_pipeline_python_suspension_sim_py_d832c18f["python/suspension_sim.py"]
+        python_suspension_sim_c79ad161("suspension_sim.py")
+        python_suspension_sim_integrador_rk4_df7929c2("integrador_rk4()<br/><small>python/suspension_sim.py</small>")
+        python_suspension_sim_calcular_metricas_dc7c83e6("calcular_metricas()<br/><small>python/suspension_sim.py</small>")
+        python_suspension_sim_sistema_edo_654474f2("sistema_edo()<br/><small>python/suspension_sim.py</small>")
+        python_suspension_sim_x_analitica_critico_3cd7406e("x_analitica_critico()<br/><small>python/suspension_sim.py</small>")
+        python_suspension_sim_x_analitica_sobreamortigua_3c241176("x analitica sobreamortiguado()<br/><small>python/suspension_sim.py</small>")
+        python_suspension_sim_x_analitica_subamortiguado_330fb072("x_analitica_subamortiguado()<br/><small>python/suspension_sim.py</small>")
+    end
+    subgraph extract_pipeline_External_generated_e23197dc["External / generated"]
+        numpy_a65e1d38("numpy")
+        math_7a488390("math")
+        matplotlib_pyplot_147b569a("matplotlib_pyplot")
+    end
+    app_public_suspension_sim_calcular_metricas_b27b6414 -->|calls| numpy_a65e1d38
+    app_public_suspension_sim_integrador_rk4_0fdca27b -->|calls| numpy_a65e1d38
+    app_public_suspension_sim_integrador_rk4_0fdca27b -->|calls| app_public_suspension_sim_sistema_edo_2e698153
+    app_public_suspension_sim_sistema_edo_2e698153 -->|calls| numpy_a65e1d38
+    app_public_suspension_sim_x_analitica_critico_ad9cb3c1 -->|calls| numpy_a65e1d38
+    app_public_suspension_sim_x_analitica_sobreamort_ceee43e9 -->|calls| math_7a488390
+    app_public_suspension_sim_x_analitica_sobreamort_ceee43e9 -->|calls| numpy_a65e1d38
+    app_public_suspension_sim_x_analitica_subamortig_693d80f9 -->|calls| math_7a488390
+    app_public_suspension_sim_x_analitica_subamortig_693d80f9 -->|calls| numpy_a65e1d38
+    python_suspension_sim_calcular_metricas_dc7c83e6 -->|calls| numpy_a65e1d38
+    python_suspension_sim_integrador_rk4_df7929c2 -->|calls| numpy_a65e1d38
+    python_suspension_sim_integrador_rk4_df7929c2 -->|calls| python_suspension_sim_sistema_edo_654474f2
+    python_suspension_sim_sistema_edo_654474f2 -->|calls| numpy_a65e1d38
+    python_suspension_sim_x_analitica_critico_3cd7406e -->|calls| numpy_a65e1d38
+    python_suspension_sim_x_analitica_sobreamortigua_3c241176 -->|calls| math_7a488390
+    python_suspension_sim_x_analitica_sobreamortigua_3c241176 -->|calls| numpy_a65e1d38
+    python_suspension_sim_x_analitica_subamortiguado_330fb072 -->|calls| math_7a488390
+    python_suspension_sim_x_analitica_subamortiguado_330fb072 -->|calls| numpy_a65e1d38
+    app_public_suspension_sim_7ed1ba28 -->|imports| math_7a488390
+    app_public_suspension_sim_7ed1ba28 -->|imports| numpy_a65e1d38
+    app_public_suspension_sim_7ed1ba28 -->|imports| matplotlib_pyplot_147b569a
+    python_suspension_sim_c79ad161 -->|imports| math_7a488390
+    python_suspension_sim_c79ad161 -->|imports| numpy_a65e1d38
+    python_suspension_sim_c79ad161 -->|imports| matplotlib_pyplot_147b569a
+    %% Omitted for readability: 13 nodes, 0 edges
+    class app_public_suspension_sim_7ed1ba28 module;
+    class app_public_suspension_sim_integrador_rk4_0fdca27b function;
+    class app_public_suspension_sim_x_analitica_sobreamort_ceee43e9 function;
+    class app_public_suspension_sim_x_analitica_subamortig_693d80f9 function;
+    class app_public_suspension_sim_calcular_metricas_b27b6414 function;
+    class app_public_suspension_sim_sistema_edo_2e698153 function;
+    class app_public_suspension_sim_x_analitica_critico_ad9cb3c1 function;
+    class app_public_suspension_sim_rationale_1_5c183ab3 concept;
+    class python_suspension_sim_c79ad161 module;
+    class python_suspension_sim_integrador_rk4_df7929c2 function;
+    class python_suspension_sim_calcular_metricas_dc7c83e6 function;
+    class python_suspension_sim_sistema_edo_654474f2 function;
+    class python_suspension_sim_x_analitica_critico_3cd7406e function;
+    class python_suspension_sim_x_analitica_sobreamortigua_3c241176 function;
+    class python_suspension_sim_x_analitica_subamortiguado_330fb072 function;
+    class numpy_a65e1d38 function;
+    class math_7a488390 function;
+    class matplotlib_pyplot_147b569a function;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>calcular_metricas()</code><br><small style="color:var(--muted)">app/public/suspension_sim.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>numpy</code></td>
+  <td>calcular_metricas() node in app/public/suspension_sim.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>integrador_rk4()</code><br><small style="color:var(--muted)">app/public/suspension_sim.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>numpy</code><br><code>sistema_edo()</code><br><small style="color:var(--muted)">app/public/suspension_sim.py</small></td>
+  <td>integrador_rk4() node in app/public/suspension_sim.py.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>sistema_edo()</code><br><small style="color:var(--muted)">app/public/suspension_sim.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>integrador_rk4()</code><br><small style="color:var(--muted)">app/public/suspension_sim.py</small></td>
+  <td><code>numpy</code></td>
+  <td>sistema_edo() node in app/public/suspension_sim.py.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>x_analitica_critico()</code><br><small style="color:var(--muted)">app/public/suspension_sim.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>numpy</code></td>
+  <td>x_analitica_critico() node in app/public/suspension_sim.py.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>x_analitica_sobreamortiguado()</code><br><small style="color:var(--muted)">app/public/suspension_sim.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>math</code><br><code>numpy</code></td>
+  <td>x_analitica_sobreamortiguado() node in app/public/suspension_sim.py.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>x_analitica_subamortiguado()</code><br><small style="color:var(--muted)">app/public/suspension_sim.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>math</code><br><code>numpy</code></td>
+  <td>x_analitica_subamortiguado() node in app/public/suspension_sim.py.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>calcular_metricas()</code><br><small style="color:var(--muted)">python/suspension_sim.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>numpy</code></td>
+  <td>calcular_metricas() node in python/suspension_sim.py.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>integrador_rk4()</code><br><small style="color:var(--muted)">python/suspension_sim.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>numpy</code><br><code>sistema_edo()</code><br><small style="color:var(--muted)">python/suspension_sim.py</small></td>
+  <td>integrador_rk4() node in python/suspension_sim.py.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>sistema_edo()</code><br><small style="color:var(--muted)">python/suspension_sim.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>integrador_rk4()</code><br><small style="color:var(--muted)">python/suspension_sim.py</small></td>
+  <td><code>numpy</code></td>
+  <td>sistema_edo() node in python/suspension_sim.py.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>x_analitica_critico()</code><br><small style="color:var(--muted)">python/suspension_sim.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>numpy</code></td>
+  <td>x_analitica_critico() node in python/suspension_sim.py.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>x_analitica_sobreamortiguado()</code><br><small style="color:var(--muted)">python/suspension_sim.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>math</code><br><code>numpy</code></td>
+  <td>x_analitica_sobreamortiguado() node in python/suspension_sim.py.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>x_analitica_subamortiguado()</code><br><small style="color:var(--muted)">python/suspension_sim.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>math</code><br><code>numpy</code></td>
+  <td>x_analitica_subamortiguado() node in python/suspension_sim.py.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>public/suspension_sim.py</code><br><small style="color:var(--muted)">app/public/suspension_sim.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>math</code><br><code>matplotlib_pyplot</code><br><code>numpy</code></td>
+  <td>Module file in app/public/suspension_sim.py.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>python/suspension_sim.py</code><br><small style="color:var(--muted)">python/suspension_sim.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>math</code><br><code>matplotlib_pyplot</code><br><code>numpy</code></td>
+  <td>Module file in python/suspension_sim.py.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>===============================================================================…</code><br><small style="color:var(--muted)">app/public/suspension_sim.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for ===============================================================================….</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>Conversión de EDO de 2° orden a sistema de dos EDOs de 1° orden: Sea u = x…</code><br><small style="color:var(--muted)">app/public/suspension_sim.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Conversión de EDO de 2° orden a sistema de dos EDOs de 1° orden: Sea u = x….</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>Método numérico Runge-Kutta de cuarto orden (RK4). Evalúa 4 pendientes…</code><br><small style="color:var(--muted)">app/public/suspension_sim.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Método numérico Runge-Kutta de cuarto orden (RK4). Evalúa 4 pendientes….</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>Calcula: 1. Tiempo de asentamiento (ts): instante a partir del cual |x(t)| &lt;=…</code><br><small style="color:var(--muted)">app/public/suspension_sim.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Calcula: 1. Tiempo de asentamiento (ts): instante a partir del cual |x(t)| &lt;=….</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>Caso 1: c = 1800 N*s/m (zeta = 0.3). Ecuación característica: r^2 + 6r + 100 =…</code><br><small style="color:var(--muted)">app/public/suspension_sim.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Caso 1: c = 1800 N*s/m (zeta = 0.3). Ecuación característica: r^2 + 6r + 100 =….</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>Caso 2: c = 6000 N*s/m (zeta = 1.0). Ecuación característica: r^2 + 20r + 100 =…</code><br><small style="color:var(--muted)">app/public/suspension_sim.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Caso 2: c = 6000 N*s/m (zeta = 1.0). Ecuación característica: r^2 + 20r + 100 =….</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>Caso 3: c = 9000 N*s/m (zeta = 1.5). Ecuación característica: r^2 + 30r + 100 =…</code><br><small style="color:var(--muted)">app/public/suspension_sim.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Caso 3: c = 9000 N*s/m (zeta = 1.5). Ecuación característica: r^2 + 30r + 100 =….</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>===============================================================================…</code><br><small style="color:var(--muted)">python/suspension_sim.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for ===============================================================================….</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>Conversión de EDO de 2° orden a sistema de dos EDOs de 1° orden: Sea u = x…</code><br><small style="color:var(--muted)">python/suspension_sim.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Conversión de EDO de 2° orden a sistema de dos EDOs de 1° orden: Sea u = x….</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>Método numérico Runge-Kutta de cuarto orden (RK4). Evalúa 4 pendientes…</code><br><small style="color:var(--muted)">python/suspension_sim.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Método numérico Runge-Kutta de cuarto orden (RK4). Evalúa 4 pendientes….</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>Calcula: 1. Tiempo de asentamiento (ts): instante a partir del cual |x(t)| &lt;=…</code><br><small style="color:var(--muted)">python/suspension_sim.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Calcula: 1. Tiempo de asentamiento (ts): instante a partir del cual |x(t)| &lt;=….</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>Caso 1: c = 1800 N*s/m (zeta = 0.3). Ecuación característica: r^2 + 6r + 100 =…</code><br><small style="color:var(--muted)">python/suspension_sim.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Caso 1: c = 1800 N*s/m (zeta = 0.3). Ecuación característica: r^2 + 6r + 100 =….</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>Caso 2: c = 6000 N*s/m (zeta = 1.0). Ecuación característica: r^2 + 20r + 100 =…</code><br><small style="color:var(--muted)">python/suspension_sim.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Caso 2: c = 6000 N*s/m (zeta = 1.0). Ecuación característica: r^2 + 20r + 100 =….</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>Caso 3: c = 9000 N*s/m (zeta = 1.5). Ecuación característica: r^2 + 30r + 100 =…</code><br><small style="color:var(--muted)">python/suspension_sim.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Caso 3: c = 9000 N*s/m (zeta = 1.5). Ecuación característica: r^2 + 30r + 100 =….</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>math</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>suspension_sim.py</code><br><small style="color:var(--muted)">app/public/suspension_sim.py</small><br><code>suspension_sim.py</code><br><small style="color:var(--muted)">python/suspension_sim.py</small><br><code>x analitica sobreamortiguado()</code><br><small style="color:var(--muted)">python/suspension_sim.py</small><br>+3 more</td>
+  <td>No direct outbound edge</td>
+  <td>math node in project.</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>matplotlib_pyplot</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>suspension_sim.py</code><br><small style="color:var(--muted)">app/public/suspension_sim.py</small><br><code>suspension_sim.py</code><br><small style="color:var(--muted)">python/suspension_sim.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>matplotlib_pyplot node in project.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>app/public/suspension_sim.py</code></td><td>14 nodes</td></tr>
+<tr><td><code>python/suspension_sim.py</code></td><td>14 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: calls x18, explains x14, contains x12, imports x6. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 3. Graph Build ====== -->
+<h2 id="build-graph">3. Graph Build</h2>
+<p>Graph Build groups implementation around app, packagejson, components, react, mostly in app/package.json, src/physics/suspensionPhysics.js, src/components/SuspensionCalculator.jsx. This section covers 75 nodes and 163 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Graph Build (75 nodes, 163 edges)
+    subgraph build_graph_src_physics_suspensionPhysics_js_1e03c610["src/physics/suspensionPhysics.js"]
+        app_src_physics_suspensionphysics_calculateoscil_1318a0bd("calculateOscillatorProperties()<br/><small>src/physics/suspensionPhysics.js</small>")
+        app_src_physics_suspensionphysics_rk4integrate_19c938b9("rk4Integrate()<br/><small>src/physics/suspensionPhysics.js</small>")
+        app_src_physics_suspensionphysics_calculateengin_77c0fc39("calculateEngineeringMetrics()<br/><small>src/physics/suspensionPhysics.js</small>")
+        app_src_physics_suspensionphysics_exactanalytica_436a271e("exactAnalyticalSolution()<br/><small>src/physics/suspensionPhysics.js</small>")
+    end
+    subgraph build_graph_app_src_App_jsx_ca2ccaca["app/src/App.jsx"]
+        app_src_app_035f2427("App.jsx")
+        app_src_app_app_f382bd80("App()<br/><small>app/src/App.jsx</small>")
+    end
+    subgraph build_graph_src_components_CodeCalculationModal_21255cae["src/components/CodeCalculationModal.jsx"]
+        app_src_components_codecalculationmodal_147b2a62("CodeCalculationModal.jsx")
+        app_src_components_codecalculationmodal_codecalc_9d01062f("CodeCalculationModal()<br/><small>src/components/CodeCalculationModal.jsx</small>")
+    end
+    subgraph build_graph_src_components_PresentationDeck_jsx_632b54b3["src/components/PresentationDeck.jsx"]
+        app_src_components_presentationdeck_9ccbd635("PresentationDeck.jsx")
+        app_src_components_presentationdeck_presentation_68845dd3("PresentationDeck()<br/><small>src/components/PresentationDeck.jsx</small>")
+    end
+    subgraph build_graph_src_components_SimulationChart_jsx_247e359a["src/components/SimulationChart.jsx"]
+        app_src_components_simulationchart_bfe24001("SimulationChart.jsx")
+        app_src_components_simulationchart_simulationcha_b54eb492("SimulationChart()<br/><small>src/components/SimulationChart.jsx</small>")
+    end
+    subgraph build_graph_src_components_SuspensionCalculator_e5626bca["src/components/SuspensionCalculator.jsx"]
+        app_src_components_suspensioncalculator_suspensi_d8f818fc("SuspensionCalculator()<br/><small>src/components/SuspensionCalculator.jsx</small>")
+        app_src_components_suspensioncalculator_fmt_9a485e1e("fmt()<br/><small>src/components/SuspensionCalculator.jsx</small>")
+    end
+    app_package_afe66716("package.json")
+    app_src_components_header_header_28ada69d("Header()<br/><small>src/components/Header.jsx</small>")
+    app_src_components_suspensionanimation_suspensio_e3566b7c("SuspensionAnimation()<br/><small>src/components/SuspensionAnimation.jsx</small>")
+    app_src_components_vehicle3dscene_vehicle3dscene_ba26d7b6("Vehicle3DScene()<br/><small>src/components/Vehicle3DScene.jsx</small>")
+    app_src_app_app_f382bd80 -->|calls| app_src_components_header_header_28ada69d
+    app_src_app_app_f382bd80 -->|calls| app_src_components_vehicle3dscene_vehicle3dscene_ba26d7b6
+    app_src_app_app_f382bd80 -->|calls| app_src_components_suspensionanimation_suspensio_e3566b7c
+    app_src_app_app_f382bd80 -->|calls| app_src_components_simulationchart_simulationcha_b54eb492
+    app_src_app_app_f382bd80 -->|calls| app_src_components_suspensioncalculator_suspensi_d8f818fc
+    app_src_app_app_f382bd80 -->|calls| app_src_components_presentationdeck_presentation_68845dd3
+    app_src_app_app_f382bd80 -->|calls| app_src_physics_suspensionphysics_calculateoscil_1318a0bd
+    app_src_app_app_f382bd80 -->|calls| app_src_physics_suspensionphysics_rk4integrate_19c938b9
+    app_src_app_app_f382bd80 -->|calls| app_src_physics_suspensionphysics_calculateengin_77c0fc39
+    app_src_components_codecalculationmodal_codecalc_9d01062f -->|calls| app_src_physics_suspensionphysics_calculateoscil_1318a0bd
+    app_src_components_codecalculationmodal_codecalc_9d01062f -->|calls| app_src_physics_suspensionphysics_exactanalytica_436a271e
+    app_src_components_presentationdeck_presentation_68845dd3 -->|calls| app_src_components_simulationchart_simulationcha_b54eb492
+    app_src_components_presentationdeck_presentation_68845dd3 -->|calls| app_src_components_suspensionanimation_suspensio_e3566b7c
+    app_src_components_presentationdeck_presentation_68845dd3 -->|calls| app_src_components_codecalculationmodal_codecalc_9d01062f
+    app_src_components_simulationchart_simulationcha_b54eb492 -->|calls| app_src_physics_suspensionphysics_rk4integrate_19c938b9
+    app_src_components_simulationchart_simulationcha_b54eb492 -->|calls| app_src_physics_suspensionphysics_exactanalytica_436a271e
+    app_src_components_simulationchart_simulationcha_b54eb492 -->|calls| app_src_physics_suspensionphysics_calculateengin_77c0fc39
+    app_src_components_suspensionanimation_suspensio_e3566b7c -->|calls| app_src_physics_suspensionphysics_exactanalytica_436a271e
+    app_src_components_suspensioncalculator_suspensi_d8f818fc -->|calls| app_src_physics_suspensionphysics_calculateoscil_1318a0bd
+    app_src_components_suspensioncalculator_suspensi_d8f818fc -->|calls| app_src_components_suspensioncalculator_fmt_9a485e1e
+    app_src_components_suspensioncalculator_suspensi_d8f818fc -->|calls| app_src_physics_suspensionphysics_rk4integrate_19c938b9
+    app_src_components_suspensioncalculator_suspensi_d8f818fc -->|calls| app_src_physics_suspensionphysics_calculateengin_77c0fc39
+    app_src_physics_suspensionphysics_calculateengin_77c0fc39 -->|calls| app_src_physics_suspensionphysics_exactanalytica_436a271e
+    app_src_physics_suspensionphysics_exactanalytica_436a271e -->|calls| app_src_physics_suspensionphysics_calculateoscil_1318a0bd
+    %% Omitted for readability: 57 nodes, 13 edges
+    class app_src_physics_suspensionphysics_calculateoscil_1318a0bd function;
+    class app_src_physics_suspensionphysics_rk4integrate_19c938b9 function;
+    class app_src_physics_suspensionphysics_calculateengin_77c0fc39 function;
+    class app_src_physics_suspensionphysics_exactanalytica_436a271e function;
+    class app_src_app_035f2427 ui;
+    class app_src_app_app_f382bd80 ui;
+    class app_src_components_codecalculationmodal_147b2a62 ui;
+    class app_src_components_codecalculationmodal_codecalc_9d01062f ui;
+    class app_src_components_presentationdeck_9ccbd635 ui;
+    class app_src_components_presentationdeck_presentation_68845dd3 ui;
+    class app_src_components_simulationchart_bfe24001 ui;
+    class app_src_components_simulationchart_simulationcha_b54eb492 ui;
+    class app_src_components_suspensioncalculator_suspensi_d8f818fc ui;
+    class app_src_components_suspensioncalculator_fmt_9a485e1e ui;
+    class app_package_afe66716 function;
+    class app_src_components_header_header_28ada69d ui;
+    class app_src_components_suspensionanimation_suspensio_e3566b7c ui;
+    class app_src_components_vehicle3dscene_vehicle3dscene_ba26d7b6 ui;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>App()</code><br><small style="color:var(--muted)">app/src/App.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>main.jsx</code><br><small style="color:var(--muted)">app/src/main.jsx</small></td>
+  <td><code>calculateEngineeringMetrics()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small><br><code>calculateOscillatorProperties()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small><br><code>ClassComparisonView()</code><br><small style="color:var(--muted)">src/components/ClassComparisonView.jsx</small><br>+9 more</td>
+  <td>App() node in app/src/App.jsx.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>CodeCalculationModal()</code><br><small style="color:var(--muted)">src/components/CodeCalculationModal.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>PresentationDeck()</code><br><small style="color:var(--muted)">src/components/PresentationDeck.jsx</small></td>
+  <td><code>calculateOscillatorProperties()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small><br><code>exactAnalyticalSolution()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small><br><code>KaTeXMath()</code><br><small style="color:var(--muted)">src/components/KaTeXMath.jsx</small></td>
+  <td>CodeCalculationModal() node in src/components/CodeCalculationModal.jsx.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>Header()</code><br><small style="color:var(--muted)">src/components/Header.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App()</code><br><small style="color:var(--muted)">app/src/App.jsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>Header() node in src/components/Header.jsx.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>PresentationDeck()</code><br><small style="color:var(--muted)">src/components/PresentationDeck.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App()</code><br><small style="color:var(--muted)">app/src/App.jsx</small><br><code>App.jsx</code><br><small style="color:var(--muted)">app/src/App.jsx</small></td>
+  <td><code>CodeCalculationModal()</code><br><small style="color:var(--muted)">src/components/CodeCalculationModal.jsx</small><br><code>KaTeXMath()</code><br><small style="color:var(--muted)">src/components/KaTeXMath.jsx</small><br><code>SimulationChart()</code><br><small style="color:var(--muted)">src/components/SimulationChart.jsx</small><br>+1 more</td>
+  <td>PresentationDeck() node in src/components/PresentationDeck.jsx.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>SimulationChart()</code><br><small style="color:var(--muted)">src/components/SimulationChart.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App()</code><br><small style="color:var(--muted)">app/src/App.jsx</small><br><code>PresentationDeck()</code><br><small style="color:var(--muted)">src/components/PresentationDeck.jsx</small></td>
+  <td><code>calculateEngineeringMetrics()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small><br><code>exactAnalyticalSolution()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small><br><code>rk4Integrate()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small></td>
+  <td>SimulationChart() node in src/components/SimulationChart.jsx.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>SuspensionAnimation()</code><br><small style="color:var(--muted)">src/components/SuspensionAnimation.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App()</code><br><small style="color:var(--muted)">app/src/App.jsx</small><br><code>PresentationDeck()</code><br><small style="color:var(--muted)">src/components/PresentationDeck.jsx</small></td>
+  <td><code>exactAnalyticalSolution()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small></td>
+  <td>SuspensionAnimation() node in src/components/SuspensionAnimation.jsx.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>fmt()</code><br><small style="color:var(--muted)">src/components/SuspensionCalculator.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>SuspensionCalculator()</code><br><small style="color:var(--muted)">src/components/SuspensionCalculator.jsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>fmt() node in src/components/SuspensionCalculator.jsx.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>StepCard()</code><br><small style="color:var(--muted)">src/components/SuspensionCalculator.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>SuspensionCalculator()</code><br><small style="color:var(--muted)">src/components/SuspensionCalculator.jsx</small></td>
+  <td><code>KaTeXMath()</code><br><small style="color:var(--muted)">src/components/KaTeXMath.jsx</small></td>
+  <td>StepCard() node in src/components/SuspensionCalculator.jsx.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>SuspensionCalculator()</code><br><small style="color:var(--muted)">src/components/SuspensionCalculator.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App()</code><br><small style="color:var(--muted)">app/src/App.jsx</small></td>
+  <td><code>calculateEngineeringMetrics()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small><br><code>calculateOscillatorProperties()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small><br><code>fmt()</code><br><small style="color:var(--muted)">src/components/SuspensionCalculator.jsx</small><br>+3 more</td>
+  <td>SuspensionCalculator() node in src/components/SuspensionCalculator.jsx.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>Vehicle3DScene()</code><br><small style="color:var(--muted)">src/components/Vehicle3DScene.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App()</code><br><small style="color:var(--muted)">app/src/App.jsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>Vehicle3DScene() node in src/components/Vehicle3DScene.jsx.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>calculateEngineeringMetrics()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>App()</code><br><small style="color:var(--muted)">app/src/App.jsx</small><br><code>App.jsx</code><br><small style="color:var(--muted)">app/src/App.jsx</small><br><code>SimulationChart()</code><br><small style="color:var(--muted)">src/components/SimulationChart.jsx</small><br>+3 more</td>
+  <td><code>exactAnalyticalSolution()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small></td>
+  <td>calculateEngineeringMetrics() node in src/physics/suspensionPhysics.js.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>calculateOscillatorProperties()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>App()</code><br><small style="color:var(--muted)">app/src/App.jsx</small><br><code>App.jsx</code><br><small style="color:var(--muted)">app/src/App.jsx</small><br><code>CodeCalculationModal()</code><br><small style="color:var(--muted)">src/components/CodeCalculationModal.jsx</small><br>+4 more</td>
+  <td>No direct outbound edge</td>
+  <td>calculateOscillatorProperties() node in src/physics/suspensionPhysics.js.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>exactAnalyticalSolution()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>calculateEngineeringMetrics()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small><br><code>CodeCalculationModal()</code><br><small style="color:var(--muted)">src/components/CodeCalculationModal.jsx</small><br><code>CodeCalculationModal.jsx</code><br><small style="color:var(--muted)">src/components/CodeCalculationModal.jsx</small><br>+5 more</td>
+  <td><code>calculateOscillatorProperties()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small></td>
+  <td>Orchestrates analysis and returns structured documentation data.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>rk4Integrate()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>App()</code><br><small style="color:var(--muted)">app/src/App.jsx</small><br><code>App.jsx</code><br><small style="color:var(--muted)">app/src/App.jsx</small><br><code>SimulationChart()</code><br><small style="color:var(--muted)">src/components/SimulationChart.jsx</small><br>+3 more</td>
+  <td><code>systemDerivative()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small></td>
+  <td>rk4Integrate() node in src/physics/suspensionPhysics.js.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>systemDerivative()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>rk4Integrate()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>systemDerivative() node in src/physics/suspensionPhysics.js.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>App.jsx</code><br><small style="color:var(--muted)">app/src/App.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>main.jsx</code><br><small style="color:var(--muted)">app/src/main.jsx</small></td>
+  <td><code>calculateEngineeringMetrics()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small><br><code>calculateOscillatorProperties()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small><br><code>ClassComparisonView.jsx</code><br><small style="color:var(--muted)">src/components/ClassComparisonView.jsx</small><br>+14 more</td>
+  <td>App.jsx node in app/src/App.jsx.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>CodeCalculationModal.jsx</code><br><small style="color:var(--muted)">src/components/CodeCalculationModal.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>PresentationDeck.jsx</code><br><small style="color:var(--muted)">src/components/PresentationDeck.jsx</small></td>
+  <td><code>calculateOscillatorProperties()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small><br><code>exactAnalyticalSolution()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small><br><code>KaTeXMath.jsx</code><br><small style="color:var(--muted)">src/components/KaTeXMath.jsx</small><br>+5 more</td>
+  <td>CodeCalculationModal.jsx node in src/components/CodeCalculationModal.jsx.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>Header.jsx</code><br><small style="color:var(--muted)">src/components/Header.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App.jsx</code><br><small style="color:var(--muted)">app/src/App.jsx</small></td>
+  <td><code>lucide-react</code><br><small style="color:var(--muted)">app/package.json</small><br><code>react</code><br><small style="color:var(--muted)">app/package.json</small></td>
+  <td>Header.jsx node in src/components/Header.jsx.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>PresentationDeck.jsx</code><br><small style="color:var(--muted)">src/components/PresentationDeck.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App.jsx</code><br><small style="color:var(--muted)">app/src/App.jsx</small></td>
+  <td><code>CodeCalculationModal.jsx</code><br><small style="color:var(--muted)">src/components/CodeCalculationModal.jsx</small><br><code>flashcardsData.js</code><br><small style="color:var(--muted)">src/data/flashcardsData.js</small><br><code>KaTeXMath()</code><br><small style="color:var(--muted)">src/components/KaTeXMath.jsx</small><br>+8 more</td>
+  <td>PresentationDeck.jsx node in src/components/PresentationDeck.jsx.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>SimulationChart.jsx</code><br><small style="color:var(--muted)">src/components/SimulationChart.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App.jsx</code><br><small style="color:var(--muted)">app/src/App.jsx</small><br><code>PresentationDeck.jsx</code><br><small style="color:var(--muted)">src/components/PresentationDeck.jsx</small></td>
+  <td><code>calculateEngineeringMetrics()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small><br><code>chart.js</code><br><small style="color:var(--muted)">app/package.json</small><br><code>exactAnalyticalSolution()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small><br>+5 more</td>
+  <td>SimulationChart.jsx node in src/components/SimulationChart.jsx.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>customCanvasBackgroundColor</code><br><small style="color:var(--muted)">src/components/SimulationChart.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>customCanvasBackgroundColor node in src/components/SimulationChart.jsx.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>SuspensionAnimation.jsx</code><br><small style="color:var(--muted)">src/components/SuspensionAnimation.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App.jsx</code><br><small style="color:var(--muted)">app/src/App.jsx</small><br><code>PresentationDeck.jsx</code><br><small style="color:var(--muted)">src/components/PresentationDeck.jsx</small></td>
+  <td><code>exactAnalyticalSolution()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small><br><code>lucide-react</code><br><small style="color:var(--muted)">app/package.json</small><br><code>react</code><br><small style="color:var(--muted)">app/package.json</small><br>+1 more</td>
+  <td>SuspensionAnimation.jsx node in src/components/SuspensionAnimation.jsx.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>SuspensionCalculator.jsx</code><br><small style="color:var(--muted)">src/components/SuspensionCalculator.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App.jsx</code><br><small style="color:var(--muted)">app/src/App.jsx</small></td>
+  <td><code>calculateEngineeringMetrics()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small><br><code>calculateOscillatorProperties()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small><br><code>exactAnalyticalSolution()</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small><br>+5 more</td>
+  <td>SuspensionCalculator.jsx node in src/components/SuspensionCalculator.jsx.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>Vehicle3DScene.jsx</code><br><small style="color:var(--muted)">src/components/Vehicle3DScene.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App.jsx</code><br><small style="color:var(--muted)">app/src/App.jsx</small></td>
+  <td><code>lucide-react</code><br><small style="color:var(--muted)">app/package.json</small><br><code>react</code><br><small style="color:var(--muted)">app/package.json</small></td>
+  <td>Vehicle3DScene.jsx node in src/components/Vehicle3DScene.jsx.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>slidesCodeData.js</code><br><small style="color:var(--muted)">src/data/slidesCodeData.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>CodeCalculationModal.jsx</code><br><small style="color:var(--muted)">src/components/CodeCalculationModal.jsx</small><br><code>PresentationDeck.jsx</code><br><small style="color:var(--muted)">src/components/PresentationDeck.jsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>slidesCodeData.js node in src/data/slidesCodeData.js.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>SLIDES_CODE_MAPPING</code><br><small style="color:var(--muted)">src/data/slidesCodeData.js</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>CodeCalculationModal.jsx</code><br><small style="color:var(--muted)">src/components/CodeCalculationModal.jsx</small><br><code>PresentationDeck.jsx</code><br><small style="color:var(--muted)">src/components/PresentationDeck.jsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>SLIDES_CODE_MAPPING node in src/data/slidesCodeData.js.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>main.jsx</code><br><small style="color:var(--muted)">app/src/main.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>App()</code><br><small style="color:var(--muted)">app/src/App.jsx</small><br><code>App.jsx</code><br><small style="color:var(--muted)">app/src/App.jsx</small><br><code>app_src_index</code><br>+3 more</td>
+  <td>main.jsx node in app/src/main.jsx.</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>suspensionPhysics.js</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>App.jsx</code><br><small style="color:var(--muted)">app/src/App.jsx</small><br><code>CodeCalculationModal.jsx</code><br><small style="color:var(--muted)">src/components/CodeCalculationModal.jsx</small><br><code>SimulationChart.jsx</code><br><small style="color:var(--muted)">src/components/SimulationChart.jsx</small><br>+2 more</td>
+  <td>No direct outbound edge</td>
+  <td>suspensionPhysics.js node in src/physics/suspensionPhysics.js.</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>DEFAULT_PARAMS</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>DEFAULT_PARAMS node in src/physics/suspensionPhysics.js.</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>PRESETS</code><br><small style="color:var(--muted)">src/physics/suspensionPhysics.js</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>App.jsx</code><br><small style="color:var(--muted)">app/src/App.jsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>PRESETS node in src/physics/suspensionPhysics.js.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>app/package.json</code></td><td>43 nodes</td></tr>
+<tr><td><code>src/physics/suspensionPhysics.js</code></td><td>8 nodes</td></tr>
+<tr><td><code>src/components/SuspensionCalculator.jsx</code></td><td>4 nodes</td></tr>
+<tr><td><code>src/components/SimulationChart.jsx</code></td><td>3 nodes</td></tr>
+<tr><td><code>app/src/App.jsx</code></td><td>2 nodes</td></tr>
+<tr><td><code>src/components/CodeCalculationModal.jsx</code></td><td>2 nodes</td></tr>
+<tr><td><code>src/components/Header.jsx</code></td><td>2 nodes</td></tr>
+<tr><td><code>src/components/PresentationDeck.jsx</code></td><td>2 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x45, imports x42, imports x34, calls x26. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 4. Ingestion & Updates ====== -->
+<h2 id="ingest-cache-update">4. Ingestion &amp; Updates</h2>
+<p>Ingestion &amp; Updates groups implementation around github, workflows, deployyml, name, mostly in .github/workflows/deploy.yml. This section covers 17 nodes and 16 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Ingestion &amp; Updates (17 nodes, 16 edges)
+    github_workflows_deploy_build_and_deploy_steps_03bcc42b("steps<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_steps_with_c00968ad("with<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_jobs_build_and_deploy_9d25cdff("build-and-deploy<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_build_and_deploy_environ_337d228a("environment<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_jobs_7a16c75f("jobs<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_environment_name_f2b005bb("name<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_environment_url_7ab679ec("url<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_steps_name_d31aeb29("name<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_steps_uses_985060fe("uses<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_steps_working_directory_a67ae119("working-directory<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_steps_run_0c996f75("run<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_steps_id_05964dd8("id<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_build_and_deploy_runs_on_d65d19d5("runs-on<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_with_node_version_21a00dab("node-version<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_with_cache_23cd4eb0("cache<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_with_cache_dependency_pa_df414e42("cache-dependency-path<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_with_path_1a3f3475("path<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_build_and_deploy_environ_337d228a -->|contains| github_workflows_deploy_environment_name_f2b005bb
+    github_workflows_deploy_build_and_deploy_environ_337d228a -->|contains| github_workflows_deploy_environment_url_7ab679ec
+    github_workflows_deploy_build_and_deploy_steps_03bcc42b -->|contains| github_workflows_deploy_steps_name_d31aeb29
+    github_workflows_deploy_build_and_deploy_steps_03bcc42b -->|contains| github_workflows_deploy_steps_uses_985060fe
+    github_workflows_deploy_build_and_deploy_steps_03bcc42b -->|contains| github_workflows_deploy_steps_with_c00968ad
+    github_workflows_deploy_build_and_deploy_steps_03bcc42b -->|contains| github_workflows_deploy_steps_working_directory_a67ae119
+    github_workflows_deploy_build_and_deploy_steps_03bcc42b -->|contains| github_workflows_deploy_steps_run_0c996f75
+    github_workflows_deploy_build_and_deploy_steps_03bcc42b -->|contains| github_workflows_deploy_steps_id_05964dd8
+    github_workflows_deploy_jobs_7a16c75f -->|contains| github_workflows_deploy_jobs_build_and_deploy_9d25cdff
+    github_workflows_deploy_jobs_build_and_deploy_9d25cdff -->|contains| github_workflows_deploy_build_and_deploy_environ_337d228a
+    github_workflows_deploy_jobs_build_and_deploy_9d25cdff -->|contains| github_workflows_deploy_build_and_deploy_runs_on_d65d19d5
+    github_workflows_deploy_jobs_build_and_deploy_9d25cdff -->|contains| github_workflows_deploy_build_and_deploy_steps_03bcc42b
+    github_workflows_deploy_steps_with_c00968ad -->|contains| github_workflows_deploy_with_node_version_21a00dab
+    github_workflows_deploy_steps_with_c00968ad -->|contains| github_workflows_deploy_with_cache_23cd4eb0
+    github_workflows_deploy_steps_with_c00968ad -->|contains| github_workflows_deploy_with_cache_dependency_pa_df414e42
+    github_workflows_deploy_steps_with_c00968ad -->|contains| github_workflows_deploy_with_path_1a3f3475
+    class github_workflows_deploy_build_and_deploy_steps_03bcc42b function;
+    class github_workflows_deploy_steps_with_c00968ad function;
+    class github_workflows_deploy_jobs_build_and_deploy_9d25cdff function;
+    class github_workflows_deploy_build_and_deploy_environ_337d228a function;
+    class github_workflows_deploy_jobs_7a16c75f function;
+    class github_workflows_deploy_environment_name_f2b005bb function;
+    class github_workflows_deploy_environment_url_7ab679ec function;
+    class github_workflows_deploy_steps_name_d31aeb29 function;
+    class github_workflows_deploy_steps_uses_985060fe function;
+    class github_workflows_deploy_steps_working_directory_a67ae119 function;
+    class github_workflows_deploy_steps_run_0c996f75 function;
+    class github_workflows_deploy_steps_id_05964dd8 function;
+    class github_workflows_deploy_build_and_deploy_runs_on_d65d19d5 function;
+    class github_workflows_deploy_with_node_version_21a00dab function;
+    class github_workflows_deploy_with_cache_23cd4eb0 function;
+    class github_workflows_deploy_with_cache_dependency_pa_df414e42 function;
+    class github_workflows_deploy_with_path_1a3f3475 function;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>environment</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>environment node in .github/workflows/deploy.yml.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>runs-on</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>runs-on node in .github/workflows/deploy.yml.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>steps</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>steps node in .github/workflows/deploy.yml.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>name</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>name node in .github/workflows/deploy.yml.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>url</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>url node in .github/workflows/deploy.yml.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>jobs</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>jobs node in .github/workflows/deploy.yml.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>build-and-deploy</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>build-and-deploy node in .github/workflows/deploy.yml.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>id</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>id node in .github/workflows/deploy.yml.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>name</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>name node in .github/workflows/deploy.yml.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>run</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>run node in .github/workflows/deploy.yml.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>uses</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>uses node in .github/workflows/deploy.yml.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>with</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>with node in .github/workflows/deploy.yml.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>working-directory</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>working-directory node in .github/workflows/deploy.yml.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>cache</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Caches analysis results or computes cache keys.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>cache-dependency-path</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Builds dependency relationships and graph data.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>node-version</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>node-version node in .github/workflows/deploy.yml.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>path</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>path node in .github/workflows/deploy.yml.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>.github/workflows/deploy.yml</code></td><td>17 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x16. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 5. App Components Flashcardsmodaljsx ====== -->
+<h2 id="app-components-flashcardsmodaljsx">5. App Components Flashcardsmodaljsx</h2>
+<p>App Components Flashcardsmodaljsx groups implementation around app, components, flashcardsmodaljsx, flashcardsdatajs, mostly in src/components/FlashcardsModal.jsx, src/data/flashcardsData.js, src/components/ClassComparisonView.jsx. This section covers 13 nodes and 23 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: App Components Flashcardsmodaljsx (13 nodes, 23 edges)
+    subgraph app_components_flashcardsmodaljsx_src_components_415f32e2["src/components/FlashcardsModal.jsx"]
+        app_src_components_flashcardsmodal_bb2dffa9("FlashcardsModal.jsx")
+        app_src_components_flashcardsmodal_flashcardsmod_1b0ba837("FlashcardsModal()<br/><small>src/components/FlashcardsModal.jsx</small>")
+        app_src_components_flashcardsmodal_printableflas_5bc4bec8("PrintableFlashcard()<br/><small>src/components/FlashcardsModal.jsx</small>")
+        app_src_components_flashcardsmodal_formattedmath_4dbab194("FormattedMathText()<br/><small>src/components/FlashcardsModal.jsx</small>")
+    end
+    subgraph app_components_flashcardsmodaljsx_src_data_flash_14f51223["src/data/flashcardsData.js"]
+        app_src_data_flashcardsdata_team_members_flashca_b2fd52c6("TEAM_MEMBERS_FLASHCARDS<br/><small>src/data/flashcardsData.js</small>")
+        app_src_data_flashcardsdata_aaceb237("flashcardsData.js")
+        app_src_data_flashcardsdata_slides_presentation_d807af30("SLIDES_PRESENTATION<br/><small>src/data/flashcardsData.js</small>")
+    end
+    subgraph app_components_flashcardsmodaljsx_src_components_dfa622bd["src/components/ClassComparisonView.jsx"]
+        app_src_components_classcomparisonview_33a12536("ClassComparisonView.jsx")
+        app_src_components_classcomparisonview_classcomp_3ecad024("ClassComparisonView()<br/><small>src/components/ClassComparisonView.jsx</small>")
+    end
+    subgraph app_components_flashcardsmodaljsx_src_components_2e934eeb["src/components/KaTeXMath.jsx"]
+        app_src_components_katexmath_katexmath_7417a4df("KaTeXMath()<br/><small>src/components/KaTeXMath.jsx</small>")
+        app_src_components_katexmath_fc0a1f1f("KaTeXMath.jsx")
+    end
+    subgraph app_components_flashcardsmodaljsx_src_components_57974074["src/components/MathDeductionView.jsx"]
+        app_src_components_mathdeductionview_c6513eff("MathDeductionView.jsx")
+        app_src_components_mathdeductionview_mathdeducti_d99f9f0b("MathDeductionView()<br/><small>src/components/MathDeductionView.jsx</small>")
+    end
+    app_src_components_classcomparisonview_classcomp_3ecad024 -->|calls| app_src_components_katexmath_katexmath_7417a4df
+    app_src_components_flashcardsmodal_flashcardsmod_1b0ba837 -->|calls| app_src_components_katexmath_katexmath_7417a4df
+    app_src_components_flashcardsmodal_flashcardsmod_1b0ba837 -->|calls| app_src_components_flashcardsmodal_formattedmath_4dbab194
+    app_src_components_flashcardsmodal_flashcardsmod_1b0ba837 -->|calls| app_src_components_flashcardsmodal_printableflas_5bc4bec8
+    app_src_components_flashcardsmodal_formattedmath_4dbab194 -->|calls| app_src_components_katexmath_katexmath_7417a4df
+    app_src_components_flashcardsmodal_printableflas_5bc4bec8 -->|calls| app_src_components_flashcardsmodal_formattedmath_4dbab194
+    app_src_components_flashcardsmodal_printableflas_5bc4bec8 -->|calls| app_src_components_katexmath_katexmath_7417a4df
+    app_src_components_mathdeductionview_mathdeducti_d99f9f0b -->|calls| app_src_components_katexmath_katexmath_7417a4df
+    app_src_components_classcomparisonview_33a12536 -->|imports| app_src_components_katexmath_katexmath_7417a4df
+    app_src_components_classcomparisonview_33a12536 -->|imports| app_src_components_katexmath_fc0a1f1f
+    app_src_components_flashcardsmodal_bb2dffa9 -->|imports| app_src_data_flashcardsdata_team_members_flashca_b2fd52c6
+    app_src_components_flashcardsmodal_bb2dffa9 -->|imports| app_src_data_flashcardsdata_aaceb237
+    app_src_components_flashcardsmodal_bb2dffa9 -->|imports| app_src_components_katexmath_fc0a1f1f
+    app_src_components_mathdeductionview_c6513eff -->|imports| app_src_components_katexmath_katexmath_7417a4df
+    app_src_components_mathdeductionview_c6513eff -->|imports| app_src_components_katexmath_fc0a1f1f
+    class app_src_components_flashcardsmodal_bb2dffa9 ui;
+    class app_src_components_flashcardsmodal_flashcardsmod_1b0ba837 ui;
+    class app_src_components_flashcardsmodal_printableflas_5bc4bec8 ui;
+    class app_src_components_flashcardsmodal_formattedmath_4dbab194 ui;
+    class app_src_data_flashcardsdata_team_members_flashca_b2fd52c6 klass;
+    class app_src_data_flashcardsdata_aaceb237 module;
+    class app_src_data_flashcardsdata_slides_presentation_d807af30 klass;
+    class app_src_components_classcomparisonview_33a12536 ui;
+    class app_src_components_classcomparisonview_classcomp_3ecad024 ui;
+    class app_src_components_katexmath_katexmath_7417a4df ui;
+    class app_src_components_katexmath_fc0a1f1f ui;
+    class app_src_components_mathdeductionview_c6513eff ui;
+    class app_src_components_mathdeductionview_mathdeducti_d99f9f0b ui;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>ClassComparisonView()</code><br><small style="color:var(--muted)">src/components/ClassComparisonView.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App()</code><br><small style="color:var(--muted)">app/src/App.jsx</small></td>
+  <td><code>KaTeXMath()</code><br><small style="color:var(--muted)">src/components/KaTeXMath.jsx</small></td>
+  <td>ClassComparisonView() node in src/components/ClassComparisonView.jsx.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>FlashcardsModal()</code><br><small style="color:var(--muted)">src/components/FlashcardsModal.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App()</code><br><small style="color:var(--muted)">app/src/App.jsx</small></td>
+  <td><code>FormattedMathText()</code><br><small style="color:var(--muted)">src/components/FlashcardsModal.jsx</small><br><code>KaTeXMath()</code><br><small style="color:var(--muted)">src/components/KaTeXMath.jsx</small><br><code>PrintableFlashcard()</code><br><small style="color:var(--muted)">src/components/FlashcardsModal.jsx</small></td>
+  <td>FlashcardsModal() node in src/components/FlashcardsModal.jsx.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>FormattedMathText()</code><br><small style="color:var(--muted)">src/components/FlashcardsModal.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>FlashcardsModal()</code><br><small style="color:var(--muted)">src/components/FlashcardsModal.jsx</small><br><code>PrintableFlashcard()</code><br><small style="color:var(--muted)">src/components/FlashcardsModal.jsx</small></td>
+  <td><code>KaTeXMath()</code><br><small style="color:var(--muted)">src/components/KaTeXMath.jsx</small></td>
+  <td>FormattedMathText() node in src/components/FlashcardsModal.jsx.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>PrintableFlashcard()</code><br><small style="color:var(--muted)">src/components/FlashcardsModal.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>FlashcardsModal()</code><br><small style="color:var(--muted)">src/components/FlashcardsModal.jsx</small></td>
+  <td><code>FormattedMathText()</code><br><small style="color:var(--muted)">src/components/FlashcardsModal.jsx</small><br><code>KaTeXMath()</code><br><small style="color:var(--muted)">src/components/KaTeXMath.jsx</small></td>
+  <td>PrintableFlashcard() node in src/components/FlashcardsModal.jsx.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>KaTeXMath()</code><br><small style="color:var(--muted)">src/components/KaTeXMath.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>ClassComparisonView()</code><br><small style="color:var(--muted)">src/components/ClassComparisonView.jsx</small><br><code>ClassComparisonView.jsx</code><br><small style="color:var(--muted)">src/components/ClassComparisonView.jsx</small><br><code>CodeCalculationModal()</code><br><small style="color:var(--muted)">src/components/CodeCalculationModal.jsx</small><br>+9 more</td>
+  <td>No direct outbound edge</td>
+  <td>KaTeXMath() node in src/components/KaTeXMath.jsx.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>MathDeductionView()</code><br><small style="color:var(--muted)">src/components/MathDeductionView.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App()</code><br><small style="color:var(--muted)">app/src/App.jsx</small></td>
+  <td><code>KaTeXMath()</code><br><small style="color:var(--muted)">src/components/KaTeXMath.jsx</small></td>
+  <td>MathDeductionView() node in src/components/MathDeductionView.jsx.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>ClassComparisonView.jsx</code><br><small style="color:var(--muted)">src/components/ClassComparisonView.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App.jsx</code><br><small style="color:var(--muted)">app/src/App.jsx</small></td>
+  <td><code>KaTeXMath()</code><br><small style="color:var(--muted)">src/components/KaTeXMath.jsx</small><br><code>KaTeXMath.jsx</code><br><small style="color:var(--muted)">src/components/KaTeXMath.jsx</small><br><code>lucide-react</code><br><small style="color:var(--muted)">app/package.json</small><br>+1 more</td>
+  <td>ClassComparisonView.jsx node in src/components/ClassComparisonView.jsx.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>FlashcardsModal.jsx</code><br><small style="color:var(--muted)">src/components/FlashcardsModal.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App.jsx</code><br><small style="color:var(--muted)">app/src/App.jsx</small></td>
+  <td><code>flashcardsData.js</code><br><small style="color:var(--muted)">src/data/flashcardsData.js</small><br><code>KaTeXMath.jsx</code><br><small style="color:var(--muted)">src/components/KaTeXMath.jsx</small><br><code>lucide-react</code><br><small style="color:var(--muted)">app/package.json</small><br>+2 more</td>
+  <td>FlashcardsModal.jsx node in src/components/FlashcardsModal.jsx.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>KaTeXMath.jsx</code><br><small style="color:var(--muted)">src/components/KaTeXMath.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>ClassComparisonView.jsx</code><br><small style="color:var(--muted)">src/components/ClassComparisonView.jsx</small><br><code>CodeCalculationModal.jsx</code><br><small style="color:var(--muted)">src/components/CodeCalculationModal.jsx</small><br><code>FlashcardsModal.jsx</code><br><small style="color:var(--muted)">src/components/FlashcardsModal.jsx</small><br>+3 more</td>
+  <td><code>katex</code><br><small style="color:var(--muted)">app/package.json</small><br><code>react</code><br><small style="color:var(--muted)">app/package.json</small></td>
+  <td>KaTeXMath.jsx node in src/components/KaTeXMath.jsx.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>MathDeductionView.jsx</code><br><small style="color:var(--muted)">src/components/MathDeductionView.jsx</small></td>
+  <td><span class="tag tag-hook">UI</span></td>
+  <td><code>App.jsx</code><br><small style="color:var(--muted)">app/src/App.jsx</small></td>
+  <td><code>KaTeXMath()</code><br><small style="color:var(--muted)">src/components/KaTeXMath.jsx</small><br><code>KaTeXMath.jsx</code><br><small style="color:var(--muted)">src/components/KaTeXMath.jsx</small><br><code>lucide-react</code><br><small style="color:var(--muted)">app/package.json</small><br>+1 more</td>
+  <td>MathDeductionView.jsx node in src/components/MathDeductionView.jsx.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>flashcardsData.js</code><br><small style="color:var(--muted)">src/data/flashcardsData.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>FlashcardsModal.jsx</code><br><small style="color:var(--muted)">src/components/FlashcardsModal.jsx</small><br><code>PresentationDeck.jsx</code><br><small style="color:var(--muted)">src/components/PresentationDeck.jsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>flashcardsData.js node in src/data/flashcardsData.js.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>SLIDES_PRESENTATION</code><br><small style="color:var(--muted)">src/data/flashcardsData.js</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>PresentationDeck.jsx</code><br><small style="color:var(--muted)">src/components/PresentationDeck.jsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>SLIDES_PRESENTATION node in src/data/flashcardsData.js.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>TEAM_MEMBERS_FLASHCARDS</code><br><small style="color:var(--muted)">src/data/flashcardsData.js</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>FlashcardsModal.jsx</code><br><small style="color:var(--muted)">src/components/FlashcardsModal.jsx</small></td>
+  <td>No direct outbound edge</td>
+  <td>TEAM_MEMBERS_FLASHCARDS node in src/data/flashcardsData.js.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>src/components/FlashcardsModal.jsx</code></td><td>4 nodes</td></tr>
+<tr><td><code>src/data/flashcardsData.js</code></td><td>3 nodes</td></tr>
+<tr><td><code>src/components/ClassComparisonView.jsx</code></td><td>2 nodes</td></tr>
+<tr><td><code>src/components/KaTeXMath.jsx</code></td><td>2 nodes</td></tr>
+<tr><td><code>src/components/MathDeductionView.jsx</code></td><td>2 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: calls x8, contains x8, imports x4, imports x3. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 6. Deployyml Github Workflows ====== -->
+<h2 id="deployyml-github-workflows">6. Deployyml Github Workflows</h2>
+<p>Deployyml Github Workflows groups implementation around deployyml, github, workflows, concurrency, mostly in .github/workflows/deploy.yml. This section covers 13 nodes and 12 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Deployyml Github Workflows (13 nodes, 12 edges)
+    github_workflows_deploy_defa7c61("deploy.yml")
+    github_workflows_deploy_permissions_14c056a0("permissions<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_concurrency_75161c18("concurrency<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_on_34c76efc("on<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_on_push_a4c6b0f3("push<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_name_439d4df4("name<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_concurrency_group_23d040b8("group<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_concurrency_cancel_in_pr_49697dba("cancel-in-progress<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_on_workflow_dispatch_13060cc0("workflow_dispatch<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_push_branches_841d19a8("branches<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_permissions_pages_0cc01de9("pages<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_permissions_id_token_1819de45("id-token<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_permissions_contents_4c468ff1("contents<br/><small>.github/workflows/deploy.yml</small>")
+    github_workflows_deploy_defa7c61 -->|contains| github_workflows_deploy_name_439d4df4
+    github_workflows_deploy_defa7c61 -->|contains| github_workflows_deploy_concurrency_75161c18
+    github_workflows_deploy_defa7c61 -->|contains| github_workflows_deploy_on_34c76efc
+    github_workflows_deploy_defa7c61 -->|contains| github_workflows_deploy_permissions_14c056a0
+    github_workflows_deploy_concurrency_75161c18 -->|contains| github_workflows_deploy_concurrency_group_23d040b8
+    github_workflows_deploy_concurrency_75161c18 -->|contains| github_workflows_deploy_concurrency_cancel_in_pr_49697dba
+    github_workflows_deploy_on_34c76efc -->|contains| github_workflows_deploy_on_push_a4c6b0f3
+    github_workflows_deploy_on_34c76efc -->|contains| github_workflows_deploy_on_workflow_dispatch_13060cc0
+    github_workflows_deploy_on_push_a4c6b0f3 -->|contains| github_workflows_deploy_push_branches_841d19a8
+    github_workflows_deploy_permissions_14c056a0 -->|contains| github_workflows_deploy_permissions_pages_0cc01de9
+    github_workflows_deploy_permissions_14c056a0 -->|contains| github_workflows_deploy_permissions_id_token_1819de45
+    github_workflows_deploy_permissions_14c056a0 -->|contains| github_workflows_deploy_permissions_contents_4c468ff1
+    class github_workflows_deploy_defa7c61 function;
+    class github_workflows_deploy_permissions_14c056a0 function;
+    class github_workflows_deploy_concurrency_75161c18 function;
+    class github_workflows_deploy_on_34c76efc function;
+    class github_workflows_deploy_on_push_a4c6b0f3 function;
+    class github_workflows_deploy_name_439d4df4 function;
+    class github_workflows_deploy_concurrency_group_23d040b8 function;
+    class github_workflows_deploy_concurrency_cancel_in_pr_49697dba function;
+    class github_workflows_deploy_on_workflow_dispatch_13060cc0 function;
+    class github_workflows_deploy_push_branches_841d19a8 function;
+    class github_workflows_deploy_permissions_pages_0cc01de9 function;
+    class github_workflows_deploy_permissions_id_token_1819de45 function;
+    class github_workflows_deploy_permissions_contents_4c468ff1 function;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>deploy.yml</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>deploy.yml node in .github/workflows/deploy.yml.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>concurrency</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>concurrency node in .github/workflows/deploy.yml.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>cancel-in-progress</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>cancel-in-progress node in .github/workflows/deploy.yml.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>group</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>group node in .github/workflows/deploy.yml.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>name</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>name node in .github/workflows/deploy.yml.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>on</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>on node in .github/workflows/deploy.yml.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>push</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>push node in .github/workflows/deploy.yml.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>workflow_dispatch</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>workflow_dispatch node in .github/workflows/deploy.yml.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>permissions</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>permissions node in .github/workflows/deploy.yml.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>contents</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>contents node in .github/workflows/deploy.yml.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>id-token</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>id-token node in .github/workflows/deploy.yml.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>pages</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Organizes documentation pages, navigation, or content lookup.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>branches</code><br><small style="color:var(--muted)">.github/workflows/deploy.yml</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>branches node in .github/workflows/deploy.yml.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>.github/workflows/deploy.yml</code></td><td>13 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x12. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<h2 id="stats">Project Statistics</h2>
+
+<div class="grid">
+  <div class="card">
+    <h4>Graph</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><td>Nodes</td><td>149</td></tr>
+      <tr><td>Edges</td><td>289</td></tr>
+      <tr><td>Hyperedges</td><td>0</td></tr>
+      <tr><td>Communities</td><td>12</td></tr>
+      <tr><td>Documented Sections</td><td>5</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Edge Confidence</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><td>EXTRACTED</td><td>289</td></tr>
+      <tr><td>INFERRED</td><td>0</td></tr>
+      <tr><td>AMBIGUOUS</td><td>0</td></tr>
+    </table>
+  </div>
+</div>
+
+<div style="text-align:center; padding:40px 0; color: var(--muted); font-size:0.9rem;">
+  <p>Poyecto_EDO_Suspencion_Vehiculo — Architecture Documentation</p>
+  <p>Generated: 2026-11-24 08:25 UTC · graphify callflow-html</p>
+</div>
+
+</div><!-- .container -->
+
+<script>
+(function () {
+  const mermaidConfig = {
+    startOnLoad: false,
+    theme: 'dark',
+    securityLevel: 'loose',
+    flowchart: { htmlLabels: true, useMaxWidth: true },
+    themeVariables: {
+      primaryColor: '#1e293b',
+      primaryTextColor: '#e2e8f0',
+      primaryBorderColor: '#38bdf8',
+      secondaryColor: '#0f172a',
+      tertiaryColor: '#334155',
+      lineColor: '#64748b',
+      textColor: '#e2e8f0',
+    }
+  };
+
+  mermaid.initialize(mermaidConfig);
+
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+  }
+
+  function enhanceMermaidDiagrams() {
+    document.querySelectorAll('.mermaid').forEach((container) => {
+      if (container.dataset.zoomReady === 'true') return;
+      const svg = container.querySelector('svg');
+      if (!svg) return;
+
+      container.dataset.zoomReady = 'true';
+      container.classList.add('is-enhanced');
+
+      const viewport = document.createElement('div');
+      viewport.className = 'mermaid-viewport';
+      svg.parentNode.insertBefore(viewport, svg);
+      viewport.appendChild(svg);
+
+      const toolbar = document.createElement('div');
+      toolbar.className = 'mermaid-toolbar';
+      toolbar.innerHTML = [
+        '<button type="button" data-action="zoom-out" title="Zoom out">-</button>',
+        '<span class="zoom-level" data-role="level">100%</span>',
+        '<button type="button" data-action="zoom-in" title="Zoom in">+</button>',
+        '<button type="button" data-action="fit" title="Fit width">Fit</button>',
+        '<button type="button" data-action="reset" title="Reset view">Reset</button>'
+      ].join('');
+      container.insertBefore(toolbar, viewport);
+
+      const state = { scale: 1, x: 0, y: 0, dragging: false, startX: 0, startY: 0, originX: 0, originY: 0 };
+      const level = toolbar.querySelector('[data-role="level"]');
+
+      function applyTransform() {
+        svg.style.transform = `translate(${state.x}px, ${state.y}px) scale(${state.scale})`;
+        level.textContent = `${Math.round(state.scale * 100)}%`;
+      }
+
+      function zoomBy(delta) {
+        state.scale = clamp(state.scale + delta, 0.25, 3);
+        applyTransform();
+      }
+
+      function reset() {
+        state.scale = 1;
+        state.x = 0;
+        state.y = 0;
+        applyTransform();
+      }
+
+      function fitWidth() {
+        const rawWidth = svg.viewBox && svg.viewBox.baseVal && svg.viewBox.baseVal.width
+          ? svg.viewBox.baseVal.width
+          : svg.getBoundingClientRect().width / state.scale;
+        if (!rawWidth) {
+          reset();
+          return;
+        }
+        state.scale = clamp((viewport.clientWidth - 48) / rawWidth, 0.25, 1.4);
+        state.x = 0;
+        state.y = 0;
+        applyTransform();
+      }
+
+      toolbar.addEventListener('click', (event) => {
+        const button = event.target.closest('button[data-action]');
+        if (!button) return;
+        const action = button.dataset.action;
+        if (action === 'zoom-in') zoomBy(0.15);
+        if (action === 'zoom-out') zoomBy(-0.15);
+        if (action === 'fit') fitWidth();
+        if (action === 'reset') reset();
+      });
+
+      viewport.addEventListener('wheel', (event) => {
+        if (!event.ctrlKey && !event.metaKey) return;
+        event.preventDefault();
+        zoomBy(event.deltaY < 0 ? 0.1 : -0.1);
+      }, { passive: false });
+
+      viewport.addEventListener('pointerdown', (event) => {
+        if (event.button !== 0) return;
+        state.dragging = true;
+        state.startX = event.clientX;
+        state.startY = event.clientY;
+        state.originX = state.x;
+        state.originY = state.y;
+        viewport.classList.add('is-dragging');
+        viewport.setPointerCapture(event.pointerId);
+      });
+
+      viewport.addEventListener('pointermove', (event) => {
+        if (!state.dragging) return;
+        state.x = state.originX + event.clientX - state.startX;
+        state.y = state.originY + event.clientY - state.startY;
+        applyTransform();
+      });
+
+      function endDrag(event) {
+        if (!state.dragging) return;
+        state.dragging = false;
+        viewport.classList.remove('is-dragging');
+        if (viewport.hasPointerCapture(event.pointerId)) {
+          viewport.releasePointerCapture(event.pointerId);
+        }
+      }
+
+      viewport.addEventListener('pointerup', endDrag);
+      viewport.addEventListener('pointercancel', endDrag);
+      applyTransform();
+    });
+  }
+
+  function renderMermaid() {
+    const result = mermaid.run
+      ? mermaid.run({ querySelector: '.mermaid' })
+      : Promise.resolve();
+    Promise.resolve(result)
+      .then(enhanceMermaidDiagrams)
+      .catch((error) => {
+        console.error('Mermaid render failed:', error);
+        enhanceMermaidDiagrams();
+      });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderMermaid);
+  } else {
+    renderMermaid();
+  }
+})();
+</script>
+
+</body>
+</html>

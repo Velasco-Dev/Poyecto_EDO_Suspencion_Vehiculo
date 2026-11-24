@@ -1,0 +1,324 @@
+{
+  "communities": {
+    "0": [
+      "app_public_suspension_sim",
+      "app_public_suspension_sim_calcular_metricas",
+      "app_public_suspension_sim_integrador_rk4",
+      "app_public_suspension_sim_rationale_1",
+      "app_public_suspension_sim_rationale_106",
+      "app_public_suspension_sim_rationale_119",
+      "app_public_suspension_sim_rationale_147",
+      "app_public_suspension_sim_rationale_61",
+      "app_public_suspension_sim_rationale_72",
+      "app_public_suspension_sim_rationale_82",
+      "app_public_suspension_sim_sistema_edo",
+      "app_public_suspension_sim_x_analitica_critico",
+      "app_public_suspension_sim_x_analitica_sobreamortiguado",
+      "app_public_suspension_sim_x_analitica_subamortiguado",
+      "math",
+      "matplotlib_pyplot",
+      "numpy",
+      "python_suspension_sim",
+      "python_suspension_sim_calcular_metricas",
+      "python_suspension_sim_integrador_rk4",
+      "python_suspension_sim_rationale_1",
+      "python_suspension_sim_rationale_106",
+      "python_suspension_sim_rationale_119",
+      "python_suspension_sim_rationale_147",
+      "python_suspension_sim_rationale_61",
+      "python_suspension_sim_rationale_72",
+      "python_suspension_sim_rationale_82",
+      "python_suspension_sim_sistema_edo",
+      "python_suspension_sim_x_analitica_critico",
+      "python_suspension_sim_x_analitica_sobreamortiguado",
+      "python_suspension_sim_x_analitica_subamortiguado"
+    ],
+    "1": [
+      "app_src_app",
+      "app_src_app_app",
+      "app_src_components_classcomparisonview_classcomparisonview",
+      "app_src_components_header_header",
+      "app_src_components_mathdeductionview_mathdeductionview",
+      "app_src_components_presentationdeck_presentationdeck",
+      "app_src_components_simulationchart",
+      "app_src_components_simulationchart_customcanvasbackgroundcolor",
+      "app_src_components_simulationchart_simulationchart",
+      "app_src_components_suspensionanimation",
+      "app_src_components_suspensionanimation_suspensionanimation",
+      "app_src_components_suspensioncalculator",
+      "app_src_components_suspensioncalculator_fmt",
+      "app_src_components_suspensioncalculator_stepcard",
+      "app_src_components_suspensioncalculator_suspensioncalculator",
+      "app_src_components_vehicle3dscene_vehicle3dscene",
+      "app_src_physics_suspensionphysics",
+      "app_src_physics_suspensionphysics_calculateengineeringmetrics",
+      "app_src_physics_suspensionphysics_calculateoscillatorproperties",
+      "app_src_physics_suspensionphysics_default_params",
+      "app_src_physics_suspensionphysics_exactanalyticalsolution",
+      "app_src_physics_suspensionphysics_presets",
+      "app_src_physics_suspensionphysics_rk4integrate",
+      "app_src_physics_suspensionphysics_systemderivative"
+    ],
+    "2": [
+      "app_src_components_classcomparisonview",
+      "app_src_components_codecalculationmodal",
+      "app_src_components_codecalculationmodal_codecalculationmodal",
+      "app_src_components_flashcardsmodal",
+      "app_src_components_flashcardsmodal_flashcardsmodal",
+      "app_src_components_flashcardsmodal_formattedmathtext",
+      "app_src_components_flashcardsmodal_printableflashcard",
+      "app_src_components_header",
+      "app_src_components_katexmath",
+      "app_src_components_katexmath_katexmath",
+      "app_src_components_mathdeductionview",
+      "app_src_components_presentationdeck",
+      "app_src_components_vehicle3dscene",
+      "app_src_data_flashcardsdata",
+      "app_src_data_flashcardsdata_slides_presentation",
+      "app_src_data_flashcardsdata_team_members_flashcards",
+      "app_src_data_slidescodedata",
+      "app_src_data_slidescodedata_slides_code_mapping",
+      "ref_lucide_react",
+      "ref_react"
+    ],
+    "3": [
+      "github_workflows_deploy_build_and_deploy_environment",
+      "github_workflows_deploy_build_and_deploy_runs_on",
+      "github_workflows_deploy_build_and_deploy_steps",
+      "github_workflows_deploy_environment_name",
+      "github_workflows_deploy_environment_url",
+      "github_workflows_deploy_jobs",
+      "github_workflows_deploy_jobs_build_and_deploy",
+      "github_workflows_deploy_steps_id",
+      "github_workflows_deploy_steps_name",
+      "github_workflows_deploy_steps_run",
+      "github_workflows_deploy_steps_uses",
+      "github_workflows_deploy_steps_with",
+      "github_workflows_deploy_steps_working_directory",
+      "github_workflows_deploy_with_cache",
+      "github_workflows_deploy_with_cache_dependency_path",
+      "github_workflows_deploy_with_node_version",
+      "github_workflows_deploy_with_path"
+    ],
+    "4": [
+      "github_workflows_deploy",
+      "github_workflows_deploy_concurrency",
+      "github_workflows_deploy_concurrency_cancel_in_progress",
+      "github_workflows_deploy_concurrency_group",
+      "github_workflows_deploy_name",
+      "github_workflows_deploy_on",
+      "github_workflows_deploy_on_push",
+      "github_workflows_deploy_on_workflow_dispatch",
+      "github_workflows_deploy_permissions",
+      "github_workflows_deploy_permissions_contents",
+      "github_workflows_deploy_permissions_id_token",
+      "github_workflows_deploy_permissions_pages",
+      "github_workflows_deploy_push_branches"
+    ],
+    "5": [
+      "app_package_devdependencies",
+      "app_package_devdependencies_tailwindcss",
+      "app_package_devdependencies_tailwindcss_vite",
+      "app_package_devdependencies_types_react",
+      "app_package_devdependencies_vite",
+      "app_package_devdependencies_vitejs_plugin_react",
+      "app_vite_config",
+      "ref_tailwindcss",
+      "ref_tailwindcss_vite",
+      "ref_types_react",
+      "ref_vite",
+      "ref_vitejs_plugin_react"
+    ],
+    "6": [
+      "app_package_dependencies",
+      "app_package_dependencies_chart_js",
+      "app_package_dependencies_lucide_react",
+      "app_package_dependencies_react",
+      "app_package_dependencies_react_chartjs_2",
+      "app_package_dependencies_react_three_drei",
+      "app_package_dependencies_react_three_fiber",
+      "ref_chart_js",
+      "ref_react_chartjs_2",
+      "ref_react_three_drei",
+      "ref_react_three_fiber"
+    ],
+    "7": [
+      "app_package",
+      "app_package_dependencies_framer_motion",
+      "app_package_dependencies_three",
+      "app_package_name",
+      "app_package_private",
+      "app_package_type",
+      "app_package_version",
+      "ref_framer_motion",
+      "ref_three"
+    ],
+    "8": [
+      "app_package_dependencies_katex",
+      "app_package_dependencies_react_dom",
+      "app_src_index",
+      "app_src_main",
+      "ref_katex",
+      "ref_react_dom"
+    ],
+    "9": [
+      "app_package_scripts",
+      "app_package_scripts_build",
+      "app_package_scripts_dev",
+      "app_package_scripts_preview"
+    ],
+    "10": [
+      "app_package_devdependencies_types_react_dom",
+      "ref_types_react_dom"
+    ]
+  },
+  "cohesion": {
+    "0": 0.10752688172043011,
+    "1": 0.2391304347826087,
+    "2": 0.2631578947368421,
+    "3": 0.11764705882352941,
+    "4": 0.15384615384615385,
+    "5": 0.19696969696969696,
+    "6": 0.18181818181818182,
+    "7": 0.2222222222222222,
+    "8": 0.3333333333333333,
+    "9": 0.5,
+    "10": 1.0
+  },
+  "gods": [
+    {
+      "id": "app_src_components_katexmath_katexmath",
+      "label": "KaTeXMath()",
+      "degree": 16
+    },
+    {
+      "id": "ref_react",
+      "label": "react",
+      "degree": 15
+    },
+    {
+      "id": "app_src_app_app",
+      "label": "App()",
+      "degree": 14
+    },
+    {
+      "id": "ref_lucide_react",
+      "label": "lucide-react",
+      "degree": 13
+    },
+    {
+      "id": "app_src_physics_suspensionphysics_exactanalyticalsolution",
+      "label": "exactAnalyticalSolution()",
+      "degree": 10
+    },
+    {
+      "id": "app_src_components_suspensioncalculator_suspensioncalculator",
+      "label": "SuspensionCalculator()",
+      "degree": 9
+    },
+    {
+      "id": "app_src_components_simulationchart_simulationchart",
+      "label": "SimulationChart()",
+      "degree": 8
+    },
+    {
+      "id": "app_src_physics_suspensionphysics_calculateengineeringmetrics",
+      "label": "calculateEngineeringMetrics()",
+      "degree": 8
+    },
+    {
+      "id": "app_src_physics_suspensionphysics_calculateoscillatorproperties",
+      "label": "calculateOscillatorProperties()",
+      "degree": 8
+    },
+    {
+      "id": "app_src_physics_suspensionphysics_rk4integrate",
+      "label": "rk4Integrate()",
+      "degree": 8
+    }
+  ],
+  "surprises": [
+    {
+      "source": "App()",
+      "target": "FlashcardsModal()",
+      "source_files": [
+        "app/src/App.jsx",
+        "app/src/components/FlashcardsModal.jsx"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "ClassComparisonView()",
+      "target": "KaTeXMath()",
+      "source_files": [
+        "app/src/components/ClassComparisonView.jsx",
+        "app/src/components/KaTeXMath.jsx"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "MathDeductionView()",
+      "target": "KaTeXMath()",
+      "source_files": [
+        "app/src/components/MathDeductionView.jsx",
+        "app/src/components/KaTeXMath.jsx"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "PresentationDeck()",
+      "target": "CodeCalculationModal()",
+      "source_files": [
+        "app/src/components/PresentationDeck.jsx",
+        "app/src/components/CodeCalculationModal.jsx"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "PresentationDeck()",
+      "target": "KaTeXMath()",
+      "source_files": [
+        "app/src/components/PresentationDeck.jsx",
+        "app/src/components/KaTeXMath.jsx"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `react` connect `Community 2` to `Community 8`, `Community 1`, `Community 6`, `Community 7`?",
+      "why": "High betweenness centrality (0.075) - this node is a cross-community bridge."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 0` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.10752688172043011 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `lucide-react` connect `Community 2` to `Community 1`, `Community 6`, `Community 7`?",
+      "why": "High betweenness centrality (0.067) - this node is a cross-community bridge."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 3` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.11764705882352941 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `dependencies` connect `Community 6` to `Community 8`, `Community 7`?",
+      "why": "High betweenness centrality (0.033) - this node is a cross-community bridge."
+    }
+  ]
+}

@@ -85,9 +85,10 @@ export default function CodeCalculationModal({
     };
   }, [isSimPlaying]);
 
-  if (!isOpen || !slideData) return null;
+  const items = slideData?.items || slideData?.tabs || [];
+  if (!isOpen || !slideData || items.length === 0) return null;
 
-  const currentItem = slideData.items[activeItemIndex] || slideData.items[0];
+  const currentItem = items[activeItemIndex] || items[0] || {};
   const activeCodeObj = codeLang === 'js' ? currentItem.js : currentItem.python;
 
   const liveParams = {
@@ -264,13 +265,13 @@ export default function CodeCalculationModal({
         </div>
 
         {/* Barra de Sub-Operaciones si la diapositiva tiene varios cálculos */}
-        {slideData.items.length > 1 && (
+        {items.length > 1 && (
           <div className="px-4 sm:px-5 py-2 bg-slate-100/90 border-b border-slate-200 flex items-center gap-2 overflow-x-auto relative z-10 shrink-0">
             <span className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider shrink-0 mr-1 flex items-center gap-1">
               <Compass className="w-3.5 h-3.5 text-[#0B3C73]" />
               Sección:
             </span>
-            {slideData.items.map((item, idx) => (
+            {items.map((item, idx) => (
               <button
                 key={item.id}
                 onClick={() => {
@@ -452,10 +453,10 @@ export default function CodeCalculationModal({
                 </span>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {currentItem.variables.map((v, i) => (
+                  {(currentItem.variables || []).map((v, i) => (
                     <div key={i} className="p-2 rounded-lg bg-[#050D18] border border-slate-800 flex flex-col justify-between">
                       <div className="flex items-center justify-between mb-0.5">
-                        <span className="font-mono text-[11px] font-bold text-amber-300">
+                        <span className="font-mono text-[11px] font-bold text-amber-300 katex-formula-dark">
                           <KaTeXMath math={v.symbol} block={false} />
                         </span>
                         <span className="font-mono text-[10px] text-cyan-300 font-bold bg-cyan-950/60 px-1 py-0.5 rounded border border-cyan-800/60">
@@ -474,10 +475,17 @@ export default function CodeCalculationModal({
               </div>
 
               {/* Bloque de Código con Syntax Highlighting */}
-              <div className="rounded-xl border border-slate-800 bg-[#030811] p-3.5 font-mono text-xs sm:text-[13px] leading-relaxed overflow-x-auto text-emerald-300 shadow-inner">
-                <div className="flex items-center justify-between text-[10px] text-slate-500 border-b border-slate-850 pb-1.5 mb-2 font-mono">
-                  <span>{activeCodeObj.file}</span>
-                  <span>{activeCodeObj.lines}</span>
+              <div className="rounded-2xl border border-slate-800 bg-[#030811] p-3.5 font-mono text-xs sm:text-[13px] leading-relaxed overflow-x-auto text-emerald-300 shadow-inner">
+                <div className="flex items-center justify-between text-[10px] text-slate-500 border-b border-slate-850 pb-2 mb-2.5 font-mono">
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80 inline-block" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80 inline-block" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80 inline-block" />
+                    </div>
+                    <span className="text-slate-400 font-bold ml-1">{activeCodeObj.file}</span>
+                  </div>
+                  <span className="text-slate-500 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">{activeCodeObj.lines}</span>
                 </div>
                 <pre className="m-0 whitespace-pre">
                   <code>{activeCodeObj.snippet}</code>
@@ -486,27 +494,27 @@ export default function CodeCalculationModal({
 
               {/* Evaluación Aritmética Paso a Paso con Parámetros Activos */}
               {currentItem.liveEvaluation && (
-                <div className="bg-[#091B33] p-3 rounded-xl border border-amber-500/40 space-y-2">
+                <div className="bg-[#091B33] p-3.5 rounded-2xl border border-amber-500/40 space-y-2.5 evaluation-formula-box shadow-md">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-mono uppercase tracking-wider text-amber-300 font-bold flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                      <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
                       Evaluación Aritmética con Parámetros Actuales del Slider:
                     </span>
-                    <span className="text-[9px] font-mono text-amber-200 bg-amber-950 px-2 py-0.5 rounded border border-amber-700/50">
+                    <span className="text-[9px] font-mono text-amber-200 bg-amber-950/80 px-2 py-0.5 rounded-md border border-amber-700/50">
                       m={liveParams.m}kg · k={liveParams.k}N/m · c={liveParams.c}N·s/m
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     {currentItem.liveEvaluation(liveParams).map((step, i) => (
-                      <div key={i} className="p-2.5 bg-[#050D18] rounded-lg border border-slate-700 flex flex-col justify-between">
+                      <div key={i} className="p-2.5 bg-[#050D18] rounded-xl border border-slate-700/80 flex flex-col justify-between shadow-inner">
                         <span className="text-[10px] font-bold text-slate-300 mb-0.5">
                           {step.label}:
                         </span>
-                        <div className="my-0.5 text-amber-200 overflow-x-auto py-0.5">
+                        <div className="my-1 text-[#fef08a] overflow-x-auto py-0.5 katex-formula-dark">
                           <KaTeXMath math={step.formula} block={false} />
                         </div>
-                        <div className="mt-1 pt-1 border-t border-slate-800 flex items-center justify-between text-xs">
+                        <div className="mt-1 pt-1.5 border-t border-slate-800 flex items-center justify-between text-xs">
                           <span className="text-[9px] text-slate-400 uppercase font-semibold">Valor:</span>
                           <span className="font-mono font-bold text-amber-400">
                             {step.result}
@@ -733,10 +741,10 @@ export default function CodeCalculationModal({
           </div>
 
           <div className="flex items-center gap-2">
-            {slideData.items.length > 1 && (
+            {items.length > 1 && (
               <button
                 onClick={() => {
-                  setActiveItemIndex((prev) => (prev + 1) % slideData.items.length);
+                  setActiveItemIndex((prev) => (prev + 1) % items.length);
                   setCopied(false);
                 }}
                 className="liquid-glass-button px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 hover:text-slate-950 flex items-center gap-1 cursor-pointer"

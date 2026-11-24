@@ -1,0 +1,42 @@
+# ==============================================================================
+# GRAPHIFY IGNORE - PROYECTO EDO SUSPENSIÓN VEHICULAR (UNIMAYOR)
+# ==============================================================================
+
+# Entornos virtuales de Python
+.venv/
+*/.venv/
+venv/
+*/venv/
+env/
+*/env/
+
+# Dependencias pesadas de Node.js
+node_modules/
+*/node_modules/
+
+# Directorios de compilación y empaquetado
+dist/
+*/dist/
+.vite/
+*/.vite/
+.git/
+
+# Binarios y multimedia pesada no-código
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.pdf
+*.zip
+*.tar.gz
+*.exe
+referencia/
+
+# Cachés y temporales
+__pycache__/
+*/__pycache__/
+*.pyc
+*.pyo
+*.log
+.DS_Store
+Thumbs.db

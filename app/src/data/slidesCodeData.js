@@ -1003,5 +1003,175 @@ else:
         }
       }
     ]
+  },
+  9: {
+    id: 9,
+    title: 'Arquitectura Gráfica: Modelado 3D Procedural y Renderizado PBR',
+    badge: 'Three.js & PBR',
+    speaker: 'EQUIPO GRUPO 5 - INGENIERÍA GRÁFICA',
+    time: 'Demostración Técnica',
+    items: [
+      {
+        id: 'pbr-shaders',
+        title: 'Three.js sobre WebGL & Modelado por Código',
+        mathFormula: 'm\\,\\ddot{x} + c\\,\\dot{x} + k\\,x = 0 \\quad \\Longrightarrow \\quad L_{\\text{resorte}}(t) = L_0 - x(t)',
+        explanation: 'Three.js es una librería que simplifica el uso de WebGL en el navegador. En lugar de escribir miles de líneas de bajo nivel para la tarjeta gráfica (GPU), Three.js permite crear objetos, luces, cámaras y sombras de forma limpia y directa desde JavaScript.',
+        theory: 'En lugar de descargar modelos 3D pesados de internet (50+ MB), todo el escenario, los coches y los personajes se modelan mediante funciones matemáticas y curvas por código (revolución polar para llantas y splines para piezas curvas). El resultado es un simulador ultraligero (< 80 KB) con laca automotriz física (PBR) y cero tiempo de espera.',
+        deductionSteps: [
+          {
+            step: 'Paso 1: Ecuación de Fresnel-Schlick para Dieléctricos y Metales',
+            math: 'F(\\mathbf{v},\\mathbf{h}) = F_0 + (1 - F_0)(1 - \\mathbf{v}\\cdot\\mathbf{h})^5',
+            explanation: 'Predice el incremento de reflectividad cuando la superficie se observa en ángulos rasantes.'
+          },
+          {
+            step: 'Paso 2: Distribución de Normales GGX / Trowbridge-Reitz',
+            math: 'D(\\mathbf{h}) = \\frac{\\alpha^2}{\\pi \\left((\\mathbf{n}\\cdot\\mathbf{h})^2 (\\alpha^2 - 1) + 1\\right)^2}',
+            explanation: 'Concentra o dispersa los brillos especulares según el parámetro de micro-rugosidad α.'
+          }
+        ],
+        variables: [
+          { symbol: 'F_0', name: 'Reflectancia en incidencia normal', value: () => '0.04 (Laca) / 0.95 (Cromo)', desc: 'Base dieléctrica vs conductora' },
+          { symbol: '\\alpha', name: 'Rugosidad (Roughness)', value: () => '0.18 (Carrocería) / 0.65 (Neumático)', desc: 'Parámetro de microfacetas' },
+          { symbol: 'clearcoat', name: 'Barniz automotriz bicapa', value: () => '1.0', desc: 'Reflejo especular secundario' }
+        ],
+        js: {
+          file: 'app/public/models/Animacion_Carretera.html',
+          lines: 'Líneas 1440 - 1460',
+          snippet: `// Shader Físico PBR de Alto Nivel con Laca Automotriz
+const jBodyMat = new THREE.MeshPhysicalMaterial({
+  color: 0xebf0f5,
+  metalness: 0.15,
+  roughness: 0.18,
+  clearcoat: 1.0,
+  clearcoatRoughness: 0.06,
+  envMapIntensity: 1.35
+});`
+        },
+        python: {
+          file: 'python/suspension_sim.py',
+          lines: 'Líneas 240 - 250',
+          snippet: `# En Python los resultados de la EDO se grafican con Matplotlib.
+# En la aplicación web interactiva, la solución numérica se transmite
+# en tiempo real al grafo de escena Three.js en la GPU.`
+        },
+        liveEvaluation: () => [
+          { label: 'Eficacia Óptica', formula: 'I_{\\text{spec}} \\propto D \\cdot F \\cdot G', result: 'Reflejos fotorrealistas sin texturas pesadas' },
+          { label: 'Pipeline Tonal', formula: '\\text{ACES Filmic}', result: 'Preservación de detalle en altas luces sin quemar blancos' }
+        ],
+        appReflection: {
+          title: 'Reflejo en la Interfaz de la Aplicación',
+          uiLocation: 'Visor 3D en Tarjeta Principal y Vista Técnica Pantalla Completa',
+          whatItShows: 'Pintura automotriz brillante, cristales translúcidos y rines forjados que reaccionan con sombras suaves en tiempo real.',
+          effectOnCar: 'Acabado visual hiperdeportivo profesional a 60 FPS con menos de 80 KB de código.'
+        }
+      },
+      {
+        id: 'edo-coupling',
+        title: 'Acoplamiento Físico EDO en Tiempo Real (RK4 $\\to$ 3D)',
+        mathFormula: 'L_{\\text{resorte}}(t) = L_0 - x(t), \\quad \\mathbf{r}_{\\text{chasis}}(t) = \\mathbf{r}_0 + \\begin{pmatrix} 0 \\\\ x(t) \\\\ 0 \\end{pmatrix}',
+        explanation: 'En cada ciclo de requestAnimationFrame (60 FPS), la posición vertical x(t) calculada por la EDO se enlaza a la cinemática de la suspensión telescópica Öhlins y a la masa suspendida.',
+        theory: 'No se usan animaciones estáticas pregrabadas. La geometría helicoidal procedural del muelle se escala en el eje Y en proporción a la compresión física real L(t) = L0 - x(t), mientras el vástago cromado del amortiguador desliza concéntricamente dentro del cuerpo hidráulico, simulando con rigor las leyes de Newton m x\'\' + c x\' + k x = 0.',
+        deductionSteps: [
+          {
+            step: 'Paso 1: Solución Instantánea del Desplazamiento x(t)',
+            math: 'x(t) = e^{-\\omega_n t}\\big(c_1 + c_2 t\\big) \\quad (\\text{para } \\zeta = 1)',
+            explanation: 'La EDO suministra el valor analítico y numérico RK4 en el instante temporal t.'
+          },
+          {
+            step: 'Paso 2: Transformación de Matriz de la Malla del Coilover',
+            math: 'S_y = \\frac{L_0 - x(t)}{L_0}, \\quad y_{\\text{rod}} = y_0 + x(t)',
+            explanation: 'Escalado vertical del resorte e inserción concéntrica del vástago dentro del pistón.'
+          }
+        ],
+        variables: [
+          { symbol: 'L_0', name: 'Longitud en reposo del resorte', value: () => '0.45 m', desc: 'Altura nominal de suspensión' },
+          { symbol: 'x(t)', name: 'Desplazamiento vertical de la EDO', value: () => 'Variable en tiempo real', desc: 'Solución del oscilador' },
+          { symbol: 'FPS', name: 'Tasa de refresco cinemático', value: () => '60 Hz', desc: 'Sincronizado con requestAnimationFrame' }
+        ],
+        js: {
+          file: 'app/public/models/Animacion_Carretera.html',
+          lines: 'Líneas 2420 - 2445',
+          snippet: `// Bucle de animación cinemática a 60 FPS
+function updateSuspensionVisuals(xDisp) {
+  const comp = Math.max(-0.15, Math.min(0.20, xDisp));
+  springMesh.scale.y = (L0 - comp) / L0;
+  shockRod.position.y = rodBaseY + comp;
+  vehicleBody.position.y = bodyBaseY + comp;
+}`
+        },
+        python: {
+          file: 'python/suspension_sim.py',
+          lines: 'Líneas 110 - 128',
+          snippet: `# Ecuación idéntica en el solver de Python:
+def dSdt(t, S, m, c, k):
+    x, v = S
+    dxdt = v
+    dvdt = -(c/m)*v - (k/m)*x
+    return [dxdt, dvdt]`
+        },
+        liveEvaluation: () => [
+          { label: 'Perturbación Inicial', formula: 'x(0) = 0.05\\text{ m}', result: 'Compresión visual instantánea de 5 cm' },
+          { label: 'Retorno al Equilibrio', formula: 't_s = 0.58\\text{ s}', result: 'Estabilización cinemática exacta' }
+        ],
+        appReflection: {
+          title: 'Reflejo en la Simulación 3D',
+          uiLocation: 'Modo Rayos X de la Suspensión en el Visor 3D',
+          whatItShows: 'Permite hacer transparentes los paneles exteriores para ver los resortes helicoidales y amortiguadores comprimiéndose en vivo.',
+          effectOnCar: 'Fidelidad visual unida a la solución matemática de la EDO.'
+        }
+      },
+      {
+        id: 'procedural-modeling',
+        title: 'Modelado Matemático Procedural (Splines, Lathe & Canvas 2D)',
+        mathFormula: 'S(u, v) = \\big(r(v)\\cos(u), y(v), r(v)\\sin(u)\\big), \\quad \\mathbf{r}(s) = \\sum_{i=0}^n B_i(s) \\mathbf{P}_i',
+        explanation: 'En lugar de descargar modelos 3D pesados de 50+ MB, toda la geometría se sintetiza proceduralmente usando funciones matemáticas analíticas y curvas de spline.',
+        theory: 'Se emplea LatheGeometry para revolucionar perfiles polares alrededor de un eje central (generando neumáticos de perfil bajo, rines de 7 radios forjados y rotores carbocerámicos perforados). Los cuerpos orgánicos y anatómicos se modelan con CatmullRomCurve3 y TubeGeometry, mientras que las texturas (asfalto, pantalla médica ECG, velocímetro) se dibujan en memoria con la API Canvas 2D.',
+        deductionSteps: [
+          {
+            step: 'Paso 1: Parametrización de Sólidos de Revolución (Lathe)',
+            math: 'S(u, v) = \\begin{pmatrix} r(v) \\cos(u) \\\\ y(v) \\\\ r(v) \\sin(u) \\end{pmatrix}, \\quad u \\in [0, 2\\pi]',
+            explanation: 'Revoluciona una curva generatriz en 2D para formar un sólido 3D continuo.'
+          },
+          {
+            step: 'Paso 2: Interpolación Cúbica Catmull-Rom para Tuberías y Miembros',
+            math: '\\mathbf{r}(t) = \\frac{1}{2} \\begin{pmatrix} 1 & t & t^2 & t^3 \\end{pmatrix} \\mathbf{M}_{\\text{CR}} \\begin{pmatrix} \\mathbf{p}_{i-1} \\\\ \\mathbf{p}_i \\\\ \\mathbf{p}_{i+1} \\\\ \\mathbf{p}_{i+2} \\end{pmatrix}',
+            explanation: 'Garantiza continuidad C¹ en arneses, estetoscopios, extremidades y vías de suero.'
+          }
+        ],
+        variables: [
+          { symbol: 'S(u,v)', name: 'Malla de revolución', value: () => 'LatheGeometry(36 segmentos)', desc: 'Ruedas y rotores' },
+          { symbol: 'C^1', name: 'Continuidad de curvatura', value: () => 'Garantizada por Catmull-Rom', desc: 'Sin esquinas duras' },
+          { symbol: 'Canvas2D', name: 'Texturas en memoria', value: () => '0 peticiones HTTP externas', desc: 'ECG, asfalto y rotulación' }
+        ],
+        js: {
+          file: 'app/public/models/Animacion_Carretera.html',
+          lines: 'Líneas 1470 - 1510',
+          snippet: `// Neumático con LatheGeometry (revolución paramétrica)
+const tPts = [
+  new THREE.Vector2(rimR, -hw * 0.88), new THREE.Vector2(rimR + 0.08, -hw),
+  new THREE.Vector2(r - 0.015, -hw * 0.92), new THREE.Vector2(r, -hw * 0.72),
+  new THREE.Vector2(r, hw * 0.72), new THREE.Vector2(r - 0.015, hw * 0.92),
+  new THREE.Vector2(rimR + 0.08, hw), new THREE.Vector2(rimR, hw * 0.88)
+];
+const tGeo = new THREE.LatheGeometry(tPts, 36);`
+        },
+        python: {
+          file: 'python/suspension_sim.py',
+          lines: 'Líneas 250 - 265',
+          snippet: `# La versión Python almacena los datos de la pista
+# y genera gráficos analíticos estáticos exportables a PNG/PDF.`
+        },
+        liveEvaluation: () => [
+          { label: 'Peso del Archivo 3D', formula: '\\text{Tamaño}', result: '< 80 KB (Cero dependencias externas)' },
+          { label: 'Tasa de Cuadros', formula: '\\text{Frame Budget}', result: '60 FPS estables a 16.6 ms por cuadro' }
+        ],
+        appReflection: {
+          title: 'Reflejo en la Interfaz de la Aplicación',
+          uiLocation: 'Pista Infinita y Cinemática de Vehículos',
+          whatItShows: 'Asfalto infinito que avanza a la velocidad seleccionada, ruedas girando y sombras dinámicas sin caídas de framerate.',
+          effectOnCar: 'Carga instantánea en cualquier dispositivo y navegador sin lag.'
+        }
+      }
+    ]
   }
 };

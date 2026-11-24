@@ -200,11 +200,34 @@
    ========================================================================== */
 .katex-math-render {
   display: inline-block;
+  color: #0f172a;
 }
 
 .katex-math-render .katex {
-  color: #0f172a !important; /* Deep dark ink for crystal readability */
+  color: inherit;
   font-size: 1.08em;
+}
+
+/* Fórmulas en fondos oscuros: Contraste Oro Luminoso sobre Azul Marino */
+.katex-light .katex,
+.katex-light .katex *,
+.katex-math-render.katex-light .katex,
+.katex-math-render.katex-light .katex *,
+.katex-formula-dark,
+.katex-formula-dark .katex,
+.katex-formula-dark .katex *,
+.evaluation-formula-box .katex,
+.evaluation-formula-box .katex *,
+[class*="bg-[#091B33]"] .katex,
+[class*="bg-[#091B33]"] .katex *,
+[class*="bg-[#050D18]"] .katex,
+[class*="bg-[#050D18]"] .katex *,
+[class*="bg-[#0B1A2F]"] .katex,
+[class*="bg-[#0B1A2F]"] .katex *,
+.dark-math .katex,
+.dark-math .katex * {
+  color: #fef08a !important; /* Oro luminoso / amarillo canario para contraste cristalino */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
 }
 
 .math-formula-box {

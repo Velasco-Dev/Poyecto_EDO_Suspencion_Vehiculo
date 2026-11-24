@@ -185,7 +185,7 @@ export default function Vehicle3DScene({
 
         {/* Acciones principales simplificadas */}
         <div className="pointer-events-auto flex items-center gap-1.5">
-          {/* Botón Simular Bache */}
+          {/* Botón Simular Bache
           <button
             onClick={handleTriggerBump}
             className="flex items-center gap-1.5 rounded-xl border border-amber-500/50 bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 px-2.5 py-1.5 text-[11px] font-bold shadow transition cursor-pointer backdrop-blur-md"
@@ -193,7 +193,7 @@ export default function Vehicle3DScene({
           >
             <Activity className="h-3.5 w-3.5 text-amber-400 animate-pulse" />
             <span className="hidden sm:inline">Probar Bache</span>
-          </button>
+          </button> */}
 
           {/* Botón Rayos X (Suspensión) */}
           <button

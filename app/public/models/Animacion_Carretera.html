@@ -1673,6 +1673,76 @@
         const sw = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.016, 10, 28), jAlcantaraMat);
         sw.position.set(0.33, 0.69, 0.29); sw.rotation.x = -0.28; jeskoBody.add(sw);
 
+        // Piloto de Carreras Koenigsegg Jesko estilizado (Casco aerodinámico con visera oro curvada, hombreras anatómicas y manos al volante)
+        const jPilotGroup = new THREE.Group();
+        jPilotGroup.position.set(0.33, 0.40, -0.16);
+        const jSuitMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.45, metalness: 0.15 });
+        const jHelmetMat = new THREE.MeshPhysicalMaterial({ color: 0x1e293b, roughness: 0.18, metalness: 0.5, clearcoat: 1.0 });
+        const jVisorMat = new THREE.MeshPhysicalMaterial({ color: 0xf59e0b, roughness: 0.08, metalness: 0.85, clearcoat: 1.0 });
+        const jHarnessMat = new THREE.MeshStandardMaterial({ color: 0xeab308, roughness: 0.35 });
+
+        // Torso anatómico cónico (pecho atlético ovalado)
+        const jTorsoGeo = new THREE.CylinderGeometry(0.18, 0.13, 0.38, 16);
+        const jTorso = new THREE.Mesh(jTorsoGeo, jSuitMat);
+        jTorso.scale.set(1.20, 1.0, 0.72);
+        jTorso.position.set(0, 0.20, 0); jTorso.rotation.x = -0.18; jTorso.castShadow = true;
+        jPilotGroup.add(jTorso);
+
+        // Hombros / hombreras redondeadas
+        [-1, 1].forEach((sside) => {
+          const jShoulder = new THREE.Mesh(new THREE.SphereGeometry(0.062, 12, 10), jSuitMat);
+          jShoulder.position.set(sside * 0.19, 0.34, -0.02);
+          jPilotGroup.add(jShoulder);
+        });
+
+        // Arnés de competición de 5 puntos estilizado
+        const jHarnL = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.38, 0.03), jHarnessMat);
+        jHarnL.position.set(-0.085, 0.20, 0.12); jHarnL.rotation.x = -0.18;
+        const jHarnR = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.38, 0.03), jHarnessMat);
+        jHarnR.position.set(0.085, 0.20, 0.12); jHarnR.rotation.x = -0.18;
+        const jBuckle = new THREE.Mesh(new THREE.CylinderGeometry(0.026, 0.026, 0.015, 12), jChromeMat);
+        jBuckle.rotation.x = Math.PI / 2 - 0.18; jBuckle.position.set(0, 0.12, 0.11);
+        jPilotGroup.add(jHarnL, jHarnR, jBuckle);
+
+        const jNeck = new THREE.Mesh(new THREE.CylinderGeometry(0.048, 0.052, 0.06, 12), jSuitMat);
+        jNeck.position.set(0, 0.38, 0.02);
+        jPilotGroup.add(jNeck);
+
+        // Casco aerodinámico con cresta y silueta deportiva
+        const jHead = new THREE.Mesh(new THREE.SphereGeometry(0.106, 18, 16), jHelmetMat);
+        jHead.scale.set(0.96, 1.10, 1.14); jHead.position.set(0, 0.49, 0.03); jHead.castShadow = true;
+        const jAeroFin = new THREE.Mesh(new THREE.BoxGeometry(0.022, 0.035, 0.13), jHelmetMat);
+        jAeroFin.position.set(0, 0.58, -0.02); jAeroFin.rotation.x = -0.18;
+        jPilotGroup.add(jHead, jAeroFin);
+
+        // Visera curvada aerodinámica dorada
+        const jVisorArc = new THREE.CylinderGeometry(0.114, 0.114, 0.055, 16, 1, true, -Math.PI * 0.42, Math.PI * 0.84);
+        const jVisor = new THREE.Mesh(jVisorArc, jVisorMat);
+        jVisor.position.set(0, 0.49, 0.05); jVisor.rotation.y = Math.PI;
+        jPilotGroup.add(jVisor);
+
+        // Brazos fluidos con guantes deportivos al volante
+        [-1, 1].forEach((armSide) => {
+          const armCurve = new THREE.CatmullRomCurve3([
+            new THREE.Vector3(armSide * 0.19, 0.34, 0.01),
+            new THREE.Vector3(armSide * 0.16, 0.28, 0.20),
+            new THREE.Vector3(armSide * 0.10, 0.29, 0.43)
+          ]);
+          const armMesh = new THREE.Mesh(new THREE.TubeGeometry(armCurve, 10, 0.032, 10, false), jSuitMat);
+          const glove = new THREE.Mesh(new THREE.SphereGeometry(0.034, 10, 8), jHarnessMat);
+          glove.scale.set(1.0, 0.85, 1.2); glove.position.set(armSide * 0.10, 0.29, 0.44);
+          jPilotGroup.add(armMesh, glove);
+        });
+
+        // Piernas cónicas estilizadas
+        [-1, 1].forEach((legSide) => {
+          const legThigh = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.052, 0.42, 12), jSuitMat);
+          legThigh.rotation.x = Math.PI / 2 - 0.15;
+          legThigh.position.set(legSide * 0.10, 0.05, 0.20);
+          jPilotGroup.add(legThigh);
+        });
+        jeskoBody.add(jPilotGroup);
+
         // Motor V8 visible
         const jEngBlock = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.20, 0.46), jChromeMat);
         jEngBlock.position.set(0, 0.56, -0.98);
@@ -1971,6 +2041,271 @@
       const bench = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.46, 2.25), aInteriorMat); bench.position.set(0.87, 0.62, -1.65); ambBody.add(bench);
       const cotMat = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.11, 1.88), new THREE.MeshStandardMaterial({ color: 0xf97316 }));
       cotMat.position.set(-0.16, 0.84, -1.65); ambBody.add(cotMat);
+
+      // =========================================================================
+      // PACIENTE EN CAMILLA ESTILIZADO (Módulo trasero de la ambulancia)
+      // =========================================================================
+      const patientGroup = new THREE.Group();
+      patientGroup.position.set(-0.16, 0.895, -1.65);
+
+      const blanketMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.65 }); // Manta hospitalaria celeste
+      const sheetMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.7 });   // Sábana blanca
+      const driverSkinMat = new THREE.MeshStandardMaterial({ color: 0xf6d8ae, roughness: 0.65 });
+      const driverHairMat = new THREE.MeshStandardMaterial({ color: 0x332211, roughness: 0.8 });
+
+      // Almohada médica ergonómica con hendidura
+      const pillow = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.08, 0.28), sheetMat);
+      pillow.position.set(0, 0.04, 0.72);
+      patientGroup.add(pillow);
+
+      // Cabeza del paciente reposando serenamente
+      const patHead = new THREE.Mesh(new THREE.SphereGeometry(0.092, 16, 14), driverSkinMat);
+      patHead.scale.set(0.94, 1.06, 1.0); patHead.position.set(0, 0.12, 0.70); patHead.rotation.y = 0.25; patHead.castShadow = true;
+      patientGroup.add(patHead);
+
+      // Pelo estilizado del paciente
+      const patHair = new THREE.Mesh(new THREE.SphereGeometry(0.095, 14, 12, 0, Math.PI * 2, 0, Math.PI * 0.55), driverHairMat);
+      patHair.position.set(0, 0.13, 0.69); patHair.rotation.x = -0.28; patHair.rotation.y = 0.25;
+      patientGroup.add(patHair);
+
+      // Manta médica drapeada con curva anatómica suave (cubre piernas y tronco con caída natural)
+      const drapeGeo = new THREE.CylinderGeometry(0.24, 0.21, 1.26, 16, 1, false, 0, Math.PI);
+      drapeGeo.rotateX(Math.PI / 2); drapeGeo.scale(1.0, 0.70, 1.0);
+      const blanketDrape = new THREE.Mesh(drapeGeo, blanketMat);
+      blanketDrape.position.set(0, 0.02, -0.05); blanketDrape.castShadow = true;
+      patientGroup.add(blanketDrape);
+
+      // Doblez superior de la sábana blanca higiénica
+      const sheetFoldGeo = new THREE.CylinderGeometry(0.245, 0.245, 0.14, 16, 1, false, 0, Math.PI);
+      sheetFoldGeo.rotateX(Math.PI / 2); sheetFoldGeo.scale(1.01, 0.72, 1.0);
+      const sheetFold = new THREE.Mesh(sheetFoldGeo, sheetMat);
+      sheetFold.position.set(0, 0.02, 0.52);
+      patientGroup.add(sheetFold);
+
+      // Brazo relajado al costado con brazalete médico
+      const patArmCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(0.21, 0.12, 0.48),
+        new THREE.Vector3(0.24, 0.09, 0.22),
+        new THREE.Vector3(0.23, 0.08, -0.08)
+      ]);
+      const patArm = new THREE.Mesh(new THREE.TubeGeometry(patArmCurve, 8, 0.026, 8, false), driverSkinMat);
+      const idBand = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, 0.035, 10), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+      idBand.position.set(0.24, 0.09, 0.18); idBand.rotation.x = Math.PI / 2;
+      patientGroup.add(patArm, idBand);
+
+      // Soporte IV y suero con vía médica estilizada
+      const ivPole = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 1.25, 8), jChromeMat);
+      ivPole.position.set(0.24, 0.60, 0.55);
+      const ivBag = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.14, 0.03), new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: 0.75, roughness: 0.1 }));
+      ivBag.position.set(0.24, 1.15, 0.55);
+      const ivLineCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(0.24, 1.08, 0.55),
+        new THREE.Vector3(0.26, 0.50, 0.40),
+        new THREE.Vector3(0.24, 0.10, 0.19)
+      ]);
+      const ivLine = new THREE.Mesh(new THREE.TubeGeometry(ivLineCurve, 12, 0.003, 6, false), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.6 }));
+      patientGroup.add(ivPole, ivBag, ivLine);
+      ambBody.add(patientGroup);
+
+      // =========================================================================
+      // PARAMÉDICO EN BANCA LATERAL ESTILIZADO (Atendiendo con estetoscopio y tablet)
+      // =========================================================================
+      const paramedicGroup = new THREE.Group();
+      paramedicGroup.position.set(0.72, 0.62, -1.35);
+      paramedicGroup.rotation.y = -Math.PI / 2; // Orientado hacia la camilla
+
+      const emsNavyMat = new THREE.MeshStandardMaterial({ color: 0x1e3a8a, roughness: 0.55 });
+      const emsVestMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.45 });
+      const emsHiVisMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, roughness: 0.3 });
+      const gloveMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.35 });
+
+      // Torso cónico anatómico estilizado
+      const pmTorsoGeo = new THREE.CylinderGeometry(0.18, 0.135, 0.42, 16);
+      const pmTorso = new THREE.Mesh(pmTorsoGeo, emsNavyMat);
+      pmTorso.scale.set(1.20, 1.0, 0.76);
+      pmTorso.position.set(0, 0.38, 0); pmTorso.rotation.x = 0.12; pmTorso.castShadow = true;
+      paramedicGroup.add(pmTorso);
+
+      // Chaleco reflectante de paramédico contorneado
+      const pmVestGeo = new THREE.CylinderGeometry(0.185, 0.14, 0.26, 16);
+      const pmVest = new THREE.Mesh(pmVestGeo, emsVestMat);
+      pmVest.scale.set(1.22, 1.0, 0.78);
+      pmVest.position.set(0, 0.38, 0); pmVest.rotation.x = 0.12;
+      const pmStripe = new THREE.Mesh(new THREE.CylinderGeometry(0.188, 0.155, 0.05, 16), emsHiVisMat);
+      pmStripe.scale.set(1.23, 1.0, 0.79);
+      pmStripe.position.set(0, 0.34, 0); pmStripe.rotation.x = 0.12;
+      paramedicGroup.add(pmVest, pmStripe);
+
+      // Cuello y cabeza estilizada con gorra sanitaria
+      const pmNeck = new THREE.Mesh(new THREE.CylinderGeometry(0.044, 0.046, 0.06, 12), driverSkinMat);
+      pmNeck.position.set(0, 0.60, 0.03);
+      const pmHead = new THREE.Mesh(new THREE.SphereGeometry(0.095, 16, 14), driverSkinMat);
+      pmHead.scale.set(0.94, 1.08, 1.0); pmHead.position.set(0, 0.69, 0.04); pmHead.castShadow = true;
+      const pmCap = new THREE.Mesh(new THREE.CylinderGeometry(0.096, 0.10, 0.05, 16), emsNavyMat);
+      pmCap.position.set(0, 0.74, 0.04);
+      paramedicGroup.add(pmNeck, pmHead, pmCap);
+
+      // Estetoscopio médico ergonómico alrededor del cuello
+      const stethCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.06, 0.62, 0.02),
+        new THREE.Vector3(-0.08, 0.54, 0.08),
+        new THREE.Vector3(0, 0.46, 0.14),
+        new THREE.Vector3(0.08, 0.54, 0.08),
+        new THREE.Vector3(0.06, 0.62, 0.02)
+      ]);
+      const steth = new THREE.Mesh(new THREE.TubeGeometry(stethCurve, 12, 0.007, 8, false), jDarkMat);
+      const stethBell = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.012, 10), jChromeMat);
+      stethBell.position.set(0, 0.45, 0.14); stethBell.rotation.x = Math.PI / 2;
+      paramedicGroup.add(steth, stethBell);
+
+      // Brazos anatómicos sosteniendo tablet / informe médico
+      [-1, 1].forEach((aside) => {
+        const armPts = [
+          new THREE.Vector3(aside * 0.18, 0.52, 0.02),
+          new THREE.Vector3(aside * 0.15, 0.40, 0.20),
+          new THREE.Vector3(aside * 0.09, 0.38, 0.34)
+        ];
+        const armMesh = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(armPts), 10, 0.032, 10, false), emsNavyMat);
+        const gloveHand = new THREE.Mesh(new THREE.SphereGeometry(0.032, 10, 8), gloveMat);
+        gloveHand.scale.set(1.0, 0.85, 1.2); gloveHand.position.set(aside * 0.09, 0.38, 0.35);
+        paramedicGroup.add(armMesh, gloveHand);
+      });
+
+      // Tablet médica digital de paciente
+      const clipboard = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.012, 0.24), new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.3 }));
+      clipboard.position.set(0, 0.37, 0.35); clipboard.rotation.x = 0.35;
+      const chartPaper = new THREE.Mesh(new THREE.PlaneGeometry(0.15, 0.21), new THREE.MeshBasicMaterial({ color: 0x38bdf8 }));
+      chartPaper.rotation.x = -Math.PI / 2 + 0.35; chartPaper.position.set(0, 0.378, 0.35);
+      paramedicGroup.add(clipboard, chartPaper);
+
+      // Piernas sentadas estilizadas
+      [-1, 1].forEach((lside) => {
+        const legThigh = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.055, 0.38, 12), emsNavyMat);
+        legThigh.rotation.x = Math.PI / 2 - 0.12; legThigh.position.set(lside * 0.10, 0.14, 0.18);
+        const legCalf = new THREE.Mesh(new THREE.CylinderGeometry(0.054, 0.046, 0.28, 12), emsNavyMat);
+        legCalf.position.set(lside * 0.10, -0.06, 0.34);
+        const boot = new THREE.Mesh(new THREE.BoxGeometry(0.095, 0.08, 0.16), jDarkMat);
+        boot.position.set(lside * 0.10, -0.20, 0.37);
+        paramedicGroup.add(legThigh, legCalf, boot);
+      });
+      ambBody.add(paramedicGroup);
+
+      // =========================================================================
+      // CABINA DELANTERA DE LA AMBULANCIA: PISO, PLATAFORMA ELEVADA, ASIENTOS Y CONDUCTOR
+      // =========================================================================
+      // 1. Piso delantero continuo (cierra el chasis bajo los asientos y pedales al abrir las puertas)
+      const cabFloor = new THREE.Mesh(new THREE.BoxGeometry(2.04, 0.07, 1.50), aFloorMat);
+      cabFloor.position.set(0, 0.355, 1.30); cabFloor.castShadow = true; cabFloor.receiveShadow = true;
+      ambBody.add(cabFloor);
+
+      // Plataforma elevada del piso de cabina (eleva los asientos y conductor para visibilidad total por el parabrisas)
+      const cabPlatform = new THREE.Mesh(new THREE.BoxGeometry(1.92, 0.28, 0.90), aInteriorMat);
+      cabPlatform.position.set(0, 0.50, 1.15); cabPlatform.castShadow = true; cabPlatform.receiveShadow = true;
+      const cabStep = new THREE.Mesh(new THREE.BoxGeometry(1.90, 0.14, 0.22), aInteriorMat);
+      cabStep.position.set(0, 0.42, 1.62);
+      ambBody.add(cabPlatform, cabStep);
+
+      // 2. Mampara divisoria con ventana de comunicación hacia el módulo médico
+      const cabDivider = new THREE.Mesh(new THREE.BoxGeometry(2.00, 1.68, 0.06), aInteriorMat);
+      cabDivider.position.set(0, 1.20, 0.55);
+      const passThroughWin = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.40, 0.08), jGlassMat);
+      passThroughWin.position.set(0, 1.35, 0.55);
+      ambBody.add(cabDivider, passThroughWin);
+
+      // 3. Tablero de instrumentos frontal (Salpicadero) y consola de radio elevada
+      const aDashMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.65 });
+      const aDashboard = new THREE.Mesh(new THREE.BoxGeometry(1.94, 0.34, 0.42), aDashMat);
+      aDashboard.position.set(0, 1.05, 1.84);
+      const centerConsole = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.45, 0.55), aDashMat);
+      centerConsole.position.set(0, 0.72, 1.45);
+      const radioScreen = new THREE.Mesh(new THREE.PlaneGeometry(0.16, 0.09), new THREE.MeshBasicMaterial({ color: 0x38bdf8 }));
+      radioScreen.rotation.x = -0.4; radioScreen.position.set(0, 1.02, 1.68);
+      ambBody.add(aDashboard, centerConsole, radioScreen);
+
+      // 4. Volante ergonómico de la ambulancia (Ubicado en el lado derecho x = +0.48 y a la altura correcta)
+      const ambSteer = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.016, 12, 28), jDarkMat);
+      ambSteer.position.set(0.48, 1.28, 1.62); ambSteer.rotation.x = -0.42;
+      const steerCol = new THREE.Mesh(new THREE.CylinderGeometry(0.024, 0.028, 0.42, 10), jDarkMat);
+      steerCol.position.set(0.48, 1.14, 1.72); steerCol.rotation.x = 0.42;
+      ambBody.add(ambSteer, steerCol);
+
+      // 5. Asientos elevados de cabina (Conductor x = 0.48, Copiloto x = -0.48 sobre la plataforma)
+      const aSeatMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.65 });
+      [-0.48, 0.48].forEach((sx) => {
+        const seatBase = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.16, 0.48), aSeatMat);
+        seatBase.position.set(sx, 0.72, 1.15);
+        const seatBack = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.64, 0.11), aSeatMat);
+        seatBack.position.set(sx, 1.08, 0.92); seatBack.rotation.x = -0.12;
+        [-0.20, 0.20].forEach((bx) => {
+          const bolster = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.58, 0.16), aSeatMat);
+          bolster.position.set(sx + bx, 1.06, 0.94); bolster.rotation.x = -0.12;
+          ambBody.add(bolster);
+        });
+        const headrest = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.16, 0.08), aSeatMat);
+        headrest.position.set(sx, 1.48, 0.86);
+        ambBody.add(seatBase, seatBack, headrest);
+      });
+
+      // 6. Conductor de la Ambulancia estilizado (Visible por el parabrisas en x = 0.48 sobre plataforma alta)
+      const ambDriverGroup = new THREE.Group();
+      ambDriverGroup.position.set(0.48, 0.80, 1.10);
+
+      // Torso cónico anatómico estilizado
+      const drvTorsoGeo = new THREE.CylinderGeometry(0.19, 0.14, 0.42, 16);
+      const drvTorso = new THREE.Mesh(drvTorsoGeo, emsVestMat);
+      drvTorso.scale.set(1.22, 1.0, 0.76);
+      drvTorso.position.set(0, 0.26, 0); drvTorso.rotation.x = -0.06; drvTorso.castShadow = true;
+      ambDriverGroup.add(drvTorso);
+
+      // Bandas reflectantes del chaleco de alta visibilidad
+      const drvStripe1 = new THREE.Mesh(new THREE.CylinderGeometry(0.193, 0.16, 0.045, 16), emsHiVisMat);
+      drvStripe1.scale.set(1.24, 1.0, 0.78);
+      drvStripe1.position.set(0, 0.22, 0); drvStripe1.rotation.x = -0.06;
+      const drvStripe2 = new THREE.Mesh(new THREE.CylinderGeometry(0.185, 0.17, 0.045, 16), emsHiVisMat);
+      drvStripe2.scale.set(1.24, 1.0, 0.78);
+      drvStripe2.position.set(0, 0.32, 0); drvStripe2.rotation.x = -0.06;
+      ambDriverGroup.add(drvStripe1, drvStripe2);
+
+      // Hombros redondeados del conductor
+      [-1, 1].forEach((dside) => {
+        const dShoulder = new THREE.Mesh(new THREE.SphereGeometry(0.062, 12, 10), emsNavyMat);
+        dShoulder.position.set(dside * 0.20, 0.42, 0);
+        ambDriverGroup.add(dShoulder);
+      });
+
+      // Cuello y cabeza estilizada visible por el parabrisas (Y absoluto: 1.43 a 1.54)
+      const drvNeck = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.048, 0.07, 12), driverSkinMat);
+      drvNeck.position.set(0, 0.50, 0.01);
+      const drvHead = new THREE.Mesh(new THREE.SphereGeometry(0.098, 18, 16), driverSkinMat);
+      drvHead.scale.set(0.94, 1.10, 1.02); drvHead.position.set(0, 0.63, 0.02); drvHead.castShadow = true;
+      const drvCapCrown = new THREE.Mesh(new THREE.CylinderGeometry(0.098, 0.104, 0.065, 16), emsNavyMat);
+      drvCapCrown.position.set(0, 0.69, 0.02);
+      const drvCapBrim = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.016, 0.09), emsNavyMat);
+      drvCapBrim.position.set(0, 0.67, 0.10); drvCapBrim.rotation.x = 0.10;
+      ambDriverGroup.add(drvNeck, drvHead, drvCapCrown, drvCapBrim);
+
+      // Brazos anatómicos con manos al volante a la altura elevada
+      [-1, 1].forEach((aside) => {
+        const armPts = [
+          new THREE.Vector3(aside * 0.20, 0.42, 0.01),
+          new THREE.Vector3(aside * 0.16, 0.38, 0.28),
+          new THREE.Vector3(aside * 0.11, 0.48, 0.52)
+        ];
+        const armGeo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(armPts), 10, 0.032, 10, false);
+        const armMesh = new THREE.Mesh(armGeo, emsNavyMat);
+        const hand = new THREE.Mesh(new THREE.SphereGeometry(0.034, 10, 8), driverSkinMat);
+        hand.scale.set(1.0, 0.85, 1.2); hand.position.set(aside * 0.11, 0.48, 0.53);
+        ambDriverGroup.add(armMesh, hand);
+      });
+
+      // Piernas cónicas apoyadas hacia los pedales
+      [-1, 1].forEach((lside) => {
+        const legThigh = new THREE.Mesh(new THREE.CylinderGeometry(0.068, 0.056, 0.44, 12), emsNavyMat);
+        legThigh.rotation.x = Math.PI / 2 - 0.10;
+        legThigh.position.set(lside * 0.11, 0.05, 0.22);
+        ambDriverGroup.add(legThigh);
+      });
+      ambBody.add(ambDriverGroup);
 
       // Cabina Delantera Cutaway con capó inclinado, texto ECNALUBMA en espejo, guardabarros concéntricos y espejos
       const hoodS = new THREE.Shape();
